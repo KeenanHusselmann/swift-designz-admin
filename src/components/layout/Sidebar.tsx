@@ -17,7 +17,7 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronRight,
+  UserPlus,
   Sun,
   Moon,
 } from "lucide-react";
@@ -35,7 +35,7 @@ const NAV_SECTIONS = [
   {
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/leads", label: "Leads", icon: ChevronRight, countKey: "leads" },
+      { href: "/leads", label: "Leads", icon: UserPlus, countKey: "leads" },
       { href: "/clients", label: "Clients", icon: Users, countKey: "clients" },
       { href: "/projects", label: "Projects", icon: Briefcase, countKey: "projects" },
       { href: "/invoices", label: "Invoices", icon: FileText, countKey: "invoices" },
