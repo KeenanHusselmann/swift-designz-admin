@@ -1,6 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// Simple in-memory rate limiter (resets on deploy/restart — sufficient for Netlify)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 5; // max requests per window
+const RATE_WINDOW = 60 * 60 * 1000; // 1 hour
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT;
+}
+
+const CORS_ORIGIN = process.env.CORS_ALLOWED_ORIGIN || "https://swiftdesignz.co.za";
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": CORS_ORIGIN,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+}
+
 /**
  * Public API endpoint for the main Swift Designz website to submit leads.
  * Accepts POST with JSON body matching the quote/contact form data.
@@ -8,6 +38,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
  */
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429, headers: corsHeaders() },
+      );
+    }
     const body = await req.json();
     const raw = body as Record<string, unknown>;
 
@@ -20,16 +57,27 @@ export async function POST(req: NextRequest) {
     if (!name || !email) {
       return NextResponse.json(
         { error: "Name and email are required" },
-        { status: 400 },
+        { status: 400, headers: corsHeaders() },
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400, headers: corsHeaders() },
       );
     }
 
     const supabase = createAdminClient();
 
+    const validSources = ["quote_form", "contact_form", "manual"];
+    const rawSource = str(raw.source, 20);
+    const source = validSources.includes(rawSource) ? rawSource : "manual";
+
     const { data, error } = await supabase
       .from("leads")
       .insert({
-        source: str(raw.source, 20) as "quote_form" | "contact_form" | "manual" || "manual",
+        source: source as "quote_form" | "contact_form" | "manual",
         name,
         email,
         phone: str(raw.phone, 30) || null,
@@ -50,15 +98,15 @@ export async function POST(req: NextRequest) {
       console.error("Failed to insert lead:", error);
       return NextResponse.json(
         { error: "Failed to save lead" },
-        { status: 500 },
+        { status: 500, headers: corsHeaders() },
       );
     }
 
-    return NextResponse.json({ success: true, id: data.id });
+    return NextResponse.json({ success: true, id: data.id }, { headers: corsHeaders() });
   } catch {
     return NextResponse.json(
       { error: "Invalid request" },
-      { status: 400 },
+      { status: 400, headers: corsHeaders() },
     );
   }
 }

@@ -21,20 +21,37 @@ export async function updateProfileAction(formData: FormData) {
 }
 
 export async function changePasswordAction(formData: FormData) {
+  const currentPassword = formData.get("current_password") as string;
   const newPassword = formData.get("new_password") as string;
   const confirmPassword = formData.get("confirm_password") as string;
 
-  if (!newPassword || newPassword.length < 8) {
-    return { error: "Password must be at least 8 characters." };
+  if (!currentPassword) {
+    return { error: "Current password is required." };
+  }
+  if (!newPassword || newPassword.length < 10) {
+    return { error: "Password must be at least 10 characters." };
+  }
+  if (!/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+    return { error: "Password must contain at least one uppercase letter and one number." };
   }
   if (newPassword !== confirmPassword) {
     return { error: "Passwords do not match." };
   }
 
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return { error: "Not authenticated." };
+
+  // Verify current password before allowing change
+  const { error: verifyError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+  if (verifyError) return { error: "Incorrect current password." };
+
   const { error } = await supabase.auth.updateUser({ password: newPassword });
 
-  if (error) return { error: error.message };
+  if (error) return { error: "Failed to update password. Please try again." };
   revalidatePath("/settings");
   return { success: "Password updated successfully." };
 }

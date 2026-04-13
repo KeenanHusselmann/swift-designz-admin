@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { escapeHtml } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -44,7 +45,7 @@ export async function sendDocumentEmail({
               <p style="margin:0 0 8px;font-size:13px;color:#70c0c0;letter-spacing:1px;text-transform:uppercase;">Document Ready</p>
               <h1 style="margin:0 0 24px;font-size:22px;font-weight:700;color:#fff;line-height:1.3;">${templateLabel}</h1>
               <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Hi ${clientName},</p>
-              ${message ? `<p style="margin:0 0 24px;font-size:14px;color:#ccc;line-height:1.6;">${message.replace(/\n/g, "<br/>")}</p>` : ""}
+              ${message ? `<p style="margin:0 0 24px;font-size:14px;color:#ccc;line-height:1.6;">${escapeHtml(message).replace(/\n/g, "<br/>")}</p>` : ""}
               <!-- CTA -->
               <table cellpadding="0" cellspacing="0" style="margin:24px 0;">
                 <tr>

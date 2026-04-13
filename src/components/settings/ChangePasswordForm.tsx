@@ -28,6 +28,19 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
       )}
 
       <div>
+        <label htmlFor="current_password" className="block text-xs text-gray-500 mb-1">
+          Current Password <span className="text-red-400">*</span>
+        </label>
+        <input
+          id="current_password"
+          name="current_password"
+          type="password"
+          required
+          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
+        />
+      </div>
+
+      <div>
         <label htmlFor="new_password" className="block text-xs text-gray-500 mb-1">
           New Password <span className="text-red-400">*</span>
         </label>
@@ -36,9 +49,10 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
           name="new_password"
           type="password"
           required
-          minLength={8}
+          minLength={10}
           className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
         />
+        <p className="text-xs text-gray-600 mt-1">Min 10 chars, 1 uppercase, 1 number</p>
       </div>
 
       <div>

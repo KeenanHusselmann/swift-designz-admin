@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { validateUploadedFile, secureFileName } from "@/lib/utils";
 import type { ExpenseCategory, RecurringInterval } from "@/types/database";
 
 export async function createExpenseAction(formData: FormData) {
@@ -34,15 +35,15 @@ export async function createExpenseAction(formData: FormData) {
   let receiptUrl: string | null = null;
   const receiptFile = formData.get("receipt") as File | null;
   if (receiptFile && receiptFile.size > 0) {
-    const ext = (receiptFile.name.split(".").pop() || "").toLowerCase();
-    const allowed = ["pdf", "png", "jpg", "jpeg", "webp"];
-    if (!allowed.includes(ext)) return { error: "Only PDF, PNG, JPG, and WebP files are allowed." };
+    const fileError = validateUploadedFile(receiptFile);
+    if (fileError) return { error: fileError };
 
-    const filePath = `expenses/${Date.now()}.${ext}`;
+    const ext = (receiptFile.name.split(".").pop() || "").toLowerCase();
+    const filePath = `expenses/${secureFileName(ext)}`;
     const { error: uploadError } = await supabase.storage
       .from("receipts")
       .upload(filePath, receiptFile);
-    if (uploadError) return { error: `Upload failed: ${uploadError.message}` };
+    if (uploadError) return { error: "Upload failed. Please try again." };
 
     const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(filePath);
     receiptUrl = urlData.publicUrl;

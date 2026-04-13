@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { validateUploadedFile, secureFileName } from "@/lib/utils";
 import type { InvoiceStatus, PaymentMethod } from "@/types/database";
 
 // ── Create Invoice ────────────────────────────────────────────────────────────
@@ -191,14 +192,14 @@ export async function addPaymentAction(formData: FormData) {
   let proofUrl: string | null = null;
   const proofFile = formData.get("proof") as File | null;
   if (proofFile && proofFile.size > 0) {
+    const fileError = validateUploadedFile(proofFile);
+    if (fileError) return { error: fileError };
     const ext = (proofFile.name.split(".").pop() || "").toLowerCase();
-    const allowed = ["pdf", "png", "jpg", "jpeg", "webp"];
-    if (!allowed.includes(ext)) return { error: "Only PDF, PNG, JPG, and WebP files are allowed." };
-    const filePath = `payments/${invoiceId}/${Date.now()}.${ext}`;
+    const filePath = `payments/${invoiceId}/${secureFileName(ext)}`;
     const { error: uploadError } = await supabase.storage
       .from("receipts")
       .upload(filePath, proofFile);
-    if (uploadError) return { error: `Upload failed: ${uploadError.message}` };
+    if (uploadError) return { error: "Upload failed. Please try again." };
 
     const { data: urlData } = supabase.storage.from("receipts").getPublicUrl(filePath);
     proofUrl = urlData.publicUrl;

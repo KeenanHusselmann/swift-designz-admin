@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { isValidEmail } from "@/lib/utils";
 import type { LeadSource, LeadStatus } from "@/types/database";
 
 // ── Create Lead ──────────────────────────────────────────────────────────────
@@ -13,6 +14,7 @@ export async function createLead(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   if (!name || !email) return { error: "Name and email are required." };
+  if (!isValidEmail(email)) return { error: "Please enter a valid email address." };
 
   const lead = {
     name,
@@ -45,6 +47,7 @@ export async function updateLead(id: string, formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   if (!name || !email) return { error: "Name and email are required." };
+  if (!isValidEmail(email)) return { error: "Please enter a valid email address." };
 
   const updates = {
     name,

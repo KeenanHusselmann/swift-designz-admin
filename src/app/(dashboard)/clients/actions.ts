@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { isValidEmail } from "@/lib/utils";
 
 // ── Create Client ─────────────────────────────────────────────────────────────
 
@@ -12,6 +13,7 @@ export async function createClientAction(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   if (!name || !email) return { error: "Name and email are required." };
+  if (!isValidEmail(email)) return { error: "Please enter a valid email address." };
 
   const { data, error } = await supabase
     .from("clients")
@@ -40,6 +42,7 @@ export async function updateClientAction(id: string, formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const email = (formData.get("email") as string)?.trim();
   if (!name || !email) return { error: "Name and email are required." };
+  if (!isValidEmail(email)) return { error: "Please enter a valid email address." };
 
   const { error } = await supabase
     .from("clients")
