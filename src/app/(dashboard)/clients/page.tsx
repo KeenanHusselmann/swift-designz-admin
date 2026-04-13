@@ -4,10 +4,12 @@ import Link from "next/link";
 
 export default async function ClientsPage() {
   const supabase = await createClient();
-  const { data: clients } = await supabase
+  const { data: clients, error } = await supabase
     .from("clients")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (error) console.error("Clients fetch error:", error.message);
 
   return (
     <>

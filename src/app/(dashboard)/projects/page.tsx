@@ -6,10 +6,12 @@ import Link from "next/link";
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
-  const { data: projects } = await supabase
+  const { data: projects, error } = await supabase
     .from("projects")
     .select("*, clients(name)")
     .order("created_at", { ascending: false });
+
+  if (error) console.error("Projects fetch error:", error.message);
 
   return (
     <>
