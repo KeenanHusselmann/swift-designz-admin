@@ -106,12 +106,23 @@ export interface Invoice {
   updated_at: string;
 }
 
+export interface InvoiceItem {
+  id: string;
+  invoice_id: string;
+  description: string;
+  quantity: number;
+  unit_rate: number;
+  amount: number;
+  sort_order: number;
+}
+
 export interface Payment {
   id: string;
   invoice_id: string;
   amount: number;
   method: PaymentMethod;
   reference: string | null;
+  proof_url: string | null;
   paid_at: string;
   notes: string | null;
   created_at: string;

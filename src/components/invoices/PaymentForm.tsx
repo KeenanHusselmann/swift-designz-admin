@@ -1,0 +1,137 @@
+"use client";
+
+import { useState } from "react";
+import { Loader2, Upload } from "lucide-react";
+import { addPaymentAction } from "@/app/(dashboard)/invoices/actions";
+
+const METHODS = [
+  { value: "eft", label: "EFT / Bank Transfer" },
+  { value: "cash", label: "Cash" },
+  { value: "card", label: "Card" },
+  { value: "other", label: "Other" },
+];
+
+interface PaymentFormProps {
+  invoiceId: string;
+  outstandingCents: number;
+}
+
+export default function PaymentForm({ invoiceId, outstandingCents }: PaymentFormProps) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  async function handleSubmit(formData: FormData) {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    const result = await addPaymentAction(formData);
+    setLoading(false);
+
+    if (result?.error) {
+      setError(result.error);
+    } else {
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000);
+    }
+  }
+
+  const inputCls = "w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0]";
+  const labelCls = "block text-xs text-gray-400 mb-1";
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return (
+    <form action={handleSubmit} className="space-y-4">
+      <input type="hidden" name="invoice_id" value={invoiceId} />
+
+      {error && (
+        <div className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/30 text-xs text-green-400">
+          Payment recorded successfully.
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelCls}>Amount (R) *</label>
+          <input
+            name="amount"
+            type="number"
+            step="0.01"
+            min="0.01"
+            required
+            defaultValue={outstandingCents > 0 ? (outstandingCents / 100).toFixed(2) : ""}
+            placeholder="0.00"
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label className={labelCls}>Method *</label>
+          <select name="method" required className={inputCls}>
+            {METHODS.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelCls}>Date Paid *</label>
+          <input
+            name="paid_at"
+            type="date"
+            required
+            defaultValue={today}
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label className={labelCls}>Reference <span className="text-gray-600">(optional)</span></label>
+          <input
+            name="reference"
+            type="text"
+            placeholder="BNK-REF-123"
+            className={inputCls}
+          />
+        </div>
+      </div>
+
+      {/* Proof upload */}
+      <div>
+        <label className={labelCls}>
+          <span className="flex items-center gap-1">
+            <Upload className="h-3 w-3" />
+            Proof of Payment <span className="text-gray-600">(optional)</span>
+          </span>
+        </label>
+        <input
+          name="proof"
+          type="file"
+          accept=".pdf,.png,.jpg,.jpeg,.webp"
+          className="w-full text-xs text-gray-400 file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-[#2a2a2a] file:bg-[#1a1a1a] file:text-sm file:text-gray-300 file:cursor-pointer hover:file:border-[#30B0B0] transition-colors"
+        />
+      </div>
+
+      <div>
+        <label className={labelCls}>Notes <span className="text-gray-600">(optional)</span></label>
+        <input name="notes" type="text" placeholder="e.g. Deposit payment" className={inputCls} />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+      >
+        {loading ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Recording…</> : "Record Payment"}
+      </button>
+    </form>
+  );
+}
