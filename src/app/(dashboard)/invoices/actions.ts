@@ -199,10 +199,15 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
 export async function deleteInvoiceAction(id: string) {
   const supabase = await createClient();
 
+  // Delete associated income entries first
+  await supabase.from("income_entries").delete().eq("invoice_id", id);
+
   const { error } = await supabase.from("invoices").delete().eq("id", id);
   if (error) return { error: error.message };
 
   revalidatePath("/invoices");
+  revalidatePath("/accounting/income");
+  revalidatePath("/accounting");
   redirect("/invoices");
 }
 
@@ -322,6 +327,9 @@ export async function deletePaymentAction(paymentId: string, invoiceId: string) 
   const { error } = await supabase.from("payments").delete().eq("id", paymentId);
   if (error) return { error: error.message };
 
+  // Delete the auto-created income entry for this payment
+  await supabase.from("income_entries").delete().eq("invoice_id", invoiceId).eq("amount", payment.amount);
+
   // Recalculate invoice totals
   const { data: invoice } = await supabase
     .from("invoices")
@@ -353,5 +361,7 @@ export async function deletePaymentAction(paymentId: string, invoiceId: string) 
 
   revalidatePath(`/invoices/${invoiceId}`);
   revalidatePath("/invoices");
+  revalidatePath("/accounting/income");
+  revalidatePath("/accounting");
   return { success: true };
 }
