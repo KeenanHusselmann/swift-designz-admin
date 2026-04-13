@@ -17,12 +17,16 @@ export default async function DashboardPage() {
   const supabase = await createClient();
 
   // Fetch KPI data in parallel
+  const now = new Date();
+  const mtdStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
   const [
     { count: newLeadsCount },
     { count: activeProjectsCount },
     { data: unpaidInvoices },
     { data: recentLeads },
     { data: recentPayments },
+    { data: mtdPayments },
   ] = await Promise.all([
     supabase
       .from("leads")
@@ -46,6 +50,10 @@ export default async function DashboardPage() {
       .select("id, amount, method, paid_at, invoice_id")
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase
+      .from("payments")
+      .select("amount")
+      .gte("paid_at", mtdStart),
   ]);
 
   const outstandingAmount = (unpaidInvoices || []).reduce(
@@ -83,7 +91,7 @@ export default async function DashboardPage() {
         <KpiCard
           title="Revenue (MTD)"
           value={formatCurrency(
-            (recentPayments || []).reduce((s, p) => s + p.amount, 0)
+            (mtdPayments || []).reduce((s, p) => s + p.amount, 0)
           )}
           subtitle="Month to date"
           icon={TrendingUp}

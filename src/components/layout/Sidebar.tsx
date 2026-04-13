@@ -25,24 +25,25 @@ import type { Profile } from "@/types/database";
 
 interface SidebarProps {
   profile: Profile | null;
+  counts?: Record<string, number>;
 }
 
 const NAV_SECTIONS = [
   {
     items: [
       { href: "/", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/leads", label: "Leads", icon: ChevronRight },
-      { href: "/clients", label: "Clients", icon: Users },
-      { href: "/projects", label: "Projects", icon: Briefcase },
-      { href: "/invoices", label: "Invoices", icon: FileText },
+      { href: "/leads", label: "Leads", icon: ChevronRight, countKey: "leads" },
+      { href: "/clients", label: "Clients", icon: Users, countKey: "clients" },
+      { href: "/projects", label: "Projects", icon: Briefcase, countKey: "projects" },
+      { href: "/invoices", label: "Invoices", icon: FileText, countKey: "invoices" },
     ],
   },
   {
     items: [
       { href: "/accounting", label: "Accounting", icon: TrendingUp },
-      { href: "/documents", label: "Documents", icon: FolderOpen },
-      { href: "/investors", label: "Investors", icon: Landmark },
-      { href: "/team", label: "Team", icon: UserCog },
+      { href: "/documents", label: "Documents", icon: FolderOpen, countKey: "documents" },
+      { href: "/investors", label: "Investors", icon: Landmark, countKey: "investors" },
+      { href: "/team", label: "Team", icon: UserCog, countKey: "team" },
     ],
   },
   {
@@ -52,7 +53,7 @@ const NAV_SECTIONS = [
   },
 ];
 
-export default function Sidebar({ profile }: SidebarProps) {
+export default function Sidebar({ profile, counts = {} }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -64,11 +65,21 @@ export default function Sidebar({ profile }: SidebarProps) {
   const navContent = (
     <>
       {/* Brand */}
-      <div className="px-5 py-6 border-b border-[#2a2a2a]">
-        <h1 className="text-lg font-bold text-[#30B0B0] tracking-tight">
-          Swift Designz
-        </h1>
-        <p className="text-xs text-[#509090] mt-0.5">Admin Portal</p>
+      <div className="px-5 py-5 border-b border-[#2a2a2a] flex items-center gap-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/favicon.png"
+          alt="Swift Designz"
+          width={32}
+          height={32}
+          className="shrink-0"
+        />
+        <div>
+          <h1 className="text-lg font-bold text-[#30B0B0] tracking-tight leading-tight">
+            Swift Designz
+          </h1>
+          <p className="text-xs text-[#509090]">Admin Portal</p>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -82,6 +93,11 @@ export default function Sidebar({ profile }: SidebarProps) {
               {section.items.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
+                const count = item.countKey
+                  ? item.countKey === "team"
+                    ? (counts.employees ?? 0) + (counts.ai_agents ?? 0)
+                    : counts[item.countKey] ?? 0
+                  : null;
                 return (
                   <li key={item.href}>
                     <Link
@@ -96,6 +112,11 @@ export default function Sidebar({ profile }: SidebarProps) {
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {item.label}
+                      {count !== null && count > 0 && (
+                        <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-[#2a2a2a] text-gray-400">
+                          {count}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 );
