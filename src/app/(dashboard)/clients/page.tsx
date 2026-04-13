@@ -9,13 +9,14 @@ export default async function ClientsPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) console.error("Clients fetch error:", error.message);
+  // Temporary debug: show auth + query status on page
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <>
       <PageHeader
         title="Clients"
-        description="Your client directory"
+        description={error ? `ERROR: ${error.message}` : `${clients?.length ?? 0} clients loaded | Auth: ${user ? user.email : "NOT AUTHENTICATED"}`}
         actions={
           <Link
             href="/clients/new"
