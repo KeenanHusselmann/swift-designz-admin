@@ -3,13 +3,19 @@ import PageHeader from "@/components/ui/PageHeader";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
+import type { AiAgent } from "@/types/database";
+import { Bot } from "lucide-react";
 
 export default async function AgentsPage() {
   const supabase = await createClient();
-  const { data: agents } = await supabase
+  const { data: agentsRaw } = await supabase
     .from("ai_agents")
     .select("*")
     .order("name");
+
+  const agents = (agentsRaw || []) as AiAgent[];
+  const activeAgents = agents.filter((a) => a.status === "active");
+  const totalMonthlySpend = activeAgents.reduce((s, a) => s + a.monthly_cost, 0);
 
   return (
     <>
@@ -26,6 +32,37 @@ export default async function AgentsPage() {
         }
       />
 
+      {/* Summary card */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="glass-card p-5 flex items-center gap-4">
+          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
+            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Active Agents</p>
+            <p className="text-lg font-semibold text-white">{activeAgents.length}</p>
+          </div>
+        </div>
+        <div className="glass-card p-5 flex items-center gap-4">
+          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
+            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Total Monthly AI Spend</p>
+            <p className="text-lg font-semibold text-white">{formatCurrency(totalMonthlySpend)}</p>
+          </div>
+        </div>
+        <div className="glass-card p-5 flex items-center gap-4">
+          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
+            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Annual AI Spend</p>
+            <p className="text-lg font-semibold text-[#30B0B0]">{formatCurrency(totalMonthlySpend * 12)}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -40,7 +77,7 @@ export default async function AgentsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#2a2a2a]">
-              {(!agents || agents.length === 0) ? (
+              {agents.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
                     No AI agents registered yet.
@@ -49,7 +86,11 @@ export default async function AgentsPage() {
               ) : (
                 agents.map((agent) => (
                   <tr key={agent.id} className="hover:bg-[#1a1a1a] transition-colors">
-                    <td className="px-5 py-3 text-sm font-medium text-white">{agent.name}</td>
+                    <td className="px-5 py-3">
+                      <Link href={`/team/agents/${agent.id}`} className="text-sm font-medium text-white hover:text-[#30B0B0]">
+                        {agent.name}
+                      </Link>
+                    </td>
                     <td className="px-5 py-3 text-sm text-gray-400 max-w-xs truncate">{agent.purpose}</td>
                     <td className="px-5 py-3 text-sm text-gray-400">{agent.model}</td>
                     <td className="px-5 py-3 text-sm text-gray-400">{agent.provider}</td>
