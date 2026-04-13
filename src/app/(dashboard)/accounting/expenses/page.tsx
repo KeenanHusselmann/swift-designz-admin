@@ -1,11 +1,97 @@
+import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { deleteExpenseAction } from "./actions";
+import Link from "next/link";
+import { Trash2, ExternalLink, RefreshCw } from "lucide-react";
+import type { Expense } from "@/types/database";
 
-export default function ExpensesPage() {
+const categoryLabels: Record<string, string> = {
+  hosting: "Hosting",
+  software: "Software",
+  subscriptions: "Subscriptions",
+  hardware: "Hardware",
+  marketing: "Marketing",
+  transport: "Transport",
+  office: "Office",
+  professional_services: "Professional Services",
+  other: "Other",
+};
+
+export default async function ExpensesPage() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("expenses")
+    .select("*")
+    .order("date", { ascending: false });
+
+  const entries = (data || []) as Expense[];
+
   return (
     <>
-      <PageHeader title="Expenses" description="Track all business spending" />
-      <div className="glass-card p-8 text-center">
-        <p className="text-gray-500">Expense tracking coming in Phase 5.</p>
+      <PageHeader
+        title="Expenses"
+        description="Track all business spending"
+        actions={
+          <Link
+            href="/accounting/expenses/new"
+            className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Add Expense
+          </Link>
+        }
+      />
+
+      <div className="glass-card overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-[#2a2a2a]">
+              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="text-right px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th className="w-20" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#2a2a2a]">
+            {entries.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-5 py-8 text-center text-sm text-gray-500">No expenses recorded yet.</td>
+              </tr>
+            ) : (
+              entries.map((e) => (
+                <tr key={e.id} className="hover:bg-[#1a1a1a] transition-colors">
+                  <td className="px-5 py-3 text-sm text-gray-400">{formatDate(e.date)}</td>
+                  <td className="px-5 py-3 text-sm text-white">
+                    <Link href={`/accounting/expenses/${e.id}/edit`} className="hover:text-[#30B0B0]">
+                      {e.description}
+                    </Link>
+                    {e.recurring && (
+                      <span className="ml-2 inline-flex items-center gap-0.5 text-xs text-gray-500">
+                        <RefreshCw className="h-2.5 w-2.5" />
+                        {e.recurring_interval}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 text-sm text-gray-400">{categoryLabels[e.category] || e.category}</td>
+                  <td className="px-5 py-3 text-sm text-red-400 text-right font-mono font-medium">{formatCurrency(e.amount)}</td>
+                  <td className="px-2 py-3 text-center flex items-center justify-center gap-2">
+                    {e.receipt_url && (
+                      <a href={e.receipt_url} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#30B0B0] transition-colors" title="View receipt">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    <form action={async () => { "use server"; await deleteExpenseAction(e.id); }}>
+                      <button type="submit" className="text-gray-600 hover:text-red-400 transition-colors" title="Delete">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </>
   );

@@ -220,7 +220,7 @@ export async function addPaymentAction(formData: FormData) {
   // Auto-update invoice status
   const { data: invoice } = await supabase
     .from("invoices")
-    .select("amount, paid_amount, status")
+    .select("amount, paid_amount, status, invoice_number, clients(name)")
     .eq("id", invoiceId)
     .single();
 
@@ -242,10 +242,24 @@ export async function addPaymentAction(formData: FormData) {
         status: newStatus,
       })
       .eq("id", invoiceId);
+
+    // Auto-create income entry
+    const clientRel = invoice.clients as unknown as { name: string } | { name: string }[] | null;
+    const clientName = Array.isArray(clientRel) ? clientRel[0]?.name : clientRel?.name || "Client";
+    await supabase.from("income_entries").insert({
+      source: "invoice" as const,
+      invoice_id: invoiceId,
+      description: `Payment — ${invoice.invoice_number} (${clientName})`,
+      amount,
+      date: paidAt,
+      category: "web_dev" as const,
+    });
   }
 
   revalidatePath(`/invoices/${invoiceId}`);
   revalidatePath("/invoices");
+  revalidatePath("/accounting/income");
+  revalidatePath("/accounting");
   return { success: true };
 }
 
