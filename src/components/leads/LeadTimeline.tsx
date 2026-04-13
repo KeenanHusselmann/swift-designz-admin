@@ -78,7 +78,7 @@ export default function LeadTimeline({ leadId, notes }: Props) {
                     {" · "}
                     {formatTime(note.created_at)}
                   </p>
-                  <p className="text-sm text-gray-300 mt-1 whitespace-pre-wrap break-words">
+                  <p className="text-sm text-gray-300 mt-1 whitespace-pre-wrap wrap-break-word">
                     {note.content}
                   </p>
                 </div>
