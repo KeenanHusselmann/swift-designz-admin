@@ -58,6 +58,15 @@ CREATE TABLE leads (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Lead Notes (activity timeline)
+CREATE TABLE lead_notes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  author_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Clients
 CREATE TABLE clients (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -234,6 +243,8 @@ CREATE TABLE salary_history (
 
 CREATE INDEX idx_leads_status ON leads(status);
 CREATE INDEX idx_leads_created ON leads(created_at DESC);
+CREATE INDEX idx_lead_notes_lead ON lead_notes(lead_id);
+CREATE INDEX idx_lead_notes_created ON lead_notes(created_at DESC);
 CREATE INDEX idx_clients_name ON clients(name);
 CREATE INDEX idx_projects_client ON projects(client_id);
 CREATE INDEX idx_projects_status ON projects(status);
@@ -257,7 +268,7 @@ BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = '';
 
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON leads FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -278,7 +289,7 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON ai_agents FOR EACH ROW EXECUTE FU
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, email, role)
+  INSERT INTO public.profiles (id, full_name, email, role)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data ->> 'full_name', NEW.email),
@@ -287,7 +298,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -311,6 +322,7 @@ ALTER TABLE investors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_agents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE salary_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lead_notes ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can read all tables
 CREATE POLICY "Authenticated users can read profiles" ON profiles FOR SELECT TO authenticated USING (true);
@@ -327,6 +339,7 @@ CREATE POLICY "Authenticated users can read investors" ON investors FOR SELECT T
 CREATE POLICY "Authenticated users can read employees" ON employees FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read agents" ON ai_agents FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read salary history" ON salary_history FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can read lead notes" ON lead_notes FOR SELECT TO authenticated USING (true);
 
 -- Only admins can write (insert, update, delete)
 CREATE POLICY "Admins can manage profiles" ON profiles FOR ALL TO authenticated
@@ -357,10 +370,17 @@ CREATE POLICY "Admins can manage agents" ON ai_agents FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 CREATE POLICY "Admins can manage salary history" ON salary_history FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can manage lead notes" ON lead_notes FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- Allow the main website to insert leads via anon key (public API)
+-- Restricted: require name + email, source must be a public form (not manual)
 CREATE POLICY "Anon can insert leads" ON leads FOR INSERT TO anon
-  WITH CHECK (true);
+  WITH CHECK (
+    name IS NOT NULL AND length(trim(name)) > 0 AND
+    email IS NOT NULL AND length(trim(email)) > 0 AND
+    source IN ('quote_form', 'contact_form')
+  );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- STORAGE BUCKET

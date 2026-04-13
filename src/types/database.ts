@@ -45,6 +45,14 @@ export interface Lead {
   updated_at: string;
 }
 
+export interface LeadNote {
+  id: string;
+  lead_id: string;
+  content: string;
+  author_id: string | null;
+  created_at: string;
+}
+
 export interface Client {
   id: string;
   lead_id: string | null;
@@ -209,6 +217,7 @@ export interface Database {
     Tables: {
       profiles: { Row: Profile; Insert: Partial<Profile> & Pick<Profile, "id" | "full_name" | "email" | "role">; Update: Partial<Profile> };
       leads: { Row: Lead; Insert: Partial<Lead> & Pick<Lead, "name" | "email" | "source">; Update: Partial<Lead> };
+      lead_notes: { Row: LeadNote; Insert: Partial<LeadNote> & Pick<LeadNote, "lead_id" | "content">; Update: Partial<LeadNote> };
       clients: { Row: Client; Insert: Partial<Client> & Pick<Client, "name" | "email">; Update: Partial<Client> };
       projects: { Row: Project; Insert: Partial<Project> & Pick<Project, "client_id" | "name">; Update: Partial<Project> };
       project_milestones: { Row: ProjectMilestone; Insert: Partial<ProjectMilestone> & Pick<ProjectMilestone, "project_id" | "title">; Update: Partial<ProjectMilestone> };
