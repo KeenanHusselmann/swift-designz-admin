@@ -75,9 +75,20 @@ const agents = [
 ];
 
 async function seedAgents() {
-  console.log(`Seeding ${agents.length} agents...`);
+  // Fetch existing names to avoid duplicates
+  const { data: existing } = await supabase.from("ai_agents").select("name");
+  const existingNames = new Set((existing || []).map((a) => a.name));
 
-  for (const agent of agents) {
+  const toInsert = agents.filter((a) => !existingNames.has(a.name));
+
+  if (toInsert.length === 0) {
+    console.log("All agents already exist — nothing to insert.");
+    return;
+  }
+
+  console.log(`Seeding ${toInsert.length} agent(s)...`);
+
+  for (const agent of toInsert) {
     const { data, error } = await supabase
       .from("ai_agents")
       .insert(agent)
