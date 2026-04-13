@@ -24,6 +24,11 @@ export async function createInvoiceAction(formData: FormData) {
   const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
   const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
   const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
+  const paymentPlanType = paymentPlanEnabled ? (formData.get("payment_plan_type") as string) || null : null;
+  let paymentPlanSchedule: { label: string; amount: number }[] | null = null;
+  if (paymentPlanEnabled) {
+    try { paymentPlanSchedule = JSON.parse(formData.get("payment_plan_schedule") as string); } catch { /* ignore */ }
+  }
 
   // Parse line items from JSON hidden input
   const itemsJson = formData.get("items") as string;
@@ -80,6 +85,8 @@ export async function createInvoiceAction(formData: FormData) {
       payment_plan_enabled: paymentPlanEnabled,
       installment_count: installmentCount,
       installment_interval: installmentInterval,
+      payment_plan_type: paymentPlanType,
+      payment_plan_schedule: paymentPlanSchedule,
     })
     .select("id")
     .single();
@@ -122,6 +129,11 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
   const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
   const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
   const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
+  const paymentPlanType = paymentPlanEnabled ? (formData.get("payment_plan_type") as string) || null : null;
+  let paymentPlanSchedule: { label: string; amount: number }[] | null = null;
+  if (paymentPlanEnabled) {
+    try { paymentPlanSchedule = JSON.parse(formData.get("payment_plan_schedule") as string); } catch { /* ignore */ }
+  }
 
   // Parse line items
   const itemsJson = formData.get("items") as string;
@@ -155,6 +167,8 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
       payment_plan_enabled: paymentPlanEnabled,
       installment_count: installmentCount,
       installment_interval: installmentInterval,
+      payment_plan_type: paymentPlanType,
+      payment_plan_schedule: paymentPlanSchedule,
     })
     .eq("id", id);
 

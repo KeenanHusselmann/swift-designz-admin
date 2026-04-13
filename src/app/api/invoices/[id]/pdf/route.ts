@@ -78,6 +78,8 @@ export async function GET(
       paymentPlanEnabled: invoice.payment_plan_enabled ?? false,
       installmentCount: invoice.installment_count ?? null,
       installmentInterval: invoice.installment_interval ?? null,
+      paymentPlanType: invoice.payment_plan_type ?? null,
+      paymentPlanSchedule: invoice.payment_plan_schedule ?? null,
       payments: typedPayments.map((p) => ({
         amount: p.amount,
         method: p.method,

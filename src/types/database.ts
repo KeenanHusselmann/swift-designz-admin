@@ -10,6 +10,12 @@ export type IncomeCategory = "web_dev" | "ecommerce" | "apps" | "training" | "co
 export type DocumentType = "contract" | "proposal" | "invoice" | "receipt" | "agreement" | "report" | "other";
 export type InvoiceDocType = "invoice" | "quotation";
 export type InstallmentInterval = "weekly" | "bi-weekly" | "monthly";
+export type PaymentPlanType = "standard" | "full_pay" | "2_month_flex" | "3_month_ease" | "custom";
+
+export interface PaymentPlanInstallment {
+  label: string;
+  amount: number; // cents
+}
 export type InvestorStatus = "prospective" | "active" | "exited";
 export type EmployeeStatus = "active" | "inactive" | "terminated";
 export type Department = "development" | "design" | "marketing" | "operations" | "other";
@@ -108,6 +114,8 @@ export interface Invoice {
   payment_plan_enabled: boolean;
   installment_count: number | null;
   installment_interval: InstallmentInterval | null;
+  payment_plan_type: PaymentPlanType | null;
+  payment_plan_schedule: PaymentPlanInstallment[] | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

@@ -112,6 +112,8 @@ export interface InvoicePDFProps {
   paymentPlanEnabled?: boolean;
   installmentCount?: number | null;
   installmentInterval?: string | null;
+  paymentPlanType?: string | null;
+  paymentPlanSchedule?: { label: string; amount: number }[] | null;
   payments?: PaymentRecord[];
   logoSrc?: string | null;
 }
@@ -180,6 +182,8 @@ export default function InvoicePDF({
   paymentPlanEnabled,
   installmentCount,
   installmentInterval,
+  paymentPlanType,
+  paymentPlanSchedule,
   payments,
   logoSrc,
 }: InvoicePDFProps) {
@@ -282,35 +286,59 @@ export default function InvoicePDF({
         </View>
 
         {/* Payment Plan */}
-        {paymentPlanEnabled && installmentCount && installmentCount > 1 && installmentInterval && (
+        {paymentPlanEnabled && (
           <View style={s.planBox}>
             <Text style={s.planLabel}>Payment Plan</Text>
-            <Text style={s.planText}>
-              {installmentCount} installments · {installmentInterval}
-            </Text>
-            <Text style={[s.planText, { color: "#888", marginBottom: 4 }]}>
-              {formatR(Math.ceil((isQuotation ? total : outstanding) / installmentCount))} per installment
-            </Text>
-            <View style={s.planScheduleHead}>
-              <Text style={[s.planColHead, s.planCol]}>#</Text>
-              <Text style={[s.planColHead, s.planCol]}>Due Date</Text>
-              <Text style={[s.planColHead, s.planCol, { textAlign: "right" as const }]}>Amount</Text>
-            </View>
-            {generatePaymentSchedule(
-              total,
-              isQuotation ? 0 : paidAmount,
-              installmentCount,
-              installmentInterval,
-              dueDate,
-            ).map((row) => (
-              <View key={row.number} style={s.planScheduleRow}>
-                <Text style={[s.planCol, { color: "#ccc" }]}>{row.number}</Text>
-                <Text style={[s.planCol, { color: "#ccc" }]}>{fmtDate(row.date)}</Text>
-                <Text style={[s.planCol, { color: "#fff", textAlign: "right" as const, fontWeight: 600 }]}>
-                  {formatR(row.amount)}
+            {paymentPlanType && (
+              <Text style={[s.planText, { marginBottom: 4, textTransform: "capitalize" as const }]}>
+                {paymentPlanType.replace(/_/g, " ").replace(/\b2\b/, "2-").replace(/\b3\b/, "3-")}
+              </Text>
+            )}
+            {paymentPlanSchedule && paymentPlanSchedule.length > 0 ? (
+              <>
+                <View style={s.planScheduleHead}>
+                  <Text style={[s.planColHead, { flex: 2 }]}>Payment</Text>
+                  <Text style={[s.planColHead, s.planCol, { textAlign: "right" as const }]}>Amount</Text>
+                </View>
+                {paymentPlanSchedule.map((row, i) => (
+                  <View key={i} style={s.planScheduleRow}>
+                    <Text style={[{ flex: 2, fontSize: 8, color: "#ccc" }]}>{row.label}</Text>
+                    <Text style={[s.planCol, { color: "#fff", textAlign: "right" as const, fontWeight: 600 }]}>
+                      {formatR(row.amount)}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            ) : installmentCount && installmentCount > 1 && installmentInterval ? (
+              <>
+                <Text style={s.planText}>
+                  {installmentCount} installments · {installmentInterval}
                 </Text>
-              </View>
-            ))}
+                <Text style={[s.planText, { color: "#888", marginBottom: 4 }]}>
+                  {formatR(Math.ceil((isQuotation ? total : outstanding) / installmentCount))} per installment
+                </Text>
+                <View style={s.planScheduleHead}>
+                  <Text style={[s.planColHead, s.planCol]}>#</Text>
+                  <Text style={[s.planColHead, s.planCol]}>Due Date</Text>
+                  <Text style={[s.planColHead, s.planCol, { textAlign: "right" as const }]}>Amount</Text>
+                </View>
+                {generatePaymentSchedule(
+                  total,
+                  isQuotation ? 0 : paidAmount,
+                  installmentCount,
+                  installmentInterval,
+                  dueDate,
+                ).map((row) => (
+                  <View key={row.number} style={s.planScheduleRow}>
+                    <Text style={[s.planCol, { color: "#ccc" }]}>{row.number}</Text>
+                    <Text style={[s.planCol, { color: "#ccc" }]}>{fmtDate(row.date)}</Text>
+                    <Text style={[s.planCol, { color: "#fff", textAlign: "right" as const, fontWeight: 600 }]}>
+                      {formatR(row.amount)}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            ) : null}
           </View>
         )}
 

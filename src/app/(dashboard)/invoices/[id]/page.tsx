@@ -267,23 +267,39 @@ export default async function InvoiceDetailPage({
           </div>
 
           {/* Payment Plan */}
-          {invoice.payment_plan_enabled && invoice.installment_count && invoice.installment_interval && (
+          {invoice.payment_plan_enabled && (
             <div className="glass-card p-6">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Payment Plan</h2>
-              <dl className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <dt className="text-xs text-gray-500">Installments</dt>
-                  <dd className="text-sm text-foreground">{invoice.installment_count}</dd>
+              {invoice.payment_plan_type && (
+                <p className="text-sm text-foreground font-medium mb-3 capitalize">
+                  {invoice.payment_plan_type.replace(/_/g, " ").replace(/\b2\b/, "2-").replace(/\b3\b/, "3-")}
+                </p>
+              )}
+              {invoice.payment_plan_schedule && Array.isArray(invoice.payment_plan_schedule) && (invoice.payment_plan_schedule as { label: string; amount: number }[]).length > 0 ? (
+                <div className="space-y-2">
+                  {(invoice.payment_plan_schedule as { label: string; amount: number }[]).map((row: { label: string; amount: number }, i: number) => (
+                    <div key={i} className="flex justify-between items-center py-1.5 border-b border-border last:border-0">
+                      <span className="text-xs text-gray-400">{row.label}</span>
+                      <span className="text-sm font-semibold text-foreground font-mono">{formatCurrency(row.amount)}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between items-center">
-                  <dt className="text-xs text-gray-500">Interval</dt>
-                  <dd className="text-sm text-foreground capitalize">{invoice.installment_interval}</dd>
-                </div>
-                <div className="flex justify-between items-center">
-                  <dt className="text-xs text-gray-500">Per Installment</dt>
-                  <dd className="text-sm font-semibold text-teal">{formatCurrency(Math.ceil((isQuotation ? invoice.amount : outstanding) / invoice.installment_count))}</dd>
-                </div>
-              </dl>
+              ) : invoice.installment_count && invoice.installment_interval ? (
+                <dl className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <dt className="text-xs text-gray-500">Installments</dt>
+                    <dd className="text-sm text-foreground">{invoice.installment_count}</dd>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <dt className="text-xs text-gray-500">Interval</dt>
+                    <dd className="text-sm text-foreground capitalize">{invoice.installment_interval}</dd>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <dt className="text-xs text-gray-500">Per Installment</dt>
+                    <dd className="text-sm font-semibold text-teal">{formatCurrency(Math.ceil((isQuotation ? invoice.amount : outstanding) / invoice.installment_count))}</dd>
+                  </div>
+                </dl>
+              ) : null}
             </div>
           )}
 

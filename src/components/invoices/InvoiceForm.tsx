@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Plus, Trash2, Loader2 } from "lucide-react";
-import type { Invoice, InvoiceItem, Client, Project, InvoiceDocType, InstallmentInterval } from "@/types/database";
+import type { Invoice, InvoiceItem, Client, Project, InvoiceDocType, InstallmentInterval, PaymentPlanType, PaymentPlanInstallment } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
 
 const INVOICE_STATUSES = [
@@ -54,6 +54,12 @@ export default function InvoiceForm({
   const [installmentInterval, setInstallmentInterval] = useState<InstallmentInterval>(
     (invoice?.installment_interval as InstallmentInterval) || "monthly"
   );
+  const [planType, setPlanType] = useState<PaymentPlanType | null>(
+    (invoice?.payment_plan_type as PaymentPlanType) || null
+  );
+  const [schedule, setSchedule] = useState<PaymentPlanInstallment[]>(
+    invoice?.payment_plan_schedule || []
+  );
 
   const initialItems: LineItem[] = existingItems?.length
     ? existingItems.map((it) => ({
@@ -70,6 +76,97 @@ export default function InvoiceForm({
   const clientProjects = projects.filter((p) => p.client_id === selectedClientId);
 
   const total = items.reduce((sum, item) => sum + Math.round(item.quantity * item.unit_rate), 0);
+
+  // Payment plan presets matching quote template
+  const PLAN_PRESETS: { type: PaymentPlanType; title: string; badge?: string; desc: string; detail: string; generate: (t: number) => PaymentPlanInstallment[] }[] = [
+    {
+      type: "standard",
+      title: "Standard",
+      desc: "50% deposit on signing · 50% on launch / delivery",
+      detail: "Most popular plan.",
+      generate: (t) => [
+        { label: "Deposit — 1st Payment", amount: Math.round(t * 0.5) },
+        { label: "2nd Payment — On delivery", amount: t - Math.round(t * 0.5) },
+      ],
+    },
+    {
+      type: "full_pay",
+      title: "Full Pay",
+      badge: "Best Value",
+      desc: "100% upfront payment",
+      detail: "Bonus: 2 months free support (instead of 1).",
+      generate: (t) => [
+        { label: "Full Payment", amount: t },
+      ],
+    },
+    {
+      type: "2_month_flex",
+      title: "2-Month Flex",
+      desc: "50% deposit · 50% in Month 2",
+      detail: "Split into 2 equal halves.",
+      generate: (t) => [
+        { label: "Deposit — 1st Payment", amount: Math.round(t * 0.5) },
+        { label: "2nd Payment — Month 2", amount: t - Math.round(t * 0.5) },
+      ],
+    },
+    {
+      type: "3_month_ease",
+      title: "3-Month Ease",
+      desc: "50% deposit · 25% Month 2 · 25% Month 3",
+      detail: "Maximum 3 months. Final payment before launch.",
+      generate: (t) => [
+        { label: "Deposit — 1st Payment", amount: Math.round(t * 0.5) },
+        { label: "2nd Payment — Month 2", amount: Math.round(t * 0.25) },
+        { label: "3rd Payment — Month 3", amount: t - Math.round(t * 0.5) - Math.round(t * 0.25) },
+      ],
+    },
+  ];
+
+  function selectPlan(type: PaymentPlanType) {
+    setPlanType(type);
+    const preset = PLAN_PRESETS.find((p) => p.type === type);
+    if (preset) {
+      const generated = preset.generate(total);
+      setSchedule(generated);
+      setInstallmentCount(generated.length);
+      setInstallmentInterval("monthly");
+    }
+  }
+
+  function updateScheduleAmount(index: number, amountRand: number) {
+    const updated = [...schedule];
+    updated[index] = { ...updated[index], amount: Math.round(amountRand * 100) };
+    setSchedule(updated);
+    // When amounts are manually edited, mark as custom if it no longer matches the preset
+    if (planType && planType !== "custom") {
+      const preset = PLAN_PRESETS.find((p) => p.type === planType);
+      if (preset) {
+        const expected = preset.generate(total);
+        const matches = expected.length === updated.length && expected.every((e, i) => e.amount === updated[i].amount);
+        if (!matches) setPlanType("custom");
+      }
+    }
+  }
+
+  function updateScheduleLabel(index: number, label: string) {
+    const updated = [...schedule];
+    updated[index] = { ...updated[index], label };
+    setSchedule(updated);
+  }
+
+  function addScheduleRow() {
+    setSchedule([...schedule, { label: `Payment ${schedule.length + 1}`, amount: 0 }]);
+    setInstallmentCount(schedule.length + 1);
+    setPlanType("custom");
+  }
+
+  function removeScheduleRow(index: number) {
+    if (schedule.length <= 1) return;
+    const updated = schedule.filter((_, i) => i !== index);
+    setSchedule(updated);
+    setInstallmentCount(updated.length);
+    setPlanType("custom");
+  }
 
   function addItem() {
     setItems([...items, { description: "", quantity: 1, unit_rate: 0 }]);
@@ -104,6 +201,8 @@ export default function InvoiceForm({
     if (paymentPlan) {
       formData.set("installment_count", String(installmentCount));
       formData.set("installment_interval", installmentInterval);
+      formData.set("payment_plan_type", planType || "custom");
+      formData.set("payment_plan_schedule", JSON.stringify(schedule));
     }
 
     const result = await action(formData);
@@ -315,13 +414,16 @@ export default function InvoiceForm({
       </div>
 
       {/* Payment Plan */}
-      <div className="glass-card p-4 space-y-3">
+      <div className="glass-card p-4 space-y-4">
         <div className="flex items-center gap-3">
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               checked={paymentPlan}
-              onChange={(e) => setPaymentPlan(e.target.checked)}
+              onChange={(e) => {
+                setPaymentPlan(e.target.checked);
+                if (e.target.checked && schedule.length === 0) selectPlan("standard");
+              }}
               className="sr-only peer"
             />
             <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-teal transition-colors after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
@@ -330,42 +432,117 @@ export default function InvoiceForm({
         </div>
 
         {paymentPlan && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div>
-              <label className={labelCls}>Number of Installments</label>
-              <input
-                type="number"
-                min="2"
-                max="24"
-                value={installmentCount}
-                onChange={(e) => setInstallmentCount(Math.max(2, Number(e.target.value)))}
-                className={inputCls}
-              />
+          <>
+            {/* Plan Cards */}
+            <div className="grid grid-cols-2 gap-3">
+              {PLAN_PRESETS.map((preset) => (
+                <button
+                  key={preset.type}
+                  type="button"
+                  onClick={() => selectPlan(preset.type)}
+                  className={`text-left p-3 rounded-lg border transition-all ${
+                    planType === preset.type
+                      ? "border-teal bg-teal/5 shadow-[0_0_12px_rgba(48,176,176,0.15)]"
+                      : "border-border hover:border-teal/40 bg-transparent"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-semibold text-foreground">{preset.title}</span>
+                    {preset.badge && (
+                      <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-teal text-white rounded">
+                        {preset.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-gray-400 leading-relaxed">{preset.desc}</p>
+                  <p className="text-[11px] text-gray-500 italic mt-0.5">{preset.detail}</p>
+                </button>
+              ))}
             </div>
-            <div>
-              <label className={labelCls}>Interval</label>
-              <select
-                value={installmentInterval}
-                onChange={(e) => setInstallmentInterval(e.target.value as InstallmentInterval)}
-                className={inputCls}
-              >
-                <option value="weekly">Weekly</option>
-                <option value="bi-weekly">Bi-Weekly</option>
-                <option value="monthly">Monthly</option>
-              </select>
-            </div>
-            {total > 0 && (
-              <div className="sm:col-span-2">
-                <p className="text-xs text-gray-400">
-                  {installmentCount} payments of{" "}
-                  <span className="text-teal font-semibold">
-                    {formatCurrency(Math.ceil(total / installmentCount))}
-                  </span>{" "}
-                  ({installmentInterval})
-                </p>
+
+            {/* Editable Schedule Table */}
+            {schedule.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs text-gray-400 uppercase tracking-wider font-semibold">Payment Schedule</label>
+                  <button
+                    type="button"
+                    onClick={addScheduleRow}
+                    className="flex items-center gap-1 text-xs text-teal hover:text-foreground transition-colors"
+                  >
+                    <Plus className="h-3 w-3" /> Add Row
+                  </button>
+                </div>
+                <div className="overflow-hidden rounded-lg border border-border">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border bg-[#111]">
+                        <th className="text-left px-3 py-2 text-xs text-gray-500 uppercase tracking-wider">Payment</th>
+                        <th className="text-left px-3 py-2 text-xs text-gray-500 uppercase tracking-wider w-36">Amount (R)</th>
+                        <th className="w-10" />
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {schedule.map((row, i) => (
+                        <tr key={i}>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={row.label}
+                              onChange={(e) => updateScheduleLabel(i, e.target.value)}
+                              className="w-full bg-transparent border-0 text-sm text-foreground placeholder-gray-600 focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={row.amount / 100}
+                              onChange={(e) => updateScheduleAmount(i, parseFloat(e.target.value) || 0)}
+                              className="w-full bg-transparent border-0 text-sm text-foreground text-right font-mono focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            {schedule.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeScheduleRow(i)}
+                                className="text-gray-600 hover:text-red-400 transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-border">
+                        <td className="px-3 py-2 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Schedule Total</td>
+                        <td className="px-3 py-2 text-right text-sm font-mono font-bold text-teal">
+                          {formatCurrency(schedule.reduce((s, r) => s + r.amount, 0))}
+                        </td>
+                        <td />
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                {(() => {
+                  const scheduleTotal = schedule.reduce((s, r) => s + r.amount, 0);
+                  const diff = total - scheduleTotal;
+                  if (diff !== 0 && total > 0) {
+                    return (
+                      <p className="text-xs text-amber-400 mt-1">
+                        Schedule {diff > 0 ? "is short by" : "exceeds total by"} {formatCurrency(Math.abs(diff))}
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
 
