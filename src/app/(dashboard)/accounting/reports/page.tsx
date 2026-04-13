@@ -10,6 +10,7 @@ const incomeCategoryLabels: Record<string, string> = {
   apps: "Apps",
   training: "Training",
   consulting: "Consulting",
+  investment: "Investment",
   other: "Other",
 };
 

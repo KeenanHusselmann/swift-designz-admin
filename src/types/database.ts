@@ -6,13 +6,13 @@ export type InvoiceStatus = "draft" | "sent" | "paid" | "partial" | "overdue" | 
 export type PaymentMethod = "eft" | "cash" | "card" | "other";
 export type ExpenseCategory = "hosting" | "software" | "subscriptions" | "hardware" | "marketing" | "transport" | "office" | "professional_services" | "other";
 export type RecurringInterval = "monthly" | "quarterly" | "yearly";
-export type IncomeCategory = "web_dev" | "ecommerce" | "apps" | "training" | "consulting" | "other";
+export type IncomeCategory = "web_dev" | "ecommerce" | "apps" | "training" | "consulting" | "other" | "investment";
 export type DocumentType = "contract" | "proposal" | "invoice" | "receipt" | "agreement" | "report" | "other";
 export type InvestorStatus = "prospective" | "active" | "exited";
 export type EmployeeStatus = "active" | "inactive" | "terminated";
 export type Department = "development" | "design" | "marketing" | "operations" | "other";
 export type AgentStatus = "active" | "paused" | "retired";
-export type IncomeSource = "invoice" | "manual";
+export type IncomeSource = "invoice" | "manual" | "investor";
 
 export interface Profile {
   id: string;
@@ -146,6 +146,7 @@ export interface IncomeEntry {
   id: string;
   source: IncomeSource;
   invoice_id: string | null;
+  investor_id: string | null;
   description: string;
   amount: number;
   date: string;

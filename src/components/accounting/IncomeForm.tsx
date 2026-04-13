@@ -9,6 +9,7 @@ const categories: { value: IncomeCategory; label: string }[] = [
   { value: "apps", label: "Apps" },
   { value: "training", label: "Training" },
   { value: "consulting", label: "Consulting" },
+  { value: "investment", label: "Investment" },
   { value: "other", label: "Other" },
 ];
 

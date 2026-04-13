@@ -1,0 +1,242 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import PageHeader from "@/components/ui/PageHeader";
+import StatusBadge from "@/components/ui/StatusBadge";
+import DeleteInvestorButton from "@/components/investors/DeleteInvestorButton";
+import ContributionForm from "@/components/investors/ContributionForm";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { Edit, DollarSign, FileText, ExternalLink } from "lucide-react";
+import { addContributionAction } from "../actions";
+import type { Investor, IncomeEntry, Document as DocType } from "@/types/database";
+
+export default async function InvestorDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const [
+    { data: investorRaw },
+    { data: contributionsRaw },
+    { data: documentsRaw },
+  ] = await Promise.all([
+    supabase.from("investors").select("*").eq("id", id).single(),
+    supabase
+      .from("income_entries")
+      .select("*")
+      .eq("source", "investor")
+      .eq("investor_id", id)
+      .order("date", { ascending: false }),
+    supabase
+      .from("documents")
+      .select("*")
+      .eq("investor_id", id)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const investor = investorRaw as Investor | null;
+  if (!investor) notFound();
+
+  const contributions = (contributionsRaw || []) as IncomeEntry[];
+  const documents = (documentsRaw || []) as DocType[];
+
+  const totalContributed = contributions.reduce((s, c) => s + c.amount, 0);
+
+  async function contributionAction(formData: FormData) {
+    "use server";
+    return addContributionAction(id, formData);
+  }
+
+  return (
+    <>
+      <PageHeader
+        title={investor.name}
+        description={investor.company || investor.email || "Investor"}
+        actions={
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/investors/${id}/edit`}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white border border-[#2a2a2a] hover:border-[#30B0B0] rounded-lg transition-colors"
+            >
+              <Edit className="h-3.5 w-3.5" />
+              Edit
+            </Link>
+            <DeleteInvestorButton id={id} />
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column — details + contributions + documents */}
+        <div className="lg:col-span-2 space-y-6">
+
+          {/* Investor Details */}
+          <div className="glass-card p-6">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Investor Details</h2>
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {investor.email && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Email</dt>
+                  <dd className="text-sm text-white">
+                    <a href={`mailto:${investor.email}`} className="hover:text-[#30B0B0] transition-colors">{investor.email}</a>
+                  </dd>
+                </div>
+              )}
+              {investor.phone && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Phone</dt>
+                  <dd className="text-sm text-white">{investor.phone}</dd>
+                </div>
+              )}
+              {investor.company && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Company</dt>
+                  <dd className="text-sm text-white">{investor.company}</dd>
+                </div>
+              )}
+              {investor.agreement_date && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Agreement Date</dt>
+                  <dd className="text-sm text-white">{formatDate(investor.agreement_date)}</dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Status</dt>
+                <dd><StatusBadge status={investor.status} /></dd>
+              </div>
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Since</dt>
+                <dd className="text-sm text-white">{formatDate(investor.created_at)}</dd>
+              </div>
+            </dl>
+            {investor.notes && (
+              <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+                <dt className="text-xs text-gray-500 mb-1">Notes</dt>
+                <dd className="text-sm text-gray-300 whitespace-pre-wrap">{investor.notes}</dd>
+              </div>
+            )}
+          </div>
+
+          {/* Contributions */}
+          <div className="glass-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#2a2a2a]">
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <DollarSign className="h-3.5 w-3.5 text-[#30B0B0]" />
+                Contributions
+              </h2>
+            </div>
+
+            {/* Add Contribution Form */}
+            <div className="px-6 py-4 border-b border-[#2a2a2a] bg-[#141414]">
+              <ContributionForm action={contributionAction} />
+            </div>
+
+            {contributions.length === 0 ? (
+              <p className="px-6 py-8 text-sm text-center text-gray-500">No contributions recorded yet.</p>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#2a2a2a]">
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#2a2a2a]">
+                  {contributions.map((c) => (
+                    <tr key={c.id} className="hover:bg-[#1a1a1a] transition-colors">
+                      <td className="px-6 py-3 text-sm text-gray-400">{formatDate(c.date)}</td>
+                      <td className="px-6 py-3 text-sm text-white">{c.description}</td>
+                      <td className="px-6 py-3 text-sm text-green-400 font-medium text-right">{formatCurrency(c.amount)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* Documents */}
+          <div className="glass-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#2a2a2a]">
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <FileText className="h-3.5 w-3.5 text-[#30B0B0]" />
+                Documents
+              </h2>
+            </div>
+            {documents.length === 0 ? (
+              <p className="px-6 py-8 text-sm text-center text-gray-500">No documents linked to this investor.</p>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#2a2a2a]">
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#2a2a2a]">
+                  {documents.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-[#1a1a1a] transition-colors">
+                      <td className="px-6 py-3 text-sm text-white">{doc.name}</td>
+                      <td className="px-6 py-3 text-sm text-gray-400 capitalize">{doc.type.replace(/_/g, " ")}</td>
+                      <td className="px-6 py-3 text-sm text-gray-400">{formatDate(doc.created_at)}</td>
+                      <td className="px-6 py-3">
+                        <a
+                          href={doc.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#30B0B0] hover:underline text-sm flex items-center gap-1"
+                        >
+                          View <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {/* Right column — financial summary */}
+        <div className="space-y-6">
+          <div className="glass-card p-6">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Financial Summary</h2>
+            <dl className="space-y-4">
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Investment Commitment</dt>
+                <dd className="text-lg font-semibold text-white">{formatCurrency(investor.investment_amount)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Total Contributed</dt>
+                <dd className="text-lg font-semibold text-green-400">{formatCurrency(totalContributed)}</dd>
+              </div>
+              {investor.investment_amount > 0 && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Remaining</dt>
+                  <dd className={`text-lg font-semibold ${investor.investment_amount - totalContributed > 0 ? "text-yellow-400" : "text-green-400"}`}>
+                    {formatCurrency(Math.max(0, investor.investment_amount - totalContributed))}
+                  </dd>
+                </div>
+              )}
+              {investor.equity_percentage && (
+                <div>
+                  <dt className="text-xs text-gray-500 mb-1">Equity Stake</dt>
+                  <dd className="text-lg font-semibold text-[#30B0B0]">{investor.equity_percentage}%</dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Contributions</dt>
+                <dd className="text-lg font-semibold text-white">{contributions.length}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
