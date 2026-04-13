@@ -43,6 +43,7 @@ export default async function EmployeeDetailPage({
       <PageHeader
         title={employee.name}
         description={`${employee.role} — ${departmentLabels[employee.department] || employee.department}`}
+        backHref="/team/employees"
         actions={
           <div className="flex items-center gap-2">
             <Link

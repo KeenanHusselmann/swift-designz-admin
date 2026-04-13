@@ -24,7 +24,7 @@ export default async function EditInvestorPage({
 
   return (
     <>
-      <PageHeader title="Edit Investor" description={investor.name} />
+      <PageHeader title="Edit Investor" description={investor.name} backHref={`/investors/${id}`} />
       <InvestorForm investor={investor} action={action} submitLabel="Update Investor" />
     </>
   );

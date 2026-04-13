@@ -68,6 +68,7 @@ export default async function ProjectDetailPage({
       <PageHeader
         title={project.name}
         description={client?.name || "No client assigned"}
+        backHref="/projects"
         actions={
           <div className="flex items-center gap-2">
             <Link

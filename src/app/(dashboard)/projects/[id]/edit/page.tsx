@@ -30,6 +30,7 @@ export default async function EditProjectPage({
       <PageHeader
         title="Edit Project"
         description={project.name}
+        backHref={`/projects/${id}`}
       />
       <div className="max-w-2xl">
         <ProjectForm

@@ -8,6 +8,7 @@ export default function NewAgentPage() {
       <PageHeader
         title="Add AI Agent"
         description="Register a new AI agent"
+        backHref="/team/agents"
       />
       <AgentForm action={createAgentAction} submitLabel="Create Agent" />
     </>

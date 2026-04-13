@@ -25,6 +25,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
       <PageHeader
         title={agent.name}
         description="AI Agent details"
+        backHref="/team/agents"
         actions={
           <div className="flex gap-2">
             <Link

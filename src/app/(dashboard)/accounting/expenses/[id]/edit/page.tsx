@@ -25,7 +25,7 @@ export default async function EditExpensePage({
 
   return (
     <>
-      <PageHeader title="Edit Expense" description={expense.description} />
+      <PageHeader title="Edit Expense" description={expense.description} backHref="/accounting/expenses" />
       <div className="max-w-2xl">
         <ExpenseForm expense={expense} action={action} submitLabel="Save Changes" />
       </div>

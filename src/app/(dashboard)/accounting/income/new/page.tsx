@@ -5,7 +5,7 @@ import { createIncomeAction } from "../actions";
 export default function NewIncomePage() {
   return (
     <>
-      <PageHeader title="Add Income" description="Record a new income entry" />
+      <PageHeader title="Add Income" description="Record a new income entry" backHref="/accounting/income" />
       <div className="max-w-2xl">
         <IncomeForm action={createIncomeAction} submitLabel="Add Income" />
       </div>

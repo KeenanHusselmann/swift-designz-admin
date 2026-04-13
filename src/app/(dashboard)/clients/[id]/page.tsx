@@ -69,6 +69,7 @@ export default async function ClientDetailPage({
       <PageHeader
         title={client.name}
         description={client.company || client.email}
+        backHref="/clients"
         actions={
           <div className="flex items-center gap-2 flex-wrap">
             {/* Generate Document dropdown */}

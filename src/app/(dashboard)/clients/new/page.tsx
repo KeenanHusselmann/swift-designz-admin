@@ -9,7 +9,7 @@ export default async function NewClientPage() {
 
   return (
     <>
-      <PageHeader title="New Client" description="Add a new client to your directory" />
+      <PageHeader title="New Client" description="Add a new client to your directory" backHref="/clients" />
       <div className="max-w-3xl">
         <ClientForm action={createClientAction} submitLabel="Create Client" />
       </div>

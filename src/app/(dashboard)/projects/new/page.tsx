@@ -19,7 +19,7 @@ export default async function NewProjectPage({
 
   return (
     <>
-      <PageHeader title="New Project" description="Create a project and assign it to a client" />
+      <PageHeader title="New Project" description="Create a project and assign it to a client" backHref="/projects" />
       <div className="max-w-3xl">
         <ProjectForm
           clients={(clients || []) as Client[]}

@@ -30,7 +30,7 @@ export default async function EditLeadPage({ params }: Props) {
 
   return (
     <>
-      <PageHeader title={`Edit: ${typedLead.name}`} description="Update lead information" />
+      <PageHeader title={`Edit: ${typedLead.name}`} description="Update lead information" backHref={`/leads/${id}`} />
       <LeadForm lead={typedLead} action={handleUpdate} submitLabel="Save Changes" />
     </>
   );

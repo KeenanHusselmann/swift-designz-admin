@@ -30,6 +30,7 @@ export default async function IncomePage() {
       <PageHeader
         title="Income"
         description="All revenue records"
+        backHref="/accounting"
         actions={
           <Link
             href="/accounting/income/new"

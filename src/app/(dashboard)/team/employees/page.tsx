@@ -16,6 +16,7 @@ export default async function EmployeesPage() {
       <PageHeader
         title="Employees"
         description="Staff directory and salary management"
+        backHref="/team"
         actions={
           <Link
             href="/team/employees/new"

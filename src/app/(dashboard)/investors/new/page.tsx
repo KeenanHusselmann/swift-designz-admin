@@ -5,7 +5,7 @@ import { createInvestorAction } from "../actions";
 export default function NewInvestorPage() {
   return (
     <>
-      <PageHeader title="Add Investor" description="Register a new investor" />
+      <PageHeader title="Add Investor" description="Register a new investor" backHref="/investors" />
       <InvestorForm action={createInvestorAction} submitLabel="Create Investor" />
     </>
   );

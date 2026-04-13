@@ -22,6 +22,7 @@ export default async function AgentsPage() {
       <PageHeader
         title="AI Agents"
         description="Your AI assistants and their configurations"
+        backHref="/team"
         actions={
           <Link
             href="/team/agents/new"

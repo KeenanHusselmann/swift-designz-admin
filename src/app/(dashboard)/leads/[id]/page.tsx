@@ -62,6 +62,7 @@ export default async function LeadDetailPage({ params }: Props) {
       <PageHeader
         title={typedLead.name}
         description="Lead details"
+        backHref="/leads"
         actions={
           <div className="flex items-center gap-3">
             {!linkedClient && typedLead.status !== "won" && (

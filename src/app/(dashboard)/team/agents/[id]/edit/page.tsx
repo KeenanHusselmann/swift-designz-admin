@@ -27,6 +27,7 @@ export default async function EditAgentPage({ params }: { params: Promise<{ id: 
       <PageHeader
         title={`Edit ${agent.name}`}
         description="Update AI agent details"
+        backHref={`/team/agents/${id}`}
       />
       <AgentForm action={action} agent={agent} submitLabel="Update Agent" />
     </>

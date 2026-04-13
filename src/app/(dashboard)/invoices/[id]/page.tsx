@@ -53,6 +53,7 @@ export default async function InvoiceDetailPage({
       <PageHeader
         title={invoice.invoice_number}
         description={`${client?.name || docLabel} · ${docLabel}`}
+        backHref="/invoices"
         actions={
           <div className="flex items-center gap-2 flex-wrap">
             <Link

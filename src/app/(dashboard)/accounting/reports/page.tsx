@@ -103,6 +103,7 @@ export default async function ReportsPage() {
       <PageHeader
         title="Financial Reports"
         description={`Profit & Loss — ${now.getFullYear()}`}
+        backHref="/accounting"
         actions={<ExportCSV csv={csvString} filename={`PnL-${now.getFullYear()}.csv`} />}
       />
 

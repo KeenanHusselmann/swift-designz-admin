@@ -25,7 +25,7 @@ export default async function EditIncomePage({
 
   return (
     <>
-      <PageHeader title="Edit Income" description={entry.description} />
+      <PageHeader title="Edit Income" description={entry.description} backHref="/accounting/income" />
       <div className="max-w-2xl">
         <IncomeForm entry={entry} action={action} submitLabel="Save Changes" />
       </div>

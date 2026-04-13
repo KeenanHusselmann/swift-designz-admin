@@ -5,7 +5,7 @@ import { createExpenseAction } from "../actions";
 export default function NewExpensePage() {
   return (
     <>
-      <PageHeader title="Add Expense" description="Record a new business expense" />
+      <PageHeader title="Add Expense" description="Record a new business expense" backHref="/accounting/expenses" />
       <div className="max-w-2xl">
         <ExpenseForm action={createExpenseAction} submitLabel="Add Expense" />
       </div>

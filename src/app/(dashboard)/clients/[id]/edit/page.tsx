@@ -21,7 +21,7 @@ export default async function EditClientPage({
 
   return (
     <>
-      <PageHeader title="Edit Client" description={client.name} />
+      <PageHeader title="Edit Client" description={client.name} backHref={`/clients/${id}`} />
       <div className="max-w-3xl">
         <ClientForm client={client} action={action} submitLabel="Save Changes" />
       </div>

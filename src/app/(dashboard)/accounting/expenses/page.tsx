@@ -32,6 +32,7 @@ export default async function ExpensesPage() {
       <PageHeader
         title="Expenses"
         description="Track all business spending"
+        backHref="/accounting"
         actions={
           <Link
             href="/accounting/expenses/new"

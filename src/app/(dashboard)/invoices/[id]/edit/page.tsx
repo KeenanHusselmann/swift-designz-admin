@@ -37,6 +37,7 @@ export default async function EditInvoicePage({
       <PageHeader
         title="Edit Invoice"
         description={invoice.invoice_number}
+        backHref={`/invoices/${id}`}
       />
       <div className="max-w-2xl">
         <InvoiceForm

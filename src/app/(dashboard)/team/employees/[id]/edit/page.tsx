@@ -24,7 +24,7 @@ export default async function EditEmployeePage({
 
   return (
     <>
-      <PageHeader title="Edit Employee" description={employee.name} />
+      <PageHeader title="Edit Employee" description={employee.name} backHref={`/team/employees/${id}`} />
       <EmployeeForm employee={employee} action={action} submitLabel="Update Employee" />
     </>
   );

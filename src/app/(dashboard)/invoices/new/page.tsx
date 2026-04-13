@@ -24,6 +24,7 @@ export default async function NewInvoicePage({
       <PageHeader
         title={isQuotation ? "New Quotation" : "New Invoice"}
         description={isQuotation ? "Create a quotation for a client" : "Create an itemized invoice"}
+        backHref="/invoices"
       />
       <div className="max-w-3xl">
         <InvoiceForm

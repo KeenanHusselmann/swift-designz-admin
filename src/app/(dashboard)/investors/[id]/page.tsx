@@ -55,6 +55,7 @@ export default async function InvestorDetailPage({
       <PageHeader
         title={investor.name}
         description={investor.company || investor.email || "Investor"}
+        backHref="/investors"
         actions={
           <div className="flex items-center gap-2">
             <Link
