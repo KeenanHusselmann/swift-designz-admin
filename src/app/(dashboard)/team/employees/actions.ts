@@ -1,11 +1,13 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Department, EmployeeStatus } from "@/types/database";
 
 export async function createEmployeeAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -53,6 +55,7 @@ export async function createEmployeeAction(formData: FormData) {
 }
 
 export async function updateEmployeeAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -103,6 +106,7 @@ export async function updateEmployeeAction(id: string, formData: FormData) {
 }
 
 export async function deleteEmployeeAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("employees").delete().eq("id", id);

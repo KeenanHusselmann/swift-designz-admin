@@ -1,11 +1,13 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { IncomeCategory, IncomeSource } from "@/types/database";
 
 export async function createIncomeAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const description = (formData.get("description") as string)?.trim();
@@ -45,6 +47,7 @@ export async function createIncomeAction(formData: FormData) {
 }
 
 export async function updateIncomeAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const description = (formData.get("description") as string)?.trim();
@@ -77,6 +80,7 @@ export async function updateIncomeAction(id: string, formData: FormData) {
 }
 
 export async function deleteIncomeAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("income_entries").delete().eq("id", id);

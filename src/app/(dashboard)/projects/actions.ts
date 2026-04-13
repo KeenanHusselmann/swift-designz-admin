@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -8,6 +9,7 @@ import type { ProjectStatus } from "@/types/database";
 // ── Create Project (with optional inline client creation) ─────────────────────
 
 export async function createProjectAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const clientMode = formData.get("client_mode") as string;
@@ -70,6 +72,7 @@ export async function createProjectAction(formData: FormData) {
 // ── Update Project ────────────────────────────────────────────────────────────
 
 export async function updateProjectAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -103,6 +106,7 @@ export async function updateProjectAction(id: string, formData: FormData) {
 // ── Update Progress Override (inline from detail page) ────────────────────────
 
 export async function updateProgressOverrideAction(projectId: string, value: number | null) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase
@@ -119,6 +123,7 @@ export async function updateProgressOverrideAction(projectId: string, value: num
 // ── Delete Project ────────────────────────────────────────────────────────────
 
 export async function deleteProjectAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("projects").delete().eq("id", id);
@@ -131,6 +136,7 @@ export async function deleteProjectAction(id: string) {
 // ── Milestones ────────────────────────────────────────────────────────────────
 
 export async function addMilestoneAction(projectId: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const title = (formData.get("title") as string)?.trim();
@@ -163,6 +169,7 @@ export async function toggleMilestoneAction(
   completed: boolean,
   projectId: string
 ) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase
@@ -179,6 +186,7 @@ export async function toggleMilestoneAction(
 }
 
 export async function deleteMilestoneAction(milestoneId: string, projectId: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase
@@ -195,6 +203,7 @@ export async function reorderMilestonesAction(
   milestoneIds: string[],
   projectId: string
 ) {
+  await requireAuth();
   const supabase = await createClient();
 
   const updates = milestoneIds.map((id, idx) =>

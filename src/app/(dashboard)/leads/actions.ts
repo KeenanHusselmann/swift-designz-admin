@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -9,6 +10,7 @@ import type { LeadSource, LeadStatus } from "@/types/database";
 // ── Create Lead ──────────────────────────────────────────────────────────────
 
 export async function createLead(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -42,6 +44,7 @@ export async function createLead(formData: FormData) {
 // ── Update Lead ──────────────────────────────────────────────────────────────
 
 export async function updateLead(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -77,6 +80,7 @@ export async function updateLead(id: string, formData: FormData) {
 // ── Delete Lead ──────────────────────────────────────────────────────────────
 
 export async function deleteLead(id: string) {
+  await requireAuth();
   const supabase = await createClient();
   const { error } = await supabase.from("leads").delete().eq("id", id);
   if (error) return { error: error.message };
@@ -88,6 +92,7 @@ export async function deleteLead(id: string) {
 // ── Convert Lead → Client ────────────────────────────────────────────────────
 
 export async function convertLeadToClient(leadId: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   // Fetch the lead
@@ -133,6 +138,7 @@ export async function convertLeadToClient(leadId: string) {
 // ── Add Note ─────────────────────────────────────────────────────────────────
 
 export async function addLeadNote(leadId: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
   const content = (formData.get("content") as string)?.trim();
   if (!content) return { error: "Note content is required." };
@@ -152,6 +158,7 @@ export async function addLeadNote(leadId: string, formData: FormData) {
 // ── Delete Note ──────────────────────────────────────────────────────────────
 
 export async function deleteLeadNote(noteId: string, leadId: string) {
+  await requireAuth();
   const supabase = await createClient();
   const { error } = await supabase.from("lead_notes").delete().eq("id", noteId);
   if (error) return { error: error.message };

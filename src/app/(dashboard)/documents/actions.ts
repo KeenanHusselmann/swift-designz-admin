@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { sendDocumentEmail } from "@/lib/email";
 import { revalidatePath } from "next/cache";
@@ -18,6 +19,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
 };
 
 export async function sendDocumentAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const clientId = formData.get("client_id") as string;

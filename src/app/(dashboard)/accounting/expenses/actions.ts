@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -7,6 +8,7 @@ import { validateUploadedFile, secureFileName } from "@/lib/utils";
 import type { ExpenseCategory, RecurringInterval } from "@/types/database";
 
 export async function createExpenseAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const description = (formData.get("description") as string)?.trim();
@@ -68,6 +70,7 @@ export async function createExpenseAction(formData: FormData) {
 }
 
 export async function updateExpenseAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const description = (formData.get("description") as string)?.trim();
@@ -130,6 +133,7 @@ export async function updateExpenseAction(id: string, formData: FormData) {
 }
 
 export async function deleteExpenseAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("expenses").delete().eq("id", id);

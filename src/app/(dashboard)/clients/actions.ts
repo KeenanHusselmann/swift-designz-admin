@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -8,6 +9,7 @@ import { isValidEmail } from "@/lib/utils";
 // ── Create Client ─────────────────────────────────────────────────────────────
 
 export async function createClientAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -37,6 +39,7 @@ export async function createClientAction(formData: FormData) {
 // ── Update Client ─────────────────────────────────────────────────────────────
 
 export async function updateClientAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -66,6 +69,7 @@ export async function updateClientAction(id: string, formData: FormData) {
 // ── Delete Client ─────────────────────────────────────────────────────────────
 
 export async function deleteClientAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("clients").delete().eq("id", id);

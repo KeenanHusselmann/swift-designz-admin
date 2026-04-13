@@ -17,7 +17,7 @@ export default async function ProjectDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: project }, { data: milestones }] = await Promise.all([
+  const [{ data: project }, { data: milestones }, { data: invoices }] = await Promise.all([
     supabase
       .from("projects")
       .select("*, clients(id, name, email)")
@@ -28,6 +28,10 @@ export default async function ProjectDetailPage({
       .select("*")
       .eq("project_id", id)
       .order("sort_order"),
+    supabase
+      .from("invoices")
+      .select("amount, paid_amount, status")
+      .eq("project_id", id),
   ]);
 
   if (!project) notFound();
@@ -55,11 +59,6 @@ export default async function ProjectDetailPage({
   }
 
   // Invoice summary
-  const { data: invoices } = await supabase
-    .from("invoices")
-    .select("amount, paid_amount, status")
-    .eq("project_id", id);
-
   const totalBilled = (invoices || []).reduce((s, inv) => s + inv.amount, 0);
   const totalPaid = (invoices || []).reduce((s, inv) => s + inv.paid_amount, 0);
 

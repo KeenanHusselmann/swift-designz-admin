@@ -1,11 +1,13 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { InvestorStatus } from "@/types/database";
 
 export async function createInvestorAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -50,6 +52,7 @@ export async function createInvestorAction(formData: FormData) {
 }
 
 export async function updateInvestorAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const name = (formData.get("name") as string)?.trim();
@@ -88,6 +91,7 @@ export async function updateInvestorAction(id: string, formData: FormData) {
 }
 
 export async function deleteInvestorAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   const { error } = await supabase.from("investors").delete().eq("id", id);
@@ -98,6 +102,7 @@ export async function deleteInvestorAction(id: string) {
 }
 
 export async function addContributionAction(investorId: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const description = (formData.get("description") as string)?.trim();

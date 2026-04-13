@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -9,6 +10,7 @@ import type { InvoiceStatus, PaymentMethod } from "@/types/database";
 // ── Create Invoice ────────────────────────────────────────────────────────────
 
 export async function createInvoiceAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const clientId = formData.get("client_id") as string;
@@ -114,6 +116,7 @@ export async function createInvoiceAction(formData: FormData) {
 // ── Update Invoice ────────────────────────────────────────────────────────────
 
 export async function updateInvoiceAction(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const clientId = formData.get("client_id") as string;
@@ -197,6 +200,7 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
 // ── Delete Invoice ────────────────────────────────────────────────────────────
 
 export async function deleteInvoiceAction(id: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   // Delete associated income entries first
@@ -214,6 +218,7 @@ export async function deleteInvoiceAction(id: string) {
 // ── Record Payment ────────────────────────────────────────────────────────────
 
 export async function addPaymentAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   const invoiceId = formData.get("invoice_id") as string;
@@ -313,6 +318,7 @@ export async function addPaymentAction(formData: FormData) {
 // ── Delete Payment ────────────────────────────────────────────────────────────
 
 export async function deletePaymentAction(paymentId: string, invoiceId: string) {
+  await requireAuth();
   const supabase = await createClient();
 
   // Get the payment amount to deduct

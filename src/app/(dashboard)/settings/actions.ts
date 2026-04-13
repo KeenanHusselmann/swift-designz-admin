@@ -1,9 +1,11 @@
 "use server";
 
+import { requireAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateProfileAction(formData: FormData) {
+  await requireAuth();
   const fullName = formData.get("full_name") as string;
   if (!fullName?.trim()) return { error: "Full name is required." };
 
@@ -21,6 +23,7 @@ export async function updateProfileAction(formData: FormData) {
 }
 
 export async function changePasswordAction(formData: FormData) {
+  await requireAuth();
   const currentPassword = formData.get("current_password") as string;
   const newPassword = formData.get("new_password") as string;
   const confirmPassword = formData.get("confirm_password") as string;
@@ -57,6 +60,7 @@ export async function changePasswordAction(formData: FormData) {
 }
 
 export async function updateBusinessSettingsAction(formData: FormData) {
+  await requireAuth();
   const supabase = await createClient();
 
   // Get the singleton row
