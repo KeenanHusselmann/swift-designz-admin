@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import StatusBadge from "@/components/ui/StatusBadge";
+import DeleteInvoiceButton from "@/components/invoices/DeleteInvoiceButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 
@@ -64,12 +65,13 @@ export default async function InvoicesPage() {
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {invoices.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={7} className="px-5 py-8 text-center text-sm text-gray-500">
                       No invoices yet.
                     </td>
                   </tr>
@@ -88,6 +90,9 @@ export default async function InvoicesPage() {
                       <td className="px-5 py-3 text-sm text-gray-400">{formatCurrency(inv.paid_amount)}</td>
                       <td className="px-5 py-3"><StatusBadge status={inv.status} /></td>
                       <td className="px-5 py-3 text-sm text-gray-500">{formatDate(inv.due_date)}</td>
+                      <td className="px-5 py-3 text-right">
+                        <DeleteInvoiceButton id={inv.id} />
+                      </td>
                     </tr>
                   ))
                 )}
@@ -110,12 +115,13 @@ export default async function InvoicesPage() {
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Valid Until</th>
+                  <th className="px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {quotations.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
                       No quotations yet.
                     </td>
                   </tr>
@@ -133,6 +139,9 @@ export default async function InvoicesPage() {
                       <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(q.amount)}</td>
                       <td className="px-5 py-3"><StatusBadge status={q.status} /></td>
                       <td className="px-5 py-3 text-sm text-gray-500">{formatDate(q.due_date)}</td>
+                      <td className="px-5 py-3 text-right">
+                        <DeleteInvoiceButton id={q.id} />
+                      </td>
                     </tr>
                   ))
                 )}

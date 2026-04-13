@@ -200,6 +200,12 @@ export default async function ProjectDetailPage({
           <div className="glass-card p-6">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Billing</h2>
             <div className="space-y-3">
+              {project.quoted_amount != null && (
+                <div className="flex justify-between items-center py-1.5 border-b border-border">
+                  <span className="text-xs text-gray-500">Quoted</span>
+                  <span className="text-sm font-semibold text-teal">{formatCurrency(project.quoted_amount)}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center py-1.5 border-b border-border">
                 <span className="text-xs text-gray-500">Total Billed</span>
                 <span className="text-sm font-semibold text-foreground">{formatCurrency(totalBilled)}</span>
@@ -214,6 +220,9 @@ export default async function ProjectDetailPage({
                   {formatCurrency(totalBilled - totalPaid)}
                 </span>
               </div>
+              {(invoices || []).length === 0 && (
+                <p className="text-[11px] text-gray-500 pt-1">No invoices linked to this project. Edit your invoices and select this project to track billing here.</p>
+              )}
             </div>
           </div>
         </div>
