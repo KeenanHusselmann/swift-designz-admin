@@ -216,9 +216,15 @@ export default async function ProjectDetailPage({
               </div>
               <div className="flex justify-between items-center py-1.5">
                 <span className="text-xs text-gray-500">Outstanding</span>
-                <span className={`text-sm font-semibold ${totalBilled - totalPaid > 0 ? "text-amber-400" : "text-gray-400"}`}>
-                  {formatCurrency(totalBilled - totalPaid)}
-                </span>
+                {(() => {
+                  const base = project.quoted_amount ?? totalBilled;
+                  const outstanding = base - totalPaid;
+                  return (
+                    <span className={`text-sm font-semibold ${outstanding > 0 ? "text-amber-400" : "text-gray-400"}`}>
+                      {formatCurrency(Math.max(0, outstanding))}
+                    </span>
+                  );
+                })()}
               </div>
               {(invoices || []).length === 0 && (
                 <p className="text-[11px] text-gray-500 pt-1">No invoices linked to this project. Edit your invoices and select this project to track billing here.</p>
