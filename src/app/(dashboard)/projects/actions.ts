@@ -55,6 +55,7 @@ export async function createProjectAction(formData: FormData) {
       start_date: (formData.get("start_date") as string) || null,
       due_date: (formData.get("due_date") as string) || null,
       quoted_amount: quotedAmount,
+      progress_override: formData.get("progress_override") ? parseInt(formData.get("progress_override") as string, 10) : null,
       notes: (formData.get("notes") as string)?.trim() || null,
     })
     .select("id")
@@ -87,6 +88,7 @@ export async function updateProjectAction(id: string, formData: FormData) {
       start_date: (formData.get("start_date") as string) || null,
       due_date: (formData.get("due_date") as string) || null,
       quoted_amount: quotedAmount,
+      progress_override: formData.get("progress_override") ? parseInt(formData.get("progress_override") as string, 10) : null,
       notes: (formData.get("notes") as string)?.trim() || null,
     })
     .eq("id", id);
@@ -96,6 +98,22 @@ export async function updateProjectAction(id: string, formData: FormData) {
   revalidatePath(`/projects/${id}`);
   revalidatePath("/projects");
   redirect(`/projects/${id}`);
+}
+
+// ── Update Progress Override (inline from detail page) ────────────────────────
+
+export async function updateProgressOverrideAction(projectId: string, value: number | null) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("projects")
+    .update({ progress_override: value })
+    .eq("id", projectId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/projects");
 }
 
 // ── Delete Project ────────────────────────────────────────────────────────────

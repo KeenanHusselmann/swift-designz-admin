@@ -248,6 +248,27 @@ export default function ProjectForm({
         </div>
       </div>
 
+      {/* Progress Override */}
+      <div className="glass-card p-6">
+        <h2 className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">Progress</h2>
+        <div className="max-w-xs">
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">
+            Manual Override (%)
+          </label>
+          <input
+            name="progress_override"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            defaultValue={project?.progress_override ?? ""}
+            placeholder="Leave empty to auto-calculate from milestones"
+            className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
+          />
+          <p className="mt-1 text-xs text-gray-500">Leave blank to auto-calculate from milestones.</p>
+        </div>
+      </div>
+
       {/* Notes */}
       <div className="glass-card p-6">
         <h2 className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">Notes</h2>

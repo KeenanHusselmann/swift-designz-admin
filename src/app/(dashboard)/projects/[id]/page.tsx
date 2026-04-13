@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import StatusBadge from "@/components/ui/StatusBadge";
 import MilestoneBoard from "@/components/projects/MilestoneBoard";
+import ProgressEditor from "@/components/projects/ProgressEditor";
 import DeleteProjectButton from "@/components/projects/DeleteProjectButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Edit, User, Calendar, Clock, DollarSign } from "lucide-react";
@@ -36,7 +37,9 @@ export default async function ProjectDetailPage({
   // Calculate progress
   const total = milestones?.length ?? 0;
   const done = milestones?.filter((m) => m.completed).length ?? 0;
-  const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+  const milestoneProgress = total > 0 ? Math.round((done / total) * 100) : 0;
+  const progress = project.progress_override ?? milestoneProgress;
+  const isOverridden = project.progress_override !== null && project.progress_override !== undefined;
 
   // Days remaining
   let daysRemaining: number | null = null;
@@ -177,7 +180,14 @@ export default async function ProjectDetailPage({
               )}
               <div className="flex justify-between items-center">
                 <dt className="text-xs text-gray-500">Progress</dt>
-                <dd className="text-sm font-semibold text-teal">{progress}%</dd>
+                <dd>
+                  <ProgressEditor
+                    projectId={id}
+                    progress={progress}
+                    isOverridden={isOverridden}
+                    milestoneProgress={milestoneProgress}
+                  />
+                </dd>
               </div>
               <div className="flex justify-between items-center">
                 <dt className="text-xs text-gray-500">Created</dt>

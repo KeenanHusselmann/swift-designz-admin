@@ -78,6 +78,7 @@ export interface Project {
   start_date: string | null;
   due_date: string | null;
   quoted_amount: number | null;
+  progress_override: number | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
