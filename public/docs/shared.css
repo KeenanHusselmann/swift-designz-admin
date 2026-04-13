@@ -1,0 +1,285 @@
+/* ═══════════════════════════════════════════════════════
+   Swift Designz — Shared Business Document Styles
+   Keenan Husselmann | swiftdesignz.co.za
+   ═══════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700&display=swap');
+
+:root {
+  --teal:      #30B0B0;
+  --teal-dim:  #509090;
+  --teal-deep: #307070;
+  --head-bg:   #0c1414;
+  --head-alt:  #121e1e;
+  --ink:       #1a1a1a;
+  --ink-mid:   #4a4a4a;
+  --ink-dim:   #888888;
+  --bg:        #ffffff;
+  --bg-alt:    #f4fbfb;
+  --border:    #cce6e6;
+  --field-bg:  #eef8f8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: #dde8e8;
+}
+
+/* ── A4 PAGE  ─────────────────────────────── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 24px auto;
+  background: var(--bg);
+  box-shadow: 0 6px 40px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── DOCUMENT HEADER  ────────────────────── */
+.doc-header {
+  background: var(--head-bg);
+  padding: 26px 36px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 3px solid var(--teal);
+  flex-shrink: 0;
+}
+.doc-logo { height: 42px; width: auto; filter: drop-shadow(0 0 10px rgba(48,176,176,0.45)); }
+.doc-type-block { text-align: center; }
+.doc-type { font-family: 'Orbitron', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 5px; text-transform: uppercase; color: var(--teal); }
+.doc-subtype { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal-dim); margin-top: 3px; }
+.doc-meta { text-align: right; }
+.doc-ref { font-size: 11px; font-weight: 700; color: #c0e0e0; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+.doc-date-line { font-size: 10px; color: var(--teal-dim); margin-top: 3px; }
+/* Fields inside the dark header need light colours */
+.doc-header .field {
+  background: rgba(48,176,176,0.12);
+  border-bottom-color: var(--teal-dim);
+  color: #c8eeee;
+  font-style: normal;
+}
+.doc-header .field:focus {
+  background: rgba(48,176,176,0.22);
+  border-bottom-color: var(--teal);
+  color: #e8fafa;
+}
+
+/* ── DOCUMENT BODY  ──────────────────────── */
+.doc-body { padding: 28px 36px; flex: 1; }
+
+/* ── PARTIES GRID  ───────────────────────── */
+.parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  margin-bottom: 26px;
+}
+.party { padding: 16px 18px; }
+.party:first-child { border-right: 1px solid var(--border); }
+.party-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--teal-dim); font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.party-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.party-trade { font-size: 11px; color: var(--teal); font-weight: 600; margin-bottom: 8px; }
+.party-line { font-size: 11px; color: var(--ink-mid); margin-bottom: 2px; }
+.party-line a { color: var(--teal); text-decoration: none; }
+
+/* ── SECTION HEADINGS  ───────────────────── */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 8px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 7px;
+  margin: 22px 0 14px;
+}
+.section-head::before { content: ''; display: block; width: 18px; height: 2px; background: var(--teal); flex-shrink: 0; }
+
+/* ── TABLES  ──────────────────────────────── */
+.doc-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; }
+.doc-table th { background: var(--head-bg); color: var(--teal-dim); font-size: 8px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 10px; text-align: left; font-weight: 600; }
+.doc-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--ink-mid); }
+.doc-table td strong { color: var(--ink); }
+.doc-table tr:nth-child(even) td { background: var(--bg-alt); }
+.doc-table .col-amount { text-align: right; font-weight: 600; color: var(--ink) !important; }
+.doc-table .total-row td { font-weight: 700; background: var(--bg-alt) !important; border-top: 2px solid var(--teal); color: var(--ink) !important; }
+.doc-table .grand-total-row td { font-size: 14px; font-weight: 800; border-top: 2px solid var(--teal); color: var(--teal) !important; background: var(--head-bg) !important; }
+.doc-table .grand-total-row td:first-child { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+
+/* ── TOTALS BOX  ─────────────────────────── */
+.totals-box { margin-left: auto; width: 270px; border: 1px solid var(--border); margin-bottom: 22px; }
+.totals-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.totals-row:last-child { border-bottom: none; }
+.totals-row.grand { background: var(--head-bg); padding: 11px 14px; border-top: 2px solid var(--teal); }
+.totals-row.grand .totals-label { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--teal-dim); }
+.totals-row.grand .totals-value { font-family: 'Orbitron', sans-serif; font-size: 16px; color: var(--teal); font-weight: 700; }
+.totals-label { color: var(--ink-mid); }
+.totals-value { font-weight: 600; color: var(--ink); }
+
+/* ── FILLABLE FIELDS  ────────────────────── */
+.field {
+  display: inline-block;
+  border-bottom: 1.5px dashed var(--teal-dim);
+  padding: 1px 5px;
+  background: var(--field-bg);
+  min-width: 120px;
+  outline: none;
+  cursor: text;
+  color: var(--ink-mid);
+  font-style: italic;
+  border-radius: 2px;
+}
+.field:focus { background: #d8f4f4; border-bottom: 1.5px solid var(--teal); color: var(--ink); font-style: normal; }
+/* When .field is on a <td>, don't break the table layout */
+td.field { display: table-cell; min-width: 0; width: auto; }
+.field-block {
+  display: block;
+  width: 100%;
+  border: 1px dashed var(--border);
+  padding: 8px 10px;
+  background: var(--field-bg);
+  min-height: 36px;
+  outline: none;
+  cursor: text;
+  border-radius: 3px;
+  color: var(--ink-mid);
+  font-style: italic;
+}
+.field-block:focus { border: 1px solid var(--teal); background: #d8f4f4; color: var(--ink); font-style: normal; }
+
+/* ── TICK BOXES  ──────────────────────────── */
+.tick { width: 16px; height: 16px; border: 1.5px solid var(--teal); border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 11px; color: var(--teal); font-weight: 700; user-select: none; }
+
+/* ── PAYMENT PLAN CARDS  ─────────────────── */
+.plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.plan-card { border: 1.5px solid var(--border); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.plan-card:hover { border-color: var(--teal); }
+.plan-card.active { border-color: var(--teal); background: var(--bg-alt); }
+.plan-title { font-weight: 700; font-size: 13px; color: var(--ink); margin-bottom: 3px; }
+.plan-badge { display: inline-block; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; background: var(--teal); color: #fff; padding: 2px 8px; border-radius: 999px; margin-left: 6px; vertical-align: middle; font-weight: 700; }
+.plan-desc { font-size: 11px; color: var(--ink-mid); line-height: 1.55; }
+
+/* ── BANKING BLOCK  ──────────────────────── */
+.banking-block { background: var(--head-bg); border-left: 4px solid var(--teal); padding: 18px 22px; margin: 16px 0 20px; }
+.banking-head { font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+.banking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 24px; }
+.banking-item { padding: 4px 0; }
+.banking-lbl,
+.banking-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #70b0b0; }
+.banking-val,
+.banking-value { font-size: 13px; font-weight: 700; color: #e8fafa; font-family: 'Inter', system-ui, sans-serif; letter-spacing: 0.3px; }
+.banking-ref { margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e3a3a; font-size: 11px; color: #70b0b0; }
+.banking-ref strong { color: #90d0d0; }
+/* Fields inside dark banking block need visible contrast */
+.banking-block .field {
+  background: rgba(48,176,176,0.18);
+  border-bottom-color: var(--teal-dim);
+  color: #e8fafa;
+  font-style: normal;
+}
+.banking-block .field:focus {
+  background: rgba(48,176,176,0.32);
+  border-bottom-color: var(--teal);
+  color: #ffffff;
+}
+
+/* ── INFO / WARN BOXES  ──────────────────── */
+.info-box { background: var(--bg-alt); border-left: 3px solid var(--teal); padding: 12px 16px; margin-bottom: 14px; font-size: 11.5px; color: var(--ink-mid); line-height: 1.7; }
+.info-box strong, .info-box b { color: var(--ink); }
+.warn-box { background: #fff8f0; border-left: 3px solid #e09030; padding: 12px 16px; margin-bottom: 14px; font-size: 11.5px; color: #6a4010; line-height: 1.7; }
+
+/* ── TEXT STYLES  ────────────────────────── */
+.prose p { margin-bottom: 10px; font-size: 12px; color: var(--ink-mid); line-height: 1.7; }
+.prose h4 { font-size: 11px; font-weight: 700; color: var(--ink); margin: 14px 0 4px; text-transform: uppercase; letter-spacing: 1px; }
+.clause { margin-bottom: 12px; }
+.clause-num { font-weight: 700; font-size: 11px; color: var(--ink); }
+.clause-body { font-size: 11.5px; color: var(--ink-mid); line-height: 1.7; }
+.clause ul, .clause ol { padding-left: 20px; margin-top: 4px; }
+.clause li { font-size: 11.5px; color: var(--ink-mid); margin-bottom: 3px; }
+
+/* ── SIGNATURE BLOCK  ────────────────────── */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-top: 28px; }
+.sig-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 4px; }
+.sig-line { height: 48px; border-bottom: 1px solid #aaa; margin-bottom: 8px; }
+.sig-name { font-size: 11px; color: var(--ink-mid); margin-bottom: 2px; }
+
+/* ── DOCUMENT FOOTER  ────────────────────── */
+.doc-footer {
+  border-top: 2px solid var(--border);
+  padding: 13px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-alt);
+  flex-shrink: 0;
+}
+.doc-footer-left { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--teal-dim); }
+.doc-footer-right { font-size: 10px; color: var(--ink-dim); text-align: right; line-height: 1.5; }
+
+/* ── HELPER UTILITIES  ───────────────────── */
+.text-teal { color: var(--teal); }
+.text-dim   { color: var(--ink-dim); }
+.text-small { font-size: 10px; }
+.font-orb   { font-family: 'Orbitron', sans-serif; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.check-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 12px; color: var(--ink-mid); }
+.badge { display: inline-block; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; font-weight: 700; }
+.badge-teal { background: rgba(48,176,176,0.12); color: var(--teal); border: 1px solid rgba(48,176,176,0.25); }
+
+/* ── EXPORT PDF BUTTON  ──────────────────── */
+.export-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--teal);
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(48,176,176,0.45);
+  z-index: 9999;
+  user-select: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.export-btn:hover { background: #28a0a0; transform: translateY(-2px); }
+.export-btn:active { transform: translateY(0); }
+
+/* ── PDF PAGE-BREAK CONTROL  ─────────────── */
+table, .doc-table { page-break-inside: auto; }
+tr, .doc-table tr { page-break-inside: avoid; page-break-after: auto; }
+.parties, .check-grid, .check-item, .clause, .banking-block, .sig-row,
+.totals-box, .info-box, .plan-row { page-break-inside: avoid; }
+
+/* ── PRINT STYLES  ───────────────────────── */
+@media print {
+  body { background: white; }
+  .page { box-shadow: none; margin: 0; width: 100%; min-height: 0; }
+  .no-print { display: none !important; }
+  .export-btn { display: none !important; }
+  .doc-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .banking-block { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .doc-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .doc-table .grand-total-row td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .field { background: transparent; border-bottom: 1px solid #aaa; font-style: normal; }
+  .field-block { background: transparent; border: 1px solid #ccc; font-style: normal; }
+  .field:empty::before { content: '________________________________'; color: #ddd; }
+  .plan-card { page-break-inside: avoid; }
+  .sig-row { page-break-inside: avoid; }
+  .doc-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

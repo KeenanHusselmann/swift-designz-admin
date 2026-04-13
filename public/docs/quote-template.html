@@ -1,0 +1,502 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quotation — Swift Designz</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  .service-tabs { display:flex; gap:0; border:1px solid var(--border); margin-bottom:20px; border-radius:6px; overflow:hidden; }
+  .svc-tab { flex:1; padding:10px 6px; text-align:center; font-size:10px; font-weight:700; letter-spacing:1px; cursor:pointer; border-right:1px solid var(--border); background:var(--bg-alt); color:var(--ink-dim); text-transform:uppercase; transition:all 0.18s; }
+  .svc-tab:last-child { border-right:none; }
+  .svc-tab:hover { color:var(--teal); }
+  .svc-tab.active { background:var(--teal); color:#fff; }
+  .svc-section { display:none; }
+  .svc-section.show { display:block; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="doc-header">
+    <img class="doc-logo" src="../images/logo.png" alt="Swift Designz"/>
+    <div class="doc-type-block">
+      <div class="doc-type">Quotation</div>
+      <div class="doc-subtype">Professional Services Proposal</div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-ref">SD-Q-2026-<span class="field" contenteditable="true">001</span></div>
+      <div class="doc-date-line">Date: <span id="quote-date" class="field" contenteditable="true">____ / ____ / ______</span></div>
+      <div class="doc-date-line">Valid Until: <span id="quote-valid" class="field" contenteditable="true">____ / ____ / ______</span></div>
+    </div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="doc-body">
+
+    <!-- PARTIES -->
+    <div class="parties">
+      <div class="party">
+        <div class="party-label">Prepared For (Client)</div>
+        <div class="party-name field" contenteditable="true">Client Full Name</div>
+        <div class="party-trade field" contenteditable="true">Company / Organisation (if applicable)</div>
+        <div class="party-line">Email: <span class="field" contenteditable="true">client@email.com</span></div>
+        <div class="party-line">Phone: <span class="field" contenteditable="true">+___ ___ ___ ____</span></div>
+        <div class="party-line">Location: <span class="field" contenteditable="true">City, Country</span></div>
+      </div>
+      <div class="party">
+        <div class="party-label">Prepared By</div>
+        <div class="party-name">Keenan Husselmann</div>
+        <div class="party-trade">Trading as Swift Designz</div>
+        <div class="party-line">Email: <a href="mailto:keenan@swiftdesignz.co.za">keenan@swiftdesignz.co.za</a></div>
+        <div class="party-line">Phone: +264 81 853 6789</div>
+        <div class="party-line">Phone: +27 <span style="color:#aaa">___ ___ ____</span></div>
+        <div class="party-line">Web: swiftdesignz.co.za</div>
+        <div class="party-line">Service: Remote · Worldwide</div>
+      </div>
+    </div>
+
+    <!-- SERVICE TYPE SELECTOR -->
+    <div class="section-head">Service Type</div>
+    <div class="service-tabs no-print">
+      <div class="svc-tab active" onclick="showSvc('website',this)">Website</div>
+      <div class="svc-tab" onclick="showSvc('ecom',this)">E-Commerce</div>
+      <div class="svc-tab" onclick="showSvc('app',this)">App / Software</div>
+      <div class="svc-tab" onclick="showSvc('ai',this)">AI Training</div>
+      <div class="svc-tab" onclick="showSvc('pm',this)">PM Training</div>
+    </div>
+
+    <!-- ═══════ WEBSITE ═══════ -->
+    <div class="svc-section show" id="svc-website">
+      <div class="section-head">Website Development — Package Details</div>
+      <table class="doc-table">
+        <thead><tr><th>Package</th><th>Features Included</th><th>Timeline</th><th>Base Price</th><th style="width:60px;text-align:center;">Select</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Starter</strong></td>
+            <td>Up to 3 pages · Mobile-responsive · Basic design · Contact form · Basic SEO setup</td>
+            <td>4 business days</td>
+            <td class="col-amount"><strong>R 2,500</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Professional</strong></td>
+            <td>Up to 7 pages · Custom design · Framer Motion animations · CMS integration · SEO basics · Social links</td>
+            <td>8 business days</td>
+            <td class="col-amount"><strong>R 5,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Premium</strong></td>
+            <td>10+ pages · Full custom design & animations · Advanced SEO · Third-party integrations · Performance optimised · Analytics setup</td>
+            <td>14–21 business days</td>
+            <td class="col-amount"><strong>R 10,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════ E-COMMERCE ═══════ -->
+    <div class="svc-section" id="svc-ecom">
+      <div class="section-head">E-Commerce Store — Package Details</div>
+      <table class="doc-table">
+        <thead><tr><th>Package</th><th>Features Included</th><th>Timeline</th><th>Base Price</th><th style="width:60px;text-align:center;">Select</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Starter</strong></td>
+            <td>Up to 20 products · Shopify/catalogue setup · Basic storefront design · Payment gateway integration</td>
+            <td>4 business days</td>
+            <td class="col-amount"><strong>R 4,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Business</strong></td>
+            <td>Up to 100 products · Custom Shopify theme · Collections & filters · Abandoned cart recovery · Advanced checkout</td>
+            <td>14 business days</td>
+            <td class="col-amount"><strong>R 7,500</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise</strong></td>
+            <td>Unlimited products · Fully custom store · Multi-currency · ERP/CRM integrations · Custom reporting · Full branding</td>
+            <td>21 business days</td>
+            <td class="col-amount"><strong>R 15,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box"><strong>Note:</strong> For Shopify stores, the Shopify account belongs to the client. Swift Designz provides development services only. Monthly Shopify subscription fees are the client's responsibility.</div>
+    </div>
+
+    <!-- ═══════ APP / SOFTWARE ═══════ -->
+    <div class="svc-section" id="svc-app">
+      <div class="section-head">App / Software Development — Package Details</div>
+      <table class="doc-table">
+        <thead><tr><th>Package</th><th>Features Included</th><th>Timeline</th><th>Base Price</th><th style="width:60px;text-align:center;">Select</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>MVP</strong></td>
+            <td>Core feature set · 1 platform (web or mobile) · User authentication · Basic UI/UX · Testing & deployment</td>
+            <td>Architecture-dependent<br/><em style="font-size:10px;color:#888">(Scoped per project)</em></td>
+            <td class="col-amount"><strong>R 5,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Standard</strong></td>
+            <td>Full feature set · 2 platforms · Custom UI/UX · API integrations · Admin dashboard · Documentation</td>
+            <td>Architecture-dependent<br/><em style="font-size:10px;color:#888">(Scoped per project)</em></td>
+            <td class="col-amount"><strong>R 12,000</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Full-Scale</strong></td>
+            <td>Enterprise-grade · Cross-platform · Scalable architecture · Full CI/CD pipeline · Extensive testing · Long-term support option</td>
+            <td>Architecture-dependent<br/><em style="font-size:10px;color:#888">(Scoped per project)</em></td>
+            <td class="col-amount"><strong>R 25,000+</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box"><strong>IP Note:</strong> Swift Designz retains a licence over the codebase for websites and apps. The client receives a perpetual use licence. Full code transfer is available at an additional fee — quote on request.</div>
+    </div>
+
+    <!-- ═══════ AI TRAINING ═══════ -->
+    <div class="svc-section" id="svc-ai">
+      <div class="section-head">AI Training — Session Details</div>
+      <table class="doc-table">
+        <thead><tr><th>Format</th><th>Description</th><th>Duration</th><th>Rate</th><th style="width:60px;text-align:center;">Select</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Individual Session</strong></td>
+            <td>One-on-one AI tools & workflow training · Remote (Zoom/Meet) · Course notes included</td>
+            <td>30 minutes per session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Team Training</strong></td>
+            <td>Group AI adoption training for teams · Remote · Slides, notes & resources included</td>
+            <td>1.5 hours per session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Workshop / Course</strong></td>
+            <td>Full-day or multi-session structured AI training programme · Comprehensive materials, assessments</td>
+            <td>Full day / Multi-session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="section-head">Session Schedule</div>
+      <table class="doc-table">
+        <thead><tr><th>#</th><th>Date &amp; Time</th><th>Topic / Agenda</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">30 min / 1.5 hr</td></tr>
+          <tr><td>2</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td></tr>
+          <tr><td>3</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════ PM TRAINING ═══════ -->
+    <div class="svc-section" id="svc-pm">
+      <div class="section-head">Project Management Training — Session Details</div>
+      <table class="doc-table">
+        <thead><tr><th>Format</th><th>Description</th><th>Duration</th><th>Rate</th><th style="width:60px;text-align:center;">Select</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Individual Session</strong></td>
+            <td>One-on-one PM coaching · Agile, Scrum, Kanban · Remote · Notes included</td>
+            <td>30 minutes per session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Team Training</strong></td>
+            <td>Group PM methodology training · Remote · Frameworks, tools & best practices</td>
+            <td>1.5 hours per session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+          <tr>
+            <td><strong>Workshop / Course</strong></td>
+            <td>Full PM immersive programme · Tools setup (Jira, Notion, Asana), processes, certifications prep</td>
+            <td>Full day / Multi-session</td>
+            <td class="col-amount"><strong>Custom</strong></td>
+            <td style="text-align:center;"><span class="tick" onclick="this.textContent=this.textContent?'':'✓'"></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="section-head">Session Schedule</div>
+      <table class="doc-table">
+        <thead><tr><th>#</th><th>Date &amp; Time</th><th>Topic / Agenda</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">30 min / 1.5 hr</td></tr>
+          <tr><td>2</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td></tr>
+          <tr><td>3</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td><td class="field" contenteditable="true">________________</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SCOPE OF WORK -->
+    <div style="page-break-inside:avoid;">
+    <div class="section-head">Scope of Work &amp; Deliverables</div>
+    <div class="field-block" contenteditable="true" style="min-height:64px;">Describe specific deliverables, features, pages, and any special requirements for this project…</div>
+    </div>
+
+    <!-- INCLUSIONS / EXCLUSIONS -->
+    <div style="page-break-inside:avoid;">
+    <div class="section-head">Inclusions &amp; Exclusions</div>
+    <table class="doc-table">
+      <thead><tr><th style="width:50%">Included in this Quote</th><th>Excluded / Additional Cost</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="check-item"><span class="tick">✓</span><span>Items scoped in selected package</span></div>
+            <div class="check-item"><span class="tick">✓</span><span>Up to 3 rounds of revisions</span></div>
+            <div class="check-item"><span class="tick">✓</span><span>Client-provided images, copy &amp; assets</span></div>
+            <div class="check-item"><span class="tick">✓</span><span>1 month free post-launch support</span></div>
+            <div class="check-item"><span class="tick">✓</span><span>Mobile-responsive implementation</span></div>
+          </td>
+          <td>
+            <div class="check-item" style="color:#e09030;"><span style="color:#e09030;">✗</span>&nbsp;<span>Domain &amp; hosting (via IT-Guru — see note)</span></div>
+            <div class="check-item" style="color:#e09030;"><span style="color:#e09030;">✗</span>&nbsp;<span>Original copywriting / content creation</span></div>
+            <div class="check-item" style="color:#e09030;"><span style="color:#e09030;">✗</span>&nbsp;<span>Custom graphic design / brand assets (charged at R350/hr)</span></div>
+            <div class="check-item" style="color:#e09030;"><span style="color:#e09030;">✗</span>&nbsp;<span>Revisions beyond 3 rounds (R350/hr)</span></div>
+            <div class="check-item" style="color:#e09030;"><span style="color:#e09030;">✗</span>&nbsp;<span>Third-party subscriptions &amp; software licences</span></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- PRICING BREAKDOWN -->
+    <div class="section-head">Pricing Breakdown</div>
+    <table class="doc-table" id="pricing-table">
+      <thead><tr><th style="width:4%">#</th><th>Item / Description</th><th style="width:7%">Qty</th><th style="width:16%">Unit Price (R)</th><th style="width:15%">Amount (R)</th></tr></thead>
+      <tbody id="pricing-rows">
+        <tr>
+          <td>1</td>
+          <td contenteditable="true" class="field">Base Package</td>
+          <td contenteditable="true" class="field price-qty">1</td>
+          <td contenteditable="true" class="field price-unit col-amount">0</td>
+          <td class="col-amount price-amt" style="font-weight:700;color:var(--ink);">R 0.00</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td contenteditable="true" class="field">Additional Feature / Add-on</td>
+          <td contenteditable="true" class="field price-qty">1</td>
+          <td contenteditable="true" class="field price-unit col-amount">0</td>
+          <td class="col-amount price-amt" style="font-weight:700;color:var(--ink);">R 0.00</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td contenteditable="true" class="field">—</td>
+          <td contenteditable="true" class="field price-qty">0</td>
+          <td contenteditable="true" class="field price-unit col-amount">0</td>
+          <td class="col-amount price-amt" style="font-weight:700;color:var(--ink);">R 0.00</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td contenteditable="true" class="field">—</td>
+          <td contenteditable="true" class="field price-qty">0</td>
+          <td contenteditable="true" class="field price-unit col-amount">0</td>
+          <td class="col-amount price-amt" style="font-weight:700;color:var(--ink);">R 0.00</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="totals-box">
+      <div class="totals-row"><span class="totals-label">Subtotal</span><span class="totals-value" id="calc-subtotal" style="font-weight:700;">R 0.00</span></div>
+      <div class="totals-row"><span class="totals-label">Discount (R)</span><span class="totals-value field" id="calc-discount" contenteditable="true" style="min-width:80px;">0</span></div>
+      <div class="totals-row grand"><span class="totals-label">TOTAL DUE</span><span class="totals-value" id="calc-total" style="font-weight:800;">R 0.00</span></div>
+    </div>
+
+    <!-- PAYMENT PLAN -->
+    <div class="section-head">Payment Plan</div>
+    <div class="plan-grid">
+      <div class="plan-card active" onclick="selPlan(this)">
+        <div class="plan-title">Standard</div>
+        <div class="plan-desc">50% deposit on signing · 50% on launch / delivery<br/><em>Most popular plan.</em></div>
+      </div>
+      <div class="plan-card" onclick="selPlan(this)">
+        <div class="plan-title">Full Pay <span class="plan-badge">Best Value</span></div>
+        <div class="plan-desc">100% upfront payment<br/><em>Bonus: 2 months free support (instead of 1).</em></div>
+      </div>
+      <div class="plan-card" onclick="selPlan(this)">
+        <div class="plan-title">2-Month Flex</div>
+        <div class="plan-desc">50% deposit · 50% in Month 2<br/><em>Split into 2 equal halves.</em></div>
+      </div>
+      <div class="plan-card" onclick="selPlan(this)">
+        <div class="plan-title">3-Month Ease</div>
+        <div class="plan-desc">50% deposit · 25% Month 2 · 25% Month 3<br/><em>Maximum 3 months. Final payment before launch.</em></div>
+      </div>
+    </div>
+    <table class="doc-table">
+      <thead><tr><th>Payment</th><th>Due Date</th><th style="width:18%">Amount (R)</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Deposit — 1st Payment</td><td>On acceptance of quote</td><td class="col-amount field" contenteditable="true">R</td><td><span class="badge badge-teal">Due on signing</span></td></tr>
+        <tr><td>2nd Payment</td><td class="field" contenteditable="true">On launch / Month 2</td><td class="col-amount field" contenteditable="true">R</td><td>&nbsp;</td></tr>
+        <tr><td>3rd Payment (if applicable)</td><td class="field" contenteditable="true">Month 3 only</td><td class="col-amount field" contenteditable="true">—</td><td>&nbsp;</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TIMELINE -->
+    <div style="page-break-inside:avoid;">
+    <div class="section-head">Estimated Project Timeline</div>
+    <table class="doc-table">
+      <thead><tr><th>Milestone</th><th>Target Date</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Project Start</strong></td><td>On receipt of deposit</td><td>Confirmation within 24 hrs of payment</td></tr>
+        <tr><td><strong>First Draft / Preview</strong></td><td class="field" contenteditable="true">________________</td><td contenteditable="true" class="field">________________</td></tr>
+        <tr><td><strong>Revisions Round 1</strong></td><td class="field" contenteditable="true">________________</td><td>Up to 3 rounds included</td></tr>
+        <tr><td><strong>Final Delivery / Launch</strong></td><td class="field" contenteditable="true">________________</td><td>Final payment due on / before launch</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- IMPORTANT NOTES -->
+    <div class="section-head">Important Notes</div>
+    <div class="info-box">
+      <strong>Validity:</strong> This quotation is valid for <strong>14 days</strong> from the date of issue. After this period, prices may be revised.<br/>
+      <strong>Revisions:</strong> Up to 3 rounds of revisions are included. Additional changes are billed at <strong>R350/hour</strong>.<br/>
+      <strong>Domain &amp; Hosting:</strong> Facilitated by IT-Guru — Contact: Ambrose · <a href="mailto:ambrose@it-guru.co.za">ambrose@it-guru.co.za</a> · 072 962 7608 · <a href="https://www.it-guru.co.za">it-guru.co.za</a>. Costs quoted separately.<br/>
+      <strong>Support:</strong> 1 month free post-launch support is included. Forfeited if final payment is late. Ongoing support via Maintenance Retainer (R800/month).<br/>
+      <strong>Client Assets:</strong> Client-supplied images, copy, and assets are included at no extra charge. Swift Designz-created assets are charged at R350/hr.<br/>
+      <strong>VAT:</strong> Swift Designz is not VAT registered. No VAT is charged. All prices are final.
+    </div>
+
+    <!-- SIGNATURE / ACCEPTANCE -->
+    <div class="section-head">Quote Acceptance</div>
+    <p style="font-size:12px;color:var(--ink-mid);margin-bottom:20px;">By signing below, the client confirms they have read this quotation, agree to the payment terms above, and authorise Keenan Husselmann (Swift Designz) to proceed upon receipt of the deposit payment. This document, once signed, forms a binding service agreement.</p>
+    <div class="sig-row">
+      <div>
+        <div class="sig-label">Client Signature</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Name: <span class="field" contenteditable="true">________________________________</span></div>
+        <div class="sig-name">Date: <span class="field" contenteditable="true">________________________________</span></div>
+      </div>
+      <div>
+        <div class="sig-label">Swift Designz — Service Provider</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Keenan Husselmann (Swift Designz)</div>
+        <div class="sig-name">Date: ________________________________</div>
+      </div>
+    </div>
+
+  </div><!-- /.doc-body -->
+
+  <!-- ── FOOTER ── -->
+  <div class="doc-footer">
+    <div class="doc-footer-left">Swift Designz · Keenan Husselmann · Remote &amp; Worldwide</div>
+    <div class="doc-footer-right">info@swiftdesignz.co.za · swiftdesignz.co.za<br/>Subject to Swift Designz Terms &amp; Conditions (SD-TC-2026)</div>
+  </div>
+
+</div><!-- /.page -->
+<script>
+  function showSvc(id, el) {
+    document.querySelectorAll('.svc-section').forEach(s => s.classList.remove('show'));
+    document.querySelectorAll('.svc-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('svc-' + id).classList.add('show');
+    el.classList.add('active');
+  }
+  function selPlan(el) {
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* ── AUTO-CALCULATE PRICING TABLE ── */
+  function parseNum(str) {
+    // strip R, spaces, commas — parse what's left
+    const n = parseFloat(str.replace(/[Rr,\s]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+  function fmt(n) {
+    return 'R ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function recalc() {
+    const rows = document.querySelectorAll('#pricing-rows tr');
+    let subtotal = 0;
+    rows.forEach(row => {
+      const qtyEl   = row.querySelector('.price-qty');
+      const unitEl  = row.querySelector('.price-unit');
+      const amtEl   = row.querySelector('.price-amt');
+      if (!qtyEl || !unitEl || !amtEl) return;
+      const qty  = parseNum(qtyEl.innerText);
+      const unit = parseNum(unitEl.innerText);
+      const amt  = qty * unit;
+      amtEl.innerText = fmt(amt);
+      subtotal += amt;
+    });
+    document.getElementById('calc-subtotal').innerText = fmt(subtotal);
+    const discount = parseNum(document.getElementById('calc-discount').innerText);
+    const total = Math.max(0, subtotal - discount);
+    document.getElementById('calc-total').innerText = fmt(total);
+  }
+
+  // Listen on every input inside pricing rows + discount
+  document.getElementById('pricing-rows').addEventListener('input', recalc);
+  document.getElementById('calc-discount').addEventListener('input', recalc);
+  recalc(); // run once on load
+
+  // Auto-populate Date with today and Valid Until with today+7
+  function fmtDate(d){var dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yy=d.getFullYear();return dd+'/'+mm+'/'+yy;}
+  function calcValidUntil(){
+    var raw=document.getElementById('quote-date').innerText.trim().replace(/[^\d\/]/g,'');
+    var p=raw.split('/');
+    if(p.length===3&&p[2].length===4){
+      var d=new Date(p[2],p[1]-1,p[0]);
+      if(!isNaN(d)){d.setDate(d.getDate()+7);document.getElementById('quote-valid').innerText=fmtDate(d);}
+    }
+  }
+  var qd=document.getElementById('quote-date');
+  var qv=document.getElementById('quote-valid');
+  if(qd.innerText.trim().startsWith('_')){
+    var today=new Date();
+    qd.innerText=fmtDate(today);
+    var valid=new Date();valid.setDate(valid.getDate()+7);
+    qv.innerText=fmtDate(valid);
+  }
+  qd.addEventListener('input',calcValidUntil);
+</script>
+
+<!-- EXPORT PDF -->
+<div id="export-btn" class="export-btn" onclick="exportPDF()">&#8595;&nbsp;&nbsp;Export PDF</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// Auto-save & restore all editable fields
+(function(){
+  var key='sd_fields_'+location.pathname;
+  function save(){var d={};document.querySelectorAll('[contenteditable]').forEach(function(el,i){d[i]=el.innerHTML;});sessionStorage.setItem(key,JSON.stringify(d));}
+  function restore(){var s=sessionStorage.getItem(key);if(!s)return;try{var d=JSON.parse(s);document.querySelectorAll('[contenteditable]').forEach(function(el,i){if(d[i]!==undefined)el.innerHTML=d[i];});}catch(e){}}
+  document.addEventListener('input',save);
+  restore();
+})();
+
+function exportPDF(){
+  var btn=document.getElementById('export-btn');
+  var page=document.querySelector('.page');
+  var name=document.title.replace(/\s*[-\u2014\u2013]\s*Swift Designz\s*/i,'').trim().replace(/[^\w\s]/g,'').replace(/\s+/g,'-').toLowerCase();
+  btn.style.display='none';
+  var prevWidth=page.style.width;
+  var prevShadow=page.style.boxShadow;
+  page.style.width='794px';
+  page.style.boxShadow='none';
+  html2pdf().from(page).set({
+    margin:0,
+    filename:name+'.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,logging:false,windowWidth:794,backgroundColor:'#ffffff',scrollX:0,scrollY:-window.scrollY},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']}
+  }).save().then(function(){
+    page.style.width=prevWidth;
+    page.style.boxShadow=prevShadow;
+    btn.style.display='';
+    btn.innerHTML='&#8595;&nbsp;&nbsp;Export PDF';
+  });
+}
+</script></body>`n</html>

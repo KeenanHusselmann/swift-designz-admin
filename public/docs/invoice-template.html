@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invoice — Swift Designz</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  .status-badge { display:inline-block; padding:4px 14px; border-radius:999px; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+  .status-outstanding { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
+  .status-paid { background:#d4edda; color:#155724; border:1px solid #28a745; }
+  .status-partial { background:#cce5ff; color:#004085; border:1px solid #007bff; }
+  /* Header field sizing */
+  .doc-ref .field { min-width: 48px; width: auto; text-align: right; font-family: 'Orbitron', sans-serif; }
+  .doc-date-line .field { min-width: 90px; }
+  /* Invoice number — plain text, no field styling */
+  .inv-num { background: transparent !important; border-bottom: none !important; padding: 0 !important; font-style: normal !important; min-width: 0 !important; }
+  /* Auto-calculated cells */
+  .inv-line-amt { color: var(--ink) !important; font-weight: 600; }
+  #tot-subtotal { font-weight: 700; color: var(--ink); }
+  #tot-balance { font-weight: 700; color: #e0fafa; }
+  /* Grand total row — lighter teal bg so text is readable */
+  .totals-row.grand { background: #1e4848 !important; }
+  .totals-row.grand .totals-label { color: #a0d8d8; }
+  .totals-row.grand .totals-value { color: #e0fafa; }
+  /* Banking block — lighter teal bg for readability */
+  .banking-block { background: #1e4848 !important; }
+  /* New invoice button */
+  #new-inv-btn { position:fixed; bottom:60px; right:20px; background:#1e3a3a; border:1px solid var(--teal); color:var(--teal); font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:2px; padding:8px 16px; cursor:pointer; border-radius:4px; text-transform:uppercase; z-index:100; }
+  #new-inv-btn:hover { background:#30B0B0; color:#2f5252; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="doc-header">
+    <img class="doc-logo" src="../images/logo.png" alt="Swift Designz"/>
+    <div class="doc-type-block">
+      <div class="doc-type">Invoice</div>
+      <div class="doc-subtype">Tax Invoice / Proof of Billing</div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-ref">SD-INV-<span class="doc-year">2026</span>-<span class="field inv-num" contenteditable="true">001</span></div>
+      <div class="doc-date-line">Invoice Date: <span class="field" id="inv-date" contenteditable="true">____ / ____ / ______</span></div>
+      <div class="doc-date-line">Due Date: <span class="field" id="inv-due-date" contenteditable="true">____ / ____ / ______</span></div>
+      <div class="doc-date-line">Quote Ref: <span class="field" contenteditable="true">SD-Q-<span class="doc-year">2026</span>-___</span></div>
+    </div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="doc-body">
+
+    <!-- PAYMENT STATUS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:4px;">Payment Status</div>
+        <div id="statusDisplay">
+          <span class="status-badge status-outstanding" id="s-outstanding" onclick="setStatus('outstanding')" style="cursor:pointer;">Outstanding</span>&nbsp;
+          <span class="status-badge status-paid" id="s-paid" onclick="setStatus('paid')" style="cursor:pointer;opacity:0.4;">Paid</span>&nbsp;
+          <span class="status-badge status-partial" id="s-partial" onclick="setStatus('partial')" style="cursor:pointer;opacity:0.4;">Partial</span>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);">Payment #</div>
+        <div style="font-size:20px;font-family:'Orbitron',sans-serif;font-weight:700;color:var(--teal);">
+          <span class="field" contenteditable="true" style="min-width:60px;">1 of 1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTIES -->
+    <div class="parties">
+      <div class="party">
+        <div class="party-label">Bill To (Client)</div>
+        <div class="party-name field" contenteditable="true">Client Full Name</div>
+        <div class="party-trade field" contenteditable="true">Company / Organisation (if applicable)</div>
+        <div class="party-line">Email: <span class="field" contenteditable="true">client@email.com</span></div>
+        <div class="party-line">Phone: <span class="field" contenteditable="true">+___ ___ ___ ____</span></div>
+        <div class="party-line">Location: <span class="field" contenteditable="true">City, Country</span></div>
+      </div>
+      <div class="party">
+        <div class="party-label">Billed By</div>
+        <div class="party-name">Keenan Husselmann</div>
+        <div class="party-trade">Trading as Swift Designz</div>
+        <div class="party-line">Email: <a href="mailto:keenan@swiftdesignz.co.za">keenan@swiftdesignz.co.za</a></div>
+        <div class="party-line">Phone: +264 81 853 6789</div>
+        <div class="party-line">Web: swiftdesignz.co.za</div>
+        <div class="party-line" style="margin-top:6px;font-size:10px;color:var(--ink-dim);">Not VAT Registered · Individual Freelancer</div>
+      </div>
+    </div>
+
+    <!-- SERVICES RENDERED -->
+    <div class="section-head">Services Rendered</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Description of Service / Deliverable</th>
+          <th style="width:8%">Qty</th>
+          <th style="width:14%">Unit Price (R)</th>
+          <th style="width:13%">Amount</th>
+        </tr>
+      </thead>
+      <tbody id="services-tbody">
+        <tr>
+          <td>1</td>
+          <td contenteditable="true" class="field">e.g. Professional Website — 7-page custom build</td>
+          <td contenteditable="true" class="field inv-qty" style="text-align:center;">1</td>
+          <td class="col-amount field inv-price" contenteditable="true">0</td>
+          <td class="col-amount inv-line-amt">—</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td contenteditable="true" class="field">e.g. Custom logo / asset creation</td>
+          <td contenteditable="true" class="field inv-qty" style="text-align:center;">1</td>
+          <td class="col-amount field inv-price" contenteditable="true">0</td>
+          <td class="col-amount inv-line-amt">—</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td contenteditable="true" class="field">—</td>
+          <td contenteditable="true" class="field inv-qty" style="text-align:center;">—</td>
+          <td class="col-amount field inv-price" contenteditable="true">0</td>
+          <td class="col-amount inv-line-amt">—</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td contenteditable="true" class="field">—</td>
+          <td contenteditable="true" class="field inv-qty" style="text-align:center;">—</td>
+          <td class="col-amount field inv-price" contenteditable="true">0</td>
+          <td class="col-amount inv-line-amt">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <div class="totals-box">
+      <div class="totals-row"><span class="totals-label">Subtotal</span><span class="totals-value" id="tot-subtotal">R 0.00</span></div>
+      <div class="totals-row"><span class="totals-label">Previously Paid</span><span class="totals-value field" id="tot-prev-paid" contenteditable="true">0</span></div>
+      <div class="totals-row"><span class="totals-label">VAT (N/A)</span><span class="totals-value">R 0.00</span></div>
+      <div class="totals-row grand"><span class="totals-label">BALANCE DUE</span><span class="totals-value" id="tot-balance">R 0.00</span></div>
+    </div>
+
+    <!-- PAYMENT INSTRUCTIONS -->
+    <div class="section-head">Payment Instructions</div>
+    <div class="info-box" style="margin-bottom:10px;">
+      Please use your <strong>Invoice Number (SD-INV-<span class="doc-year">2026</span>-<span contenteditable="true" class="field inv-num">001</span>)</strong> as the payment reference. Payment is due by the date stated above. EFT only — no cash accepted.
+    </div>
+    <div class="banking-block">
+      <div class="banking-head">Banking Details — Keenan Husselmann</div>
+      <div class="banking-grid">
+        <div class="banking-item" style="grid-column:1/-1;"><div class="banking-lbl">Address</div><div class="banking-val" style="font-size:12px;">55 Kenneth McArthur Street, Olympia, Windhoek, Namibia</div></div>
+        <div class="banking-item"><div class="banking-lbl">Account Name</div><div class="banking-val">Keenan Husselmann</div></div>
+        <div class="banking-item"><div class="banking-lbl">Bank</div><div class="banking-val">Bank Windhoek Ltd.</div></div>
+        <div class="banking-item"><div class="banking-lbl">Account Type</div><div class="banking-val">Cheque (CHK)</div></div>
+        <div class="banking-item"><div class="banking-lbl">Account Number</div><div class="banking-val">8025331126</div></div>
+        <div class="banking-item"><div class="banking-lbl">Branch</div><div class="banking-val">Windhoek (WHK)</div></div>
+        <div class="banking-item"><div class="banking-lbl">Branch Code</div><div class="banking-val">481-972</div></div>
+        <div class="banking-item"><div class="banking-lbl">Swift Code</div><div class="banking-val">BWLINANX</div></div>
+        <div class="banking-item"><div class="banking-lbl">Currency</div><div class="banking-val">NAD / ZAR (R)</div></div>
+      </div>
+      <div class="banking-ref"><strong>Reference:</strong> SD-INV-<span class="doc-year">2026</span>-<span contenteditable="true" class="field inv-num">001</span> · Always include your invoice number as the payment reference.</div>
+    </div>
+
+    <!-- PAYMENT HISTORY (if applicable) -->
+    <div class="section-head">Payment History</div>
+    <table class="doc-table">
+      <thead><tr><th>Date</th><th>Description</th><th>Amount Paid</th><th>Balance Remaining</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="field" contenteditable="true">____ / ____ / ______</td>
+          <td class="field" contenteditable="true">Deposit (50%) received</td>
+          <td class="col-amount field" contenteditable="true">R</td>
+          <td class="col-amount field" contenteditable="true">R</td>
+        </tr>
+        <tr>
+          <td class="field" contenteditable="true">—</td>
+          <td class="field" contenteditable="true">—</td>
+          <td class="col-amount">—</td>
+          <td class="col-amount">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TERMS & NOTES -->
+    <div class="section-head">Terms &amp; Notes</div>
+    <div class="info-box">
+      <strong>1. Late Payment:</strong> Failure to pay by the due date forfeits the 1-month free post-launch support. All late payments are subject to a follow-up fee of R350 per communication.<br/>
+      <strong>2. Deposit:</strong> The 50% deposit is non-refundable. If a project is cancelled, the deposit covers work completed to that point.<br/>
+      <strong>3. Delivery:</strong> Final deliverables, credentials, and handover are completed only after full payment is received.<br/>
+      <strong>4. Disputes:</strong> Any billing disputes must be raised within 7 calendar days of invoice date.<br/>
+      <strong>5. VAT:</strong> Keenan Husselmann (Swift Designz) is not VAT registered. No VAT is charged or claimable.
+    </div>
+
+    <!-- NOTES FIELD -->
+    <div class="section-head">Additional Notes</div>
+    <div class="field-block" contenteditable="true" style="min-height:50px;">Any additional project notes, delivery details, or special instructions…</div>
+
+    <!-- SIGNATURE -->
+    <div class="section-head">Acknowledgement (Optional)</div>
+    <p style="font-size:11px;color:var(--ink-dim);margin-bottom:16px;">If required, the client may sign below to acknowledge receipt of this invoice and confirm the outstanding amount.</p>
+    <div class="sig-row">
+      <div>
+        <div class="sig-label">Client Signature (Optional)</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Name: <span class="field" contenteditable="true">________________________________</span></div>
+        <div class="sig-name">Date: <span class="field" contenteditable="true">________________________________</span></div>
+      </div>
+      <div>
+        <div class="sig-label">Issued By — Swift Designz</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Keenan Husselmann (Swift Designz)</div>
+        <div class="sig-name">+264 81 853 6789 · keenan@swiftdesignz.co.za</div>
+      </div>
+    </div>
+
+  </div><!-- /.doc-body -->
+
+  <!-- ── FOOTER ── -->
+  <div class="doc-footer">
+    <div class="doc-footer-left">Swift Designz · Invoice SD-INV-<span class="doc-year">2026</span>-<span contenteditable="true" class="field inv-num" style="font-size:9px;border:none;background:transparent;color:var(--teal-dim);">001</span></div>
+    <div class="doc-footer-right">keenan@swiftdesignz.co.za · swiftdesignz.co.za<br/>Thank you for choosing Swift Designz.</div>
+  </div>
+
+</div>
+<script>
+  function setStatus(s) {
+    ['outstanding','paid','partial'].forEach(id => {
+      const el = document.getElementById('s-'+id);
+      el.style.opacity = id===s ? '1' : '0.35';
+    });
+  }
+</script>
+
+<!-- EXPORT DOCX -->
+<div id="new-inv-btn" onclick="newInvoice()">+ New Invoice</div>
+<div id="export-btn" class="export-btn" onclick="exportDOCX()">&#8595;&nbsp;&nbsp;Export DOCX</div>
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script>
+(function(){
+  var YEAR = new Date().getFullYear();
+  var lsKey    = 'sd_inv_next_' + YEAR;
+  var ssKey    = 'sd_inv_cur_'  + YEAR;
+  var fieldsKey= 'sd_fields_'   + location.pathname;
+  var VER      = 'v3'; // bump this to bust stale sessionStorage on template updates
+  var verKey   = 'sd_ver_'      + location.pathname;
+
+  // ── Bust stale cached field data when template version changes ──
+  if (sessionStorage.getItem(verKey) !== VER) {
+    sessionStorage.removeItem(fieldsKey);
+    sessionStorage.setItem(verKey, VER);
+  }
+
+  // ── Invoice number: increment once per session ──
+  var curNum = sessionStorage.getItem(ssKey);
+  if (!curNum) {
+    curNum = parseInt(localStorage.getItem(lsKey) || '1', 10);
+    localStorage.setItem(lsKey, curNum + 1);
+    sessionStorage.setItem(ssKey, String(curNum));
+  } else {
+    curNum = parseInt(curNum, 10);
+  }
+  var numStr = String(curNum).padStart(3, '0');
+
+  // ── Date helpers ──
+  function fmtDate(d) {
+    return String(d.getDate()).padStart(2,'0') + ' / ' + String(d.getMonth()+1).padStart(2,'0') + ' / ' + d.getFullYear();
+  }
+  var today = new Date();
+  var due   = new Date(today); due.setDate(due.getDate() + 14);
+
+  // ── Apply year, invoice number, dates as defaults ──
+  document.querySelectorAll('.doc-year').forEach(function(el) { el.textContent = YEAR; });
+  document.querySelectorAll('.inv-num').forEach(function(el)  { el.textContent = numStr; });
+  var invDateEl = document.getElementById('inv-date');
+  var dueDateEl = document.getElementById('inv-due-date');
+  if (invDateEl) invDateEl.textContent = fmtDate(today);
+  if (dueDateEl) dueDateEl.textContent = fmtDate(due);
+
+  // ── Update page title ──
+  document.title = 'Invoice SD-INV-' + YEAR + '-' + numStr + ' \u2014 Swift Designz';
+
+  // ── Restore saved field values (user edits from this session) ──
+  var saved = sessionStorage.getItem(fieldsKey);
+  if (saved) {
+    try {
+      var savedData = JSON.parse(saved);
+      document.querySelectorAll('[contenteditable]').forEach(function(el, i) {
+        if (savedData[i] !== undefined) el.innerHTML = savedData[i];
+      });
+    } catch(e) {}
+  }
+
+  // ── Always force-correct dates after restore (never show placeholder) ──
+  if (invDateEl && invDateEl.textContent.indexOf('_') !== -1) invDateEl.textContent = fmtDate(today);
+  if (dueDateEl && dueDateEl.textContent.indexOf('_') !== -1) dueDateEl.textContent = fmtDate(due);
+
+  // ── Initial calculation (runs after restore so saved prices are used) ──
+  calcAll();
+
+  // ── Auto-save on any edit + recalculate ──
+  document.addEventListener('input', function() {
+    calcAll();
+    var d = {};
+    document.querySelectorAll('[contenteditable]').forEach(function(el, i) { d[i] = el.innerHTML; });
+    sessionStorage.setItem(fieldsKey, JSON.stringify(d));
+  });
+
+  // ── Sync all inv-num spans when one is edited ──
+  document.querySelectorAll('.inv-num').forEach(function(el) {
+    el.addEventListener('input', function() {
+      var v = this.textContent;
+      document.querySelectorAll('.inv-num').forEach(function(o) { if (o !== el) o.textContent = v; });
+      // Also update page title
+      document.title = 'Invoice SD-INV-' + YEAR + '-' + v.trim() + ' — Swift Designz';
+    });
+  });
+})();
+
+function parseR(str) {
+  var s = String(str).replace(/R\s*/g, '').replace(/,/g, '').trim();
+  return parseFloat(s) || 0;
+}
+function fmtR(n) {
+  return 'R\u00a0' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function calcAll() {
+  var rows = document.querySelectorAll('#services-tbody tr');
+  var subtotal = 0;
+  rows.forEach(function(row) {
+    var qtyEl   = row.querySelector('.inv-qty');
+    var priceEl = row.querySelector('.inv-price');
+    var amtEl   = row.querySelector('.inv-line-amt');
+    if (!qtyEl || !priceEl || !amtEl) return;
+    var qty   = parseFloat(qtyEl.textContent.trim()) || 0;
+    var price = parseR(priceEl.textContent);
+    var amt   = qty * price;
+    amtEl.textContent = amt > 0 ? fmtR(amt) : '\u2014';
+    subtotal += amt;
+  });
+  var subtotalEl  = document.getElementById('tot-subtotal');
+  var prevPaidEl  = document.getElementById('tot-prev-paid');
+  var balanceEl   = document.getElementById('tot-balance');
+  if (subtotalEl) subtotalEl.textContent = fmtR(subtotal);
+  if (balanceEl) {
+    var prevPaid = prevPaidEl ? parseR(prevPaidEl.textContent) : 0;
+    var balance  = Math.max(0, subtotal - prevPaid);
+    balanceEl.textContent = fmtR(balance);
+  }
+}
+
+function newInvoice() {
+  if (!confirm('Start a new invoice? This will clear the current form.')) return;
+  var YEAR = new Date().getFullYear();
+  sessionStorage.removeItem('sd_inv_cur_' + YEAR);
+  sessionStorage.removeItem('sd_fields_' + location.pathname);
+  location.reload();
+}
+
+function exportDOCX(){
+  var btn=document.getElementById('export-btn');
+  var newBtn=document.getElementById('new-inv-btn');
+  var page=document.querySelector('.page');
+  var name=document.title.replace(/\s*[-\u2014\u2013]\s*Swift Designz\s*/i,'').trim().replace(/[^\w\s]/g,'').replace(/\s+/g,'-').toLowerCase();
+  btn.style.display='none'; if(newBtn) newBtn.style.display='none';
+  var liveF=Array.from(page.querySelectorAll('[contenteditable]'));
+  var clone=page.cloneNode(true);
+  var cloneF=Array.from(clone.querySelectorAll('[contenteditable]'));
+  liveF.forEach(function(f,i){if(cloneF[i]){cloneF[i].innerHTML=f.innerHTML;cloneF[i].removeAttribute('contenteditable');}});
+  var cloneBtn=clone.querySelector('#export-btn');if(cloneBtn)cloneBtn.remove();
+  var cssLink=document.querySelector('link[href*="shared.css"]');
+  var styleTag=cssLink?'<link rel="stylesheet" href="'+cssLink.href+'">':'';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'+styleTag+'</head><body>'+clone.outerHTML+'</body></html>';
+  var blob=htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}});
+  saveAs(blob,name+'.docx');
+  btn.style.display=''; if(newBtn) newBtn.style.display='';
+  btn.innerHTML='&#8595;&nbsp;&nbsp;Export DOCX';
+}
+</script></body>`n</html>

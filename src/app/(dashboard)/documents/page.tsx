@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 export default async function DocumentsPage() {
   const supabase = await createClient();
@@ -15,14 +16,7 @@ export default async function DocumentsPage() {
       <PageHeader
         title="Documents"
         description="Client contracts, proposals, and files"
-        actions={
-          <Link
-            href="/documents/upload"
-            className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors"
-          >
-            Upload Document
-          </Link>
-        }
+        actions={null}
       />
 
       <div className="glass-card overflow-hidden">
@@ -33,7 +27,8 @@ export default async function DocumentsPage() {
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded</th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Logged</th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#2a2a2a]">
@@ -47,15 +42,32 @@ export default async function DocumentsPage() {
                 documents.map((doc) => (
                   <tr key={doc.id} className="hover:bg-[#1a1a1a] transition-colors">
                     <td className="px-5 py-3">
-                      <Link href={`/documents/${doc.id}`} className="text-sm font-medium text-white hover:text-[#30B0B0]">
-                        {doc.name}
-                      </Link>
+                      <span className="text-sm font-medium text-white">{doc.name}</span>
                     </td>
                     <td className="px-5 py-3 text-sm text-gray-400 capitalize">{doc.type.replace(/_/g, " ")}</td>
                     <td className="px-5 py-3 text-sm text-gray-400">
-                      {(doc as Record<string, unknown> & { clients: { name: string } | null }).clients?.name || "—"}
+                      {(doc as Record<string, unknown> & { clients: { id: string; name: string } | null }).clients ? (
+                        <Link
+                          href={`/clients/${(doc as Record<string, unknown> & { clients: { id: string; name: string } }).clients.id}`}
+                          className="hover:text-[#30B0B0] transition-colors"
+                        >
+                          {(doc as Record<string, unknown> & { clients: { id: string; name: string } }).clients.name}
+                        </Link>
+                      ) : "—"}
                     </td>
                     <td className="px-5 py-3 text-sm text-gray-500">{formatDate(doc.created_at)}</td>
+                    <td className="px-5 py-3">
+                      {doc.file_url && (
+                        <a
+                          href={doc.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-[#30B0B0] hover:underline"
+                        >
+                          Open <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </td>
                   </tr>
                 ))
               )}

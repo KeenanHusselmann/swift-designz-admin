@@ -1,0 +1,386 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Client Onboarding Guide — Swift Designz</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  .welcome-banner { background:var(--head-bg); border:1px solid var(--teal); border-radius:10px; padding:24px 28px; margin-bottom:24px; display:grid; grid-template-columns:1fr auto; align-items:center; gap:20px; }
+  .welcome-text h2 { font-family:'Orbitron',sans-serif; font-size:16px; color:var(--teal); margin-bottom:6px; }
+  .welcome-text p { font-size:12px; color:#80c0c0; line-height:1.6; }
+  .welcome-meta { text-align:right; font-size:11px; color:#4a8080; }
+  .welcome-meta strong { display:block; font-family:'Orbitron',sans-serif; font-size:14px; color:var(--teal); margin-bottom:4px; }
+
+  .service-tabs { display:flex; border-bottom:2px solid var(--border); margin-bottom:20px; gap:2px; }
+  .stab { padding:8px 16px; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; color:var(--ink-dim); transition:all 0.2s; }
+  .stab:hover { color:var(--teal); }
+  .stab.active { color:var(--teal); border-bottom-color:var(--teal); }
+  .stab-panel { display:none; }
+  .stab-panel.active { display:block; }
+
+  .process-steps { display:grid; gap:0; margin-bottom:20px; }
+  .step { display:grid; grid-template-columns:auto 1fr; gap:0; position:relative; }
+  .step:last-child .step-line { display:none; }
+  .step-num-col { display:flex; flex-direction:column; align-items:center; width:44px; }
+  .step-circle { width:32px; height:32px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; color:white; flex-shrink:0; z-index:1; }
+  .step-line { width:2px; flex:1; background:var(--border); min-height:12px; }
+  .step-content { padding:0 0 16px 12px; }
+  .step-title { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:3px; margin-top:5px; }
+  .step-desc { font-size:11.5px; color:var(--ink-mid); line-height:1.6; }
+  .step-badge { display:inline-block; font-size:9px; letter-spacing:2px; text-transform:uppercase; background:var(--bg-alt); border:1px solid var(--border); color:var(--ink-dim); padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:middle; }
+
+  .checklist-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+  .checklist-card { background:var(--bg-alt); border:1px solid var(--border); border-radius:8px; padding:14px; }
+  .checklist-card-title { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--teal-dim); font-weight:700; margin-bottom:8px; }
+  .cl-item { display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:11.5px; color:var(--ink-mid); }
+  .cl-box { width:14px; height:14px; border:1.5px solid var(--teal); border-radius:2px; flex-shrink:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:10px; }
+  .cl-box.ticked { background:var(--teal); color:white; }
+
+  .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+  .contact-card { background:var(--bg-alt); border:1px solid var(--border); border-radius:8px; padding:16px; }
+  .contact-card-role { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--teal-dim); margin-bottom:6px; font-weight:700; }
+  .contact-card-name { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .contact-card-line { font-size:11px; color:var(--ink-mid); margin-bottom:2px; }
+  .contact-card-line a { color:var(--teal); text-decoration:none; }
+
+  .timeline-strip { display:flex; gap:0; margin-bottom:20px; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+  .tstrip-item { flex:1; padding:12px; text-align:center; border-right:1px solid var(--border); background:var(--bg-alt); }
+  .tstrip-item:last-child { border-right:none; }
+  .tstrip-num { font-family:'Orbitron',sans-serif; font-size:16px; font-weight:700; color:var(--teal); }
+  .tstrip-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-dim); margin-top:2px; }
+
+  .seminar-box { background:linear-gradient(135deg,#0c1f1f 0%,#0c1414 100%); border:1px solid var(--teal); border-radius:10px; padding:18px 22px; margin-bottom:20px; position:relative; overflow:hidden; }
+  .seminar-box::before { content:'COMING SOON'; position:absolute; top:12px; right:14px; font-size:8px; letter-spacing:3px; font-weight:700; color:var(--teal); }
+  .seminar-box h4 { font-family:'Orbitron',sans-serif; font-size:13px; color:var(--teal); margin-bottom:6px; }
+  .seminar-box p { font-size:11px; color:#70c0c0; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="doc-header">
+    <img class="doc-logo" src="../images/logo.png" alt="Swift Designz"/>
+    <div class="doc-type-block">
+      <div class="doc-type">Client Onboarding</div>
+      <div class="doc-subtype">Welcome to Swift Designz</div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-ref">Project: <span class="field" contenteditable="true">SD-PTB-2026-___</span></div>
+      <div class="doc-date-line">Prepared for: <span class="field" contenteditable="true">Client Name</span></div>
+      <div class="doc-date-line">Date: <span class="field" contenteditable="true">___________</span></div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Welcome aboard. Let's build something great.</h2>
+        <p>Thank you for choosing Swift Designz. This guide walks you through everything you need to know to get your project started smoothly. Please read it fully — it covers the process, what I need from you, timelines, and how we communicate.</p>
+      </div>
+      <div class="welcome-meta">
+        <strong>Keenan Husselmann</strong>
+        Swift Designz<br/>
+        keenan@swiftdesignz.co.za<br/>
+        +264 81 853 6789<br/>
+        swiftdesignz.co.za
+      </div>
+    </div>
+
+    <!-- SERVICE TABS -->
+    <div class="section-head">Your Service Type</div>
+    <p style="font-size:11px;color:var(--ink-dim);margin-bottom:10px;" class="no-print">Select the service type below to see service-specific information:</p>
+    <div class="service-tabs no-print">
+      <div class="stab active" onclick="showTab('web',this)">Website</div>
+      <div class="stab" onclick="showTab('ecom',this)">E-Commerce</div>
+      <div class="stab" onclick="showTab('app',this)">App / Software</div>
+      <div class="stab" onclick="showTab('ai',this)">AI Training</div>
+      <div class="stab" onclick="showTab('pm',this)">PM Training</div>
+    </div>
+
+    <!-- ══ WEBSITE PANEL ══ -->
+    <div class="stab-panel active" id="tab-web">
+      <div class="info-box" style="margin-bottom:16px;"><strong>Service:</strong> Website Development &nbsp;|&nbsp; <span class="field" contenteditable="true">Starter / Professional / Premium</span> Package</div>
+      <div class="section-head">What I Need From You — Website</div>
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-card-title">Content &amp; Copy</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> All page text / body copy</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> About / team bios</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Services descriptions</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Contact &amp; social media links</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Testimonials (if any)</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-card-title">Branding &amp; Media</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Logo (PNG/SVG, transparent bg)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Brand colours (hex codes)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Image gallery / photos</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Reference sites (likes/dislikes)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Domain name / login (if existing)</div>
+        </div>
+      </div>
+      <div class="section-head">Website Project Timeline</div>
+      <div class="timeline-strip">
+        <div class="tstrip-item"><div class="tstrip-num">Day 1</div><div class="tstrip-label">Deposit Received → Work Begins</div></div>
+        <div class="tstrip-item"><div class="tstrip-num">Day 2–3</div><div class="tstrip-label">Design Concept &amp; Structure</div></div>
+        <div class="tstrip-item"><div class="tstrip-num">Mid-Project</div><div class="tstrip-label">First Preview Shared</div></div>
+        <div class="tstrip-item"><div class="tstrip-num">Revisions</div><div class="tstrip-label">Up to 3 Rounds</div></div>
+        <div class="tstrip-item"><div class="tstrip-num">Launch</div><div class="tstrip-label">Final Payment → Go Live</div></div>
+      </div>
+    </div>
+
+    <!-- ══ ECOMMERCE PANEL ══ -->
+    <div class="stab-panel" id="tab-ecom">
+      <div class="info-box" style="margin-bottom:16px;"><strong>Service:</strong> E-Commerce Store Development &nbsp;|&nbsp; <span class="field" contenteditable="true">Starter / Business / Enterprise</span> Package</div>
+      <div class="section-head">What I Need From You — E-Commerce</div>
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-card-title">Store Setup</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Shopify / platform login credentials</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Product list with descriptions</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Product photos (high-res)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Product pricing &amp; variants</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Shipping zones &amp; rates</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-card-title">Policies &amp; Payments</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Refund &amp; return policy</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Payment gateway preference</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Tax settings / requirements</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Logo + brand colours</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Target audience &amp; category structure</div>
+        </div>
+      </div>
+      <div class="info-box"><strong>Note on Shopify:</strong> The Shopify merchant account is yours and you have full ownership. Swift Designz is the developer only. Shopify monthly fees are billed directly by Shopify to you.</div>
+    </div>
+
+    <!-- ══ APP PANEL ══ -->
+    <div class="stab-panel" id="tab-app">
+      <div class="info-box" style="margin-bottom:16px;"><strong>Service:</strong> App &amp; Software Development &nbsp;|&nbsp; <span class="field" contenteditable="true">MVP / Standard / Full-Scale</span></div>
+      <div class="section-head">What I Need From You — App / Software</div>
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-card-title">Product Definition</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Core feature list (must-haves)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Target platform (iOS/Android/Web/Desktop)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Target user personas</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Wireframes or flow diagrams (if any)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Reference apps you like</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-card-title">Technical &amp; Business</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> APIs / third-party integrations needed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Data structure / existing database</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Authentication requirements</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Brand guidelines / logo</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Launch &amp; deployment preferences</div>
+        </div>
+      </div>
+      <div class="warn-box"><strong>Note on App Timelines:</strong> App development timelines are architecture-dependent and scoped per project. A formal timeline is provided in your Proceed to Build document after the discovery phase.</div>
+    </div>
+
+    <!-- ══ AI TRAINING PANEL ══ -->
+    <div class="stab-panel" id="tab-ai">
+      <div class="info-box" style="margin-bottom:16px;"><strong>Service:</strong> AI Training &nbsp;|&nbsp; <span class="field" contenteditable="true">Individual (30 min) / Team (1.5 hr) / Workshop</span></div>
+      <div class="section-head">Before Your AI Training Session</div>
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-card-title">Individual Session Prep</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Session link sent &amp; confirmed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked')" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Topic / focus area agreed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Tools to be covered (ChatGPT, Copilot, Gemini, etc.)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Pre-session questionnaire completed</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-card-title">Team / Workshop Prep</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> # of attendees confirmed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Shared meeting link distributed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Team current tools &amp; pain points shared</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Payment confirmed in advance</div>
+        </div>
+      </div>
+      <div class="seminar-box">
+        <h4>Online Seminars — Coming Soon</h4>
+        <p>Swift Designz will be launching group AI training seminars open to the public. These will be announced on <strong>swiftdesignz.co.za</strong> and social media channels. Existing clients get early access and preferred rates. Watch this space.</p>
+      </div>
+      <div class="info-box"><strong>What you'll receive:</strong> Course notes, resource lists, prompt templates, and a recording link (where consent was granted). Materials are yours to keep and use internally.</div>
+    </div>
+
+    <!-- ══ PM TRAINING PANEL ══ -->
+    <div class="stab-panel" id="tab-pm">
+      <div class="info-box" style="margin-bottom:16px;"><strong>Service:</strong> Project Management Training &nbsp;|&nbsp; <span class="field" contenteditable="true">Individual / Team / Workshop</span></div>
+      <div class="section-head">Before Your PM Training Session</div>
+      <div class="checklist-grid">
+        <div class="checklist-card">
+          <div class="checklist-card-title">Preparation</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Session link sent &amp; confirmed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Methodology focus agreed (Agile/Scrum/Kanban/General PM)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Current tools used (Jira, Trello, Monday, ClickUp, etc.)</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Key challenges to address</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Level of experience / context shared</div>
+        </div>
+        <div class="checklist-card">
+          <div class="checklist-card-title">Team Sessions</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Number of attendees confirmed</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Team size &amp; roles provided</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Shared calendar invite accepted</div>
+          <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Payment confirmed in advance</div>
+        </div>
+      </div>
+      <div class="info-box"><strong>What you'll receive:</strong> Session notes, PM templates (sprint boards, backlog templates, status reports), and recommended reading/tool list.</div>
+    </div>
+
+    <!-- ── SHARED SECTIONS (always visible) ── -->
+
+    <!-- THE PROJECT PROCESS -->
+    <div class="section-head">Your Project Journey</div>
+    <div class="process-steps">
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">01</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Discovery &amp; Sign-Off <span class="step-badge">You Are Here</span></div>
+          <div class="step-desc">Quotation accepted, Proceed to Build signed, deposit paid. Project is officially live. You'll receive a confirmation email within 24 hours.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">02</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Design &amp; Structure</div>
+          <div class="step-desc">I create wireframes, design concepts, or technical architecture (depending on your service). You'll be asked to approve direction before full build begins.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">03</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Build Phase</div>
+          <div class="step-desc">Full development. I work through the agreed scope. You may receive progress check-ins depending on project size. Please be available for quick answers.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">04</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Review &amp; Revisions</div>
+          <div class="step-desc">I share a preview link. You review and submit feedback within 7 business days. Up to 3 revision rounds are included. Changes outside scope are quoted separately.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">05</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Launch / Delivery</div>
+          <div class="step-desc">Final payment received → project goes live / files are handed over. You receive credentials, documentation, and handover notes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num-col"><div class="step-circle">06</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Post-Launch Support</div>
+          <div class="step-desc">1 month (or 2 for Full Pay) of free support included. Ongoing maintenance via our R800/month Retainer (SD-RET-2026). Training clients: materials stay accessible.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEY CONTACTS -->
+    <div class="section-head">Your Key Contacts</div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-card-role">Your Developer</div>
+        <div class="contact-card-name">Keenan Husselmann</div>
+        <div class="contact-card-line">Swift Designz</div>
+        <div class="contact-card-line"><a href="mailto:keenan@swiftdesignz.co.za">keenan@swiftdesignz.co.za</a></div>
+        <div class="contact-card-line">+264 81 853 6789</div>
+        <div class="contact-card-line"><a href="https://swiftdesignz.co.za">swiftdesignz.co.za</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-role">Domain &amp; Hosting Partner</div>
+        <div class="contact-card-name">Ambrose</div>
+        <div class="contact-card-line">IT-Guru</div>
+        <div class="contact-card-line"><a href="mailto:ambrose@it-guru.co.za">ambrose@it-guru.co.za</a></div>
+        <div class="contact-card-line">072 962 7608</div>
+        <div class="contact-card-line"><a href="https://it-guru.co.za">it-guru.co.za</a></div>
+      </div>
+    </div>
+
+    <!-- COMMUNICATION RULES -->
+    <div class="section-head">Communication Guidelines</div>
+    <div class="info-box">
+      <strong>Feedback window:</strong> Please respond to review requests within <strong>7 business days</strong>. Extended silence may pause the project timeline.<br/>
+      <strong>Changes:</strong> All change requests must be submitted in writing (email or Change Request Form SD-CR-2026).<br/>
+      <strong>Preferred channel:</strong> Email is the official channel. Messaging apps may be used for quick questions only — formal approvals must be via email.<br/>
+      <strong>Proxy:</strong> If you'll be unavailable for 7+ business days, please nominate a proxy who can approve decisions on your behalf.
+    </div>
+
+    <!-- NEXT STEPS -->
+    <div class="section-head">Your Next Steps</div>
+    <div class="checklist-grid">
+      <div class="checklist-card">
+        <div class="checklist-card-title">Right Now</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Sign &amp; return Proceed to Build (SD-PTB)</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Pay the deposit (banking details in PTB doc)</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Send proof of payment to keenan@swiftdesignz.co.za</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Gather all assets from your service checklist above</div>
+      </div>
+      <div class="checklist-card">
+        <div class="checklist-card-title">Once We Start</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Watch for preview/draft notification email</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Review within 7 business days</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Submit all feedback in one consolidated list</div>
+        <div class="cl-item"><div class="cl-box" onclick="this.classList.toggle('ticked');this.textContent=this.classList.contains('ticked')?'✓':''"></div> Pay final balance before go-live</div>
+      </div>
+    </div>
+
+    <div class="info-box">Thank you for trusting Swift Designz with your project. I'm committed to delivering high-quality work, communicating clearly, and making this a smooth and enjoyable experience from start to finish. Let's build something exceptional. — <strong>Keenan</strong></div>
+
+  </div><!-- /.doc-body -->
+
+  <div class="doc-footer">
+    <div class="doc-footer-left">Swift Designz · Client Onboarding Guide</div>
+    <div class="doc-footer-right">keenan@swiftdesignz.co.za · swiftdesignz.co.za · Remote · Worldwide</div>
+  </div>
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.stab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+
+<!-- EXPORT DOCX -->
+<div id="export-btn" class="export-btn" onclick="exportDOCX()">&#8595;&nbsp;&nbsp;Export DOCX</div>
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script>
+// Auto-save & restore all editable fields
+(function(){
+  var key='sd_fields_'+location.pathname;
+  function save(){var d={};document.querySelectorAll('[contenteditable]').forEach(function(el,i){d[i]=el.innerHTML;});sessionStorage.setItem(key,JSON.stringify(d));}
+  function restore(){var s=sessionStorage.getItem(key);if(!s)return;try{var d=JSON.parse(s);document.querySelectorAll('[contenteditable]').forEach(function(el,i){if(d[i]!==undefined)el.innerHTML=d[i];});}catch(e){}}
+  document.addEventListener('input',save);
+  restore();
+})();
+
+function exportDOCX(){
+  var btn=document.getElementById('export-btn');
+  var page=document.querySelector('.page');
+  var name=document.title.replace(/\s*[-\u2014\u2013]\s*Swift Designz\s*/i,'').trim().replace(/[^\w\s]/g,'').replace(/\s+/g,'-').toLowerCase();
+  btn.style.display='none';
+  var liveF=Array.from(page.querySelectorAll('[contenteditable]'));
+  var clone=page.cloneNode(true);
+  var cloneF=Array.from(clone.querySelectorAll('[contenteditable]'));
+  liveF.forEach(function(f,i){if(cloneF[i]){cloneF[i].innerHTML=f.innerHTML;cloneF[i].removeAttribute('contenteditable');}});
+  var cloneBtn=clone.querySelector('#export-btn');if(cloneBtn)cloneBtn.remove();
+  var cssLink=document.querySelector('link[href*="shared.css"]');
+  var styleTag=cssLink?'<link rel="stylesheet" href="'+cssLink.href+'">':'';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'+styleTag+'</head><body>'+clone.outerHTML+'</body></html>';
+  var blob=htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}});
+  saveAs(blob,name+'.docx');
+  btn.style.display='';
+  btn.innerHTML='&#8595;&nbsp;&nbsp;Export DOCX';
+}
+</script></body>`n</html>

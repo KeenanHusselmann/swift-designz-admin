@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Change Request Form — Swift Designz</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .form-group { display:flex; flex-direction:column; gap:4px; }
+  .form-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--teal-dim); font-weight:600; }
+  .impact-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px; }
+  .impact-card { background:var(--bg-alt); border:1px solid var(--border); border-radius:6px; padding:14px; }
+  .impact-card-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--ink-dim); margin-bottom:6px; }
+  .impact-card-value { font-size:16px; font-weight:800; color:var(--teal); font-family:'Orbitron',sans-serif; }
+  .impact-card .field-block { font-size:14px; font-weight:700; color:var(--teal); font-family:'Orbitron',sans-serif; }
+  .priority-pick { display:flex; gap:10px; margin-bottom:14px; }
+  .priority-btn { flex:1; border:1px solid var(--border); border-radius:6px; padding:10px; text-align:center; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.2s; }
+  .priority-btn:hover { border-color:var(--teal); }
+  .priority-btn.low { }
+  .priority-btn.medium { }
+  .priority-btn.high { }
+  .priority-btn.selected-low { background:#e8f5e8; border-color:#50a060; color:#2a6040; }
+  .priority-btn.selected-medium { background:#fff5e0; border-color:#e0a020; color:#7a5010; }
+  .priority-btn.selected-high { background:#ffe8e8; border-color:#d04040; color:#8a2020; }
+  .scope-radio { display:flex; gap:12px; }
+  .scope-opt { flex:1; border:1px solid var(--border); border-radius:6px; padding:10px 14px; cursor:pointer; font-size:11px; font-weight:600; text-align:center; transition:all 0.2s; }
+  .scope-opt.selected { border-color:var(--teal); background:var(--bg-alt); color:var(--teal); }
+  .status-bar { display:flex; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:20px; }
+  .status-step { flex:1; padding:10px; text-align:center; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border-right:1px solid var(--border); background:var(--bg-alt); color:var(--ink-dim); }
+  .status-step:last-child { border-right:none; }
+  .status-step.active { background:var(--teal); color:white; }
+  .cr-ref { font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; color:var(--teal); letter-spacing:2px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="doc-header">
+    <img class="doc-logo" src="../images/logo.png" alt="Swift Designz"/>
+    <div class="doc-type-block">
+      <div class="doc-type">Change Request</div>
+      <div class="doc-subtype">Out-of-Scope Work Order</div>
+    </div>
+    <div class="doc-meta">
+      <div class="doc-ref">SD-CR-2026-<span class="field" contenteditable="true">___</span></div>
+      <div class="doc-date-line">Date: <span class="field" contenteditable="true">___________</span></div>
+      <div class="doc-date-line">Project Ref: <span class="field" contenteditable="true">SD-PTB-2026-___</span></div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar no-print">
+      <div class="status-step active">Submitted</div>
+      <div class="status-step">Under Review</div>
+      <div class="status-step">Quoted</div>
+      <div class="status-step">Approved</div>
+      <div class="status-step">In Progress</div>
+      <div class="status-step">Completed</div>
+    </div>
+
+    <!-- PARTIES -->
+    <div class="parties" style="margin-bottom:20px;">
+      <div class="party">
+        <div class="party-label">Requested By (Client)</div>
+        <div class="party-name" contenteditable="true" class="field">Client Full Name</div>
+        <div class="party-line">Company: <span contenteditable="true" class="field">_______________</span></div>
+        <div class="party-line">Email: <span contenteditable="true" class="field">client@email.com</span></div>
+        <div class="party-line">Phone: <span contenteditable="true" class="field">+___ ___ ___ ____</span></div>
+      </div>
+      <div class="party">
+        <div class="party-label">Assigned To</div>
+        <div class="party-name">Keenan Husselmann</div>
+        <div class="party-trade">Swift Designz</div>
+        <div class="party-line">Email: keenan@swiftdesignz.co.za</div>
+        <div class="party-line">Rate: R350/hour</div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: CHANGE DESCRIPTION -->
+    <div class="section-head">Change Description</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Feature / Page / Section Affected</div>
+        <div class="field-block" contenteditable="true">e.g. Homepage hero section, Product listing page...</div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Change Category</div>
+        <div class="field-block" contenteditable="true">e.g. New Feature · Content Update · Design Change · Bug Fix · Integration · Other</div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <div class="form-label">Full Description of Requested Change</div>
+      <div class="field-block" contenteditable="true" style="min-height:80px;">
+        Describe in detail what needs to change, be added, or be removed...
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <div class="form-label">Reason / Business Justification</div>
+      <div class="field-block" contenteditable="true" style="min-height:50px;">
+        Why is this change needed? What problem does it solve or what value does it add?
+      </div>
+    </div>
+
+    <!-- SECTION 2: SCOPE ASSESSMENT -->
+    <div class="section-head">Scope &amp; Impact Assessment</div>
+
+    <div class="form-label" style="margin-bottom:6px;">Is this within the original project scope?</div>
+    <div class="scope-radio" style="margin-bottom:14px;">
+      <div class="scope-opt selected" onclick="this.parentNode.querySelectorAll('.scope-opt').forEach(e=>e.classList.remove('selected'));this.classList.add('selected')">Out of Scope (billable)</div>
+      <div class="scope-opt" onclick="this.parentNode.querySelectorAll('.scope-opt').forEach(e=>e.classList.remove('selected'));this.classList.add('selected')">Within Scope (no charge)</div>
+      <div class="scope-opt" onclick="this.parentNode.querySelectorAll('.scope-opt').forEach(e=>e.classList.remove('selected'));this.classList.add('selected')">Partially In Scope</div>
+    </div>
+
+    <div class="form-label" style="margin-bottom:6px;">Priority Level</div>
+    <div class="priority-pick" style="margin-bottom:14px;">
+      <div class="priority-btn low" onclick="document.querySelectorAll('.priority-btn').forEach(b=>b.className='priority-btn low' in b.classList?'priority-btn low':'priority-btn '+b.classList[1]);this.classList.add('selected-low')">Low — No urgency</div>
+      <div class="priority-btn medium" onclick="document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected-low','selected-medium','selected-high'));this.classList.add('selected-medium')">Medium — Nice to have soon</div>
+      <div class="priority-btn high" onclick="document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected-low','selected-medium','selected-high'));this.classList.add('selected-high')">High — Blocking or critical</div>
+    </div>
+
+    <!-- IMPACT CARDS -->
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="impact-card-label">Estimated Hours</div>
+        <div class="field-block" contenteditable="true" style="font-size:20px;font-weight:800;color:var(--teal);font-family:'Orbitron',sans-serif;border:none;background:transparent;padding:0;">___</div>
+        <div style="font-size:10px;color:var(--ink-dim);margin-top:4px;">hours @ R350/hr</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-label">Estimated Cost</div>
+        <div class="field-block" contenteditable="true" style="font-size:20px;font-weight:800;color:var(--teal);font-family:'Orbitron',sans-serif;border:none;background:transparent;padding:0;">R ___</div>
+        <div style="font-size:10px;color:var(--ink-dim);margin-top:4px;">excl. deposit already paid</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-label">Timeline Impact</div>
+        <div class="field-block" contenteditable="true" style="font-size:20px;font-weight:800;color:var(--teal);font-family:'Orbitron',sans-serif;border:none;background:transparent;padding:0;">+___ days</div>
+        <div style="font-size:10px;color:var(--ink-dim);margin-top:4px;">added to delivery date</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">New Estimated Delivery Date</div>
+        <div class="field-block" contenteditable="true">___________</div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Payment Due</div>
+        <div class="field-block" contenteditable="true">Before work begins / On completion</div>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>Note:</strong> Work on this change request will not commence until the client has signed this form AND payment (if applicable) has been received. Any approved change request is an addendum to the original project agreement and is subject to Swift Designz Terms &amp; Conditions (SD-TC-2026).
+    </div>
+
+    <!-- SECTION 3: REFERENCE ASSETS -->
+    <div class="section-head">Reference / Supporting Materials</div>
+    <div class="field-block" contenteditable="true" style="min-height:50px;">
+      List any reference links, design mockups, screenshots, or files attached to this request...
+    </div>
+
+    <!-- SECTION 4: SIGNATURES -->
+    <div class="section-head">Approval &amp; Sign-Off</div>
+    <p style="font-size:11.5px;color:var(--ink-mid);margin-bottom:20px;">By signing below, the client approves the change described above and authorises Swift Designz to proceed. The estimated cost and timeline impact are acknowledged by both parties.</p>
+
+    <div class="sig-row">
+      <div>
+        <div class="sig-label">Client Approval</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Name: <span class="field" contenteditable="true">_____________________________</span></div>
+        <div class="sig-name">Date: <span class="field" contenteditable="true">_____________________________</span></div>
+      </div>
+      <div>
+        <div class="sig-label">Swift Designz — Approved By</div>
+        <div class="sig-line"></div>
+        <div class="sig-name">Keenan Husselmann</div>
+        <div class="sig-name">Date: ___________________________</div>
+      </div>
+    </div>
+
+  </div><!-- /.doc-body -->
+
+  <div class="doc-footer">
+    <div class="doc-footer-left">Swift Designz · Change Request · SD-CR-2026</div>
+    <div class="doc-footer-right">keenan@swiftdesignz.co.za · R350/hr out-of-scope work · SD-TC-2026 applies</div>
+  </div>
+</div>
+<!-- EXPORT DOCX -->
+<div id="export-btn" class="export-btn" onclick="exportDOCX()">&#8595;&nbsp;&nbsp;Export DOCX</div>
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script>
+// Auto-save & restore all editable fields
+(function(){
+  var key='sd_fields_'+location.pathname;
+  function save(){var d={};document.querySelectorAll('[contenteditable]').forEach(function(el,i){d[i]=el.innerHTML;});sessionStorage.setItem(key,JSON.stringify(d));}
+  function restore(){var s=sessionStorage.getItem(key);if(!s)return;try{var d=JSON.parse(s);document.querySelectorAll('[contenteditable]').forEach(function(el,i){if(d[i]!==undefined)el.innerHTML=d[i];});}catch(e){}}
+  document.addEventListener('input',save);
+  restore();
+})();
+
+function exportDOCX(){
+  var btn=document.getElementById('export-btn');
+  var page=document.querySelector('.page');
+  var name=document.title.replace(/\s*[-\u2014\u2013]\s*Swift Designz\s*/i,'').trim().replace(/[^\w\s]/g,'').replace(/\s+/g,'-').toLowerCase();
+  btn.style.display='none';
+  var liveF=Array.from(page.querySelectorAll('[contenteditable]'));
+  var clone=page.cloneNode(true);
+  var cloneF=Array.from(clone.querySelectorAll('[contenteditable]'));
+  liveF.forEach(function(f,i){if(cloneF[i]){cloneF[i].innerHTML=f.innerHTML;cloneF[i].removeAttribute('contenteditable');}});
+  var cloneBtn=clone.querySelector('#export-btn');if(cloneBtn)cloneBtn.remove();
+  var cssLink=document.querySelector('link[href*="shared.css"]');
+  var styleTag=cssLink?'<link rel="stylesheet" href="'+cssLink.href+'">':'';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'+styleTag+'</head><body>'+clone.outerHTML+'</body></html>';
+  var blob=htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:720,right:720,bottom:720,left:720}});
+  saveAs(blob,name+'.docx');
+  btn.style.display='';
+  btn.innerHTML='&#8595;&nbsp;&nbsp;Export DOCX';
+}
+</script></body>`n</html>
