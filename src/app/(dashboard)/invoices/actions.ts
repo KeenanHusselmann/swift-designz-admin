@@ -47,13 +47,22 @@ export async function createInvoiceAction(formData: FormData) {
 
   // Generate number based on doc type
   const prefix = docType === "quotation" ? "QUO" : "INV";
-  const { count } = await supabase
-    .from("invoices")
-    .select("*", { count: "exact", head: true })
-    .eq("doc_type", docType);
-
-  const sequence = (count ?? 0) + 1;
   const year = new Date().getFullYear();
+  const likePattern = `${prefix}-${year}-%`;
+  const { data: latest } = await supabase
+    .from("invoices")
+    .select("invoice_number")
+    .like("invoice_number", likePattern)
+    .order("invoice_number", { ascending: false })
+    .limit(1)
+    .single();
+
+  let sequence = 1;
+  if (latest?.invoice_number) {
+    const parts = latest.invoice_number.split("-");
+    const lastSeq = parseInt(parts[parts.length - 1], 10);
+    if (!isNaN(lastSeq)) sequence = lastSeq + 1;
+  }
   const invoiceNumber = `${prefix}-${year}-${String(sequence).padStart(3, "0")}`;
 
   // Insert invoice
