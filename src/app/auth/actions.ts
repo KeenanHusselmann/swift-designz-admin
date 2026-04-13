@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 export async function signIn(formData: FormData) {
   const email = formData.get("email") as string;
@@ -27,17 +28,17 @@ export async function signOut() {
   redirect("/login");
 }
 
-export async function getSession() {
+export const getSession = cache(async () => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   return user;
-}
+});
 
-export async function getProfile() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export const getProfile = cache(async () => {
+  const user = await getSession();
   if (!user) return null;
 
+  const supabase = await createClient();
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
@@ -45,4 +46,4 @@ export async function getProfile() {
     .single();
 
   return profile;
-}
+});

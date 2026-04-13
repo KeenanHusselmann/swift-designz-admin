@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -24,11 +24,11 @@ import {
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
+import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/types/database";
 
 interface SidebarProps {
   profile: Profile | null;
-  counts?: Record<string, number>;
 }
 
 const NAV_SECTIONS = [
@@ -56,10 +56,24 @@ const NAV_SECTIONS = [
   },
 ];
 
-export default function Sidebar({ profile, counts = {} }: SidebarProps) {
+export default function Sidebar({ profile }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
+  const [counts, setCounts] = useState<Record<string, number>>({});
+
+  // Fetch nav counts client-side so the layout never blocks on them
+  useEffect(() => {
+    const supabase = createClient();
+    const tables = ["leads", "clients", "projects", "invoices", "documents", "investors", "employees", "ai_agents"] as const;
+    Promise.all(
+      tables.map((t) => supabase.from(t).select("id", { count: "exact", head: true }))
+    ).then((results) => {
+      setCounts(
+        Object.fromEntries(tables.map((t, i) => [t, results[i].count ?? 0]))
+      );
+    });
+  }, [pathname]); // re-fetch when route changes
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
