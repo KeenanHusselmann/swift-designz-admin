@@ -24,7 +24,7 @@ interface Props {
 }
 
 const inputClass =
-  "w-full bg-[#101010] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] transition-colors";
+  "w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-teal transition-colors";
 const labelClass = "block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5";
 
 export default function LeadForm({ lead, action, submitLabel }: Props) {
@@ -147,13 +147,13 @@ export default function LeadForm({ lead, action, submitLabel }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="px-6 py-2.5 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-6 py-2.5 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
         >
           {pending ? "Saving..." : submitLabel}
         </button>
         <a
           href={lead ? `/leads/${lead.id}` : "/leads"}
-          className="px-6 py-2.5 bg-[#2a2a2a] hover:bg-[#303030] text-gray-300 text-sm font-medium rounded-lg border border-[#2a2a2a] transition-colors"
+          className="px-6 py-2.5 bg-border hover:bg-dark-gray text-gray-300 text-sm font-medium rounded-lg border border-border transition-colors"
         >
           Cancel
         </a>

@@ -47,7 +47,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             type="text"
             required
             defaultValue={employee?.name}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -59,7 +59,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             required
             placeholder="e.g. Frontend Developer"
             defaultValue={employee?.role}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             name="email"
             type="email"
             defaultValue={employee?.email || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -82,7 +82,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             name="phone"
             type="tel"
             defaultValue={employee?.phone || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             name="department"
             required
             defaultValue={employee?.department || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           >
             <option value="">Select department</option>
             {departments.map((d) => (
@@ -113,7 +113,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             min="0"
             required
             defaultValue={employee ? (employee.salary / 100).toFixed(2) : ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -122,7 +122,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             id="status"
             name="status"
             defaultValue={employee?.status || "active"}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           >
             {statuses.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
@@ -140,7 +140,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             type="date"
             required
             defaultValue={employee?.start_date || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -150,7 +150,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
             name="end_date"
             type="date"
             defaultValue={employee?.end_date || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -162,14 +162,14 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
           name="notes"
           rows={3}
           defaultValue={employee?.notes || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none resize-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Saving..." : submitLabel}
       </button>

@@ -53,19 +53,19 @@ export default async function AccountingPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link href="/accounting/income" className="glass-card p-6 text-center hover:border-[#30B0B0]/30 transition-colors">
+        <Link href="/accounting/income" className="glass-card p-6 text-center hover:border-teal/30 transition-colors">
           <TrendingUp className="h-8 w-8 text-green-400 mx-auto mb-3" />
-          <h3 className="text-white font-medium">Income</h3>
+          <h3 className="text-foreground font-medium">Income</h3>
           <p className="text-sm text-gray-500 mt-1">Track all revenue</p>
         </Link>
-        <Link href="/accounting/expenses" className="glass-card p-6 text-center hover:border-[#30B0B0]/30 transition-colors">
+        <Link href="/accounting/expenses" className="glass-card p-6 text-center hover:border-teal/30 transition-colors">
           <TrendingDown className="h-8 w-8 text-red-400 mx-auto mb-3" />
-          <h3 className="text-white font-medium">Expenses</h3>
+          <h3 className="text-foreground font-medium">Expenses</h3>
           <p className="text-sm text-gray-500 mt-1">Track all spending</p>
         </Link>
-        <Link href="/accounting/reports" className="glass-card p-6 text-center hover:border-[#30B0B0]/30 transition-colors">
-          <Receipt className="h-8 w-8 text-[#30B0B0] mx-auto mb-3" />
-          <h3 className="text-white font-medium">Reports</h3>
+        <Link href="/accounting/reports" className="glass-card p-6 text-center hover:border-teal/30 transition-colors">
+          <Receipt className="h-8 w-8 text-teal mx-auto mb-3" />
+          <h3 className="text-foreground font-medium">Reports</h3>
           <p className="text-sm text-gray-500 mt-1">P&L statements</p>
         </Link>
       </div>

@@ -50,12 +50,12 @@ export default function LeadTimeline({ leadId, notes }: Props) {
           rows={3}
           required
           placeholder="Add a note..."
-          className="w-full bg-[#101010] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] resize-none"
+          className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal resize-none"
         />
         <button
           type="submit"
           disabled={pending}
-          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
+          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-xs font-medium rounded-lg transition-colors"
         >
           <Send className="w-3 h-3" />
           {pending ? "Saving..." : "Add Note"}
@@ -68,7 +68,7 @@ export default function LeadTimeline({ leadId, notes }: Props) {
           <p className="text-sm text-gray-600">No notes yet.</p>
         ) : (
           notes.map((note) => (
-            <div key={note.id} className="relative pl-4 border-l border-[#2a2a2a]">
+            <div key={note.id} className="relative pl-4 border-l border-border">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-xs text-gray-500">

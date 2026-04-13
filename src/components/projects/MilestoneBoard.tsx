@@ -119,28 +119,28 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
           <div className="flex-1 max-w-xs">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-gray-500">Progress</span>
-              <span className="text-xs font-semibold text-[#30B0B0]">{progress}%</span>
+              <span className="text-xs font-semibold text-teal">{progress}%</span>
             </div>
-            <div className="h-1.5 bg-[#2a2a2a] rounded-full overflow-hidden">
+            <div className="h-1.5 bg-border rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#30B0B0] rounded-full transition-all duration-500"
+                className="h-full bg-teal rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
           <span className="text-xs text-gray-500">{done}/{total} complete</span>
         </div>
-        <div className="flex items-center gap-1 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-card border border-border rounded-lg p-1">
           <button
             onClick={() => switchView("table")}
-            className={`p-1.5 rounded transition-colors ${view === "table" ? "bg-[#30B0B0]/20 text-[#30B0B0]" : "text-gray-500 hover:text-white"}`}
+            className={`p-1.5 rounded transition-colors ${view === "table" ? "bg-teal/20 text-teal" : "text-gray-500 hover:text-foreground"}`}
             title="Table view"
           >
             <LayoutList className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => switchView("board")}
-            className={`p-1.5 rounded transition-colors ${view === "board" ? "bg-[#30B0B0]/20 text-[#30B0B0]" : "text-gray-500 hover:text-white"}`}
+            className={`p-1.5 rounded transition-colors ${view === "board" ? "bg-teal/20 text-teal" : "text-gray-500 hover:text-foreground"}`}
             title="Board view"
           >
             <Columns className="h-3.5 w-3.5" />
@@ -159,8 +159,8 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
               key={m.id}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
                 m.completed
-                  ? "border-[#30B0B0]/20 bg-[#30B0B0]/5"
-                  : "border-[#2a2a2a] hover:border-[#30B0B0]/30"
+                  ? "border-teal/20 bg-teal/5"
+                  : "border-border hover:border-teal/30"
               }`}
             >
               {/* Checkbox */}
@@ -168,11 +168,11 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
                 onClick={() => handleToggle(m.id, m.completed)}
                 className={`h-5 w-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                   m.completed
-                    ? "bg-[#30B0B0] border-[#30B0B0]"
-                    : "border-[#555] hover:border-[#30B0B0]"
+                    ? "bg-teal border-teal"
+                    : "border-[#555] hover:border-teal"
                 }`}
               >
-                {m.completed && <Check className="h-3 w-3 text-white" />}
+                {m.completed && <Check className="h-3 w-3 text-foreground" />}
               </button>
 
               {/* Title + due date */}
@@ -190,14 +190,14 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
                 <button
                   onClick={() => handleMove(idx, "up")}
                   disabled={idx === 0 || isPending}
-                  className="p-1 text-gray-500 hover:text-white disabled:opacity-30 transition-colors"
+                  className="p-1 text-gray-500 hover:text-foreground disabled:opacity-30 transition-colors"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => handleMove(idx, "down")}
                   disabled={idx === milestones.length - 1 || isPending}
-                  className="p-1 text-gray-500 hover:text-white disabled:opacity-30 transition-colors"
+                  className="p-1 text-gray-500 hover:text-foreground disabled:opacity-30 transition-colors"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
@@ -219,9 +219,9 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
           {[
             { label: "To Do", color: "border-gray-600", items: todo, dot: "bg-gray-500" },
             { label: "In Progress", color: "border-amber-500/50", items: inProgress, dot: "bg-amber-400" },
-            { label: "Done", color: "border-[#30B0B0]/50", items: doneMilestones, dot: "bg-[#30B0B0]" },
+            { label: "Done", color: "border-teal/50", items: doneMilestones, dot: "bg-teal" },
           ].map((col) => (
-            <div key={col.label} className={`rounded-lg border ${col.color} bg-[#1a1a1a] p-3`}>
+            <div key={col.label} className={`rounded-lg border ${col.color} bg-card p-3`}>
               <div className="flex items-center gap-2 mb-3">
                 <div className={`h-2 w-2 rounded-full ${col.dot}`} />
                 <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{col.label}</span>
@@ -231,7 +231,7 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
                 {col.items.map((m) => (
                   <div
                     key={m.id}
-                    className="p-3 bg-[#101010] rounded-lg border border-[#2a2a2a] group"
+                    className="p-3 bg-background rounded-lg border border-border group"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <p className={`text-sm leading-snug ${m.completed ? "line-through text-gray-500" : "text-white"}`}>
@@ -241,11 +241,11 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
                         onClick={() => handleToggle(m.id, m.completed)}
                         className={`h-4 w-4 rounded border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
                           m.completed
-                            ? "bg-[#30B0B0] border-[#30B0B0]"
-                            : "border-[#444] hover:border-[#30B0B0]"
+                            ? "bg-teal border-teal"
+                            : "border-[#444] hover:border-teal"
                         }`}
                       >
-                        {m.completed && <Check className="h-2.5 w-2.5 text-white" />}
+                        {m.completed && <Check className="h-2.5 w-2.5 text-foreground" />}
                       </button>
                     </div>
                     {m.due_date && (
@@ -263,7 +263,7 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
       )}
 
       {/* Add Milestone */}
-      <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+      <div className="mt-4 pt-4 border-t border-border">
         {addError && (
           <p className="text-xs text-red-400 mb-2">{addError}</p>
         )}
@@ -273,18 +273,18 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
             onChange={(e) => setAddTitle(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             placeholder="Add a milestone..."
-            className="flex-1 px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+            className="flex-1 px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
           />
           <input
             type="date"
             value={addDueDate}
             onChange={(e) => setAddDueDate(e.target.value)}
-            className="px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+            className="px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
           />
           <button
             onClick={handleAdd}
             disabled={addLoading || !addTitle.trim()}
-            className="flex items-center gap-1.5 px-3 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             Add

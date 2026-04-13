@@ -38,7 +38,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
           type="text"
           required
           defaultValue={investor?.name}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -50,7 +50,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
             name="email"
             type="email"
             defaultValue={investor?.email || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -60,7 +60,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
             name="phone"
             type="tel"
             defaultValue={investor?.phone || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
           name="company"
           type="text"
           defaultValue={investor?.company || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
             min="0"
             required
             defaultValue={investor ? (investor.investment_amount / 100).toFixed(2) : ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -100,7 +100,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
             min="0"
             max="100"
             defaultValue={investor?.equity_percentage ?? ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -110,7 +110,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
             name="agreement_date"
             type="date"
             defaultValue={investor?.agreement_date || ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
           id="status"
           name="status"
           defaultValue={investor?.status || "prospective"}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         >
           {statuses.map((s) => (
             <option key={s.value} value={s.value}>{s.label}</option>
@@ -136,14 +136,14 @@ export default function InvestorForm({ investor, action, submitLabel }: Investor
           name="notes"
           rows={3}
           defaultValue={investor?.notes || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none resize-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Saving..." : submitLabel}
       </button>

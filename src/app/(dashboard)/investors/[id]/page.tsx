@@ -59,7 +59,7 @@ export default async function InvestorDetailPage({
           <div className="flex items-center gap-2">
             <Link
               href={`/investors/${id}/edit`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white border border-[#2a2a2a] hover:border-[#30B0B0] rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground border border-border hover:border-teal rounded-lg transition-colors"
             >
               <Edit className="h-3.5 w-3.5" />
               Edit
@@ -80,27 +80,27 @@ export default async function InvestorDetailPage({
               {investor.email && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Email</dt>
-                  <dd className="text-sm text-white">
-                    <a href={`mailto:${investor.email}`} className="hover:text-[#30B0B0] transition-colors">{investor.email}</a>
+                  <dd className="text-sm text-foreground">
+                    <a href={`mailto:${investor.email}`} className="hover:text-teal transition-colors">{investor.email}</a>
                   </dd>
                 </div>
               )}
               {investor.phone && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Phone</dt>
-                  <dd className="text-sm text-white">{investor.phone}</dd>
+                  <dd className="text-sm text-foreground">{investor.phone}</dd>
                 </div>
               )}
               {investor.company && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Company</dt>
-                  <dd className="text-sm text-white">{investor.company}</dd>
+                  <dd className="text-sm text-foreground">{investor.company}</dd>
                 </div>
               )}
               {investor.agreement_date && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Agreement Date</dt>
-                  <dd className="text-sm text-white">{formatDate(investor.agreement_date)}</dd>
+                  <dd className="text-sm text-foreground">{formatDate(investor.agreement_date)}</dd>
                 </div>
               )}
               <div>
@@ -109,11 +109,11 @@ export default async function InvestorDetailPage({
               </div>
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Since</dt>
-                <dd className="text-sm text-white">{formatDate(investor.created_at)}</dd>
+                <dd className="text-sm text-foreground">{formatDate(investor.created_at)}</dd>
               </div>
             </dl>
             {investor.notes && (
-              <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+              <div className="mt-4 pt-4 border-t border-border">
                 <dt className="text-xs text-gray-500 mb-1">Notes</dt>
                 <dd className="text-sm text-gray-300 whitespace-pre-wrap">{investor.notes}</dd>
               </div>
@@ -122,15 +122,15 @@ export default async function InvestorDetailPage({
 
           {/* Contributions */}
           <div className="glass-card overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="px-6 py-4 border-b border-border">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <DollarSign className="h-3.5 w-3.5 text-[#30B0B0]" />
+                <DollarSign className="h-3.5 w-3.5 text-teal" />
                 Contributions
               </h2>
             </div>
 
             {/* Add Contribution Form */}
-            <div className="px-6 py-4 border-b border-[#2a2a2a] bg-[#141414]">
+            <div className="px-6 py-4 border-b border-border bg-sidebar">
               <ContributionForm action={contributionAction} />
             </div>
 
@@ -139,17 +139,17 @@ export default async function InvestorDetailPage({
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                     <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {contributions.map((c) => (
-                    <tr key={c.id} className="hover:bg-[#1a1a1a] transition-colors">
+                    <tr key={c.id} className="hover:bg-card transition-colors">
                       <td className="px-6 py-3 text-sm text-gray-400">{formatDate(c.date)}</td>
-                      <td className="px-6 py-3 text-sm text-white">{c.description}</td>
+                      <td className="px-6 py-3 text-sm text-foreground">{c.description}</td>
                       <td className="px-6 py-3 text-sm text-green-400 font-medium text-right">{formatCurrency(c.amount)}</td>
                     </tr>
                   ))}
@@ -160,9 +160,9 @@ export default async function InvestorDetailPage({
 
           {/* Documents */}
           <div className="glass-card overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="px-6 py-4 border-b border-border">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <FileText className="h-3.5 w-3.5 text-[#30B0B0]" />
+                <FileText className="h-3.5 w-3.5 text-teal" />
                 Documents
               </h2>
             </div>
@@ -171,17 +171,17 @@ export default async function InvestorDetailPage({
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {documents.map((doc) => (
-                    <tr key={doc.id} className="hover:bg-[#1a1a1a] transition-colors">
-                      <td className="px-6 py-3 text-sm text-white">{doc.name}</td>
+                    <tr key={doc.id} className="hover:bg-card transition-colors">
+                      <td className="px-6 py-3 text-sm text-foreground">{doc.name}</td>
                       <td className="px-6 py-3 text-sm text-gray-400 capitalize">{doc.type.replace(/_/g, " ")}</td>
                       <td className="px-6 py-3 text-sm text-gray-400">{formatDate(doc.created_at)}</td>
                       <td className="px-6 py-3">
@@ -189,7 +189,7 @@ export default async function InvestorDetailPage({
                           href={doc.file_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#30B0B0] hover:underline text-sm flex items-center gap-1"
+                          className="text-teal hover:underline text-sm flex items-center gap-1"
                         >
                           View <ExternalLink className="h-3 w-3" />
                         </a>
@@ -209,7 +209,7 @@ export default async function InvestorDetailPage({
             <dl className="space-y-4">
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Investment Commitment</dt>
-                <dd className="text-lg font-semibold text-white">{formatCurrency(investor.investment_amount)}</dd>
+                <dd className="text-lg font-semibold text-foreground">{formatCurrency(investor.investment_amount)}</dd>
               </div>
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Total Contributed</dt>
@@ -226,12 +226,12 @@ export default async function InvestorDetailPage({
               {investor.equity_percentage && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Equity Stake</dt>
-                  <dd className="text-lg font-semibold text-[#30B0B0]">{investor.equity_percentage}%</dd>
+                  <dd className="text-lg font-semibold text-teal">{investor.equity_percentage}%</dd>
                 </div>
               )}
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Contributions</dt>
-                <dd className="text-lg font-semibold text-white">{contributions.length}</dd>
+                <dd className="text-lg font-semibold text-foreground">{contributions.length}</dd>
               </div>
             </dl>
           </div>

@@ -29,7 +29,7 @@ export default function ConvertToClientButton({ leadId }: Props) {
       <button
         onClick={handleConvert}
         disabled={pending}
-        className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         <UserPlus className="w-4 h-4" />
         {pending ? "Converting..." : "Convert to Client"}

@@ -118,7 +118,7 @@ export default async function ReportsPage() {
         </div>
         <div className="glass-card p-5 text-center">
           <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Net Profit</p>
-          <p className={`text-xl font-bold ${ytdNet >= 0 ? "text-[#30B0B0]" : "text-red-400"}`}>
+          <p className={`text-xl font-bold ${ytdNet >= 0 ? "text-teal" : "text-red-400"}`}>
             {ytdNet < 0 ? "-" : ""}{formatCurrency(Math.abs(ytdNet))}
           </p>
         </div>
@@ -126,39 +126,39 @@ export default async function ReportsPage() {
 
       {/* Monthly P&L Table */}
       <div className="glass-card overflow-hidden mb-8">
-        <div className="px-6 py-4 border-b border-[#2a2a2a]">
+        <div className="px-6 py-4 border-b border-border">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Monthly Breakdown</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
-                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-[#101010]">Category</th>
+              <tr className="border-b border-border">
+                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-background">Category</th>
                 {sortedMonths.map((m) => (
                   <th key={m} className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">{getMonthLabel(m)}</th>
                 ))}
-                <th className="text-right px-5 py-3 text-xs font-medium text-[#30B0B0] uppercase tracking-wider">Total</th>
+                <th className="text-right px-5 py-3 text-xs font-medium text-teal uppercase tracking-wider">Total</th>
               </tr>
             </thead>
             <tbody>
               {/* Income section */}
-              <tr className="border-b border-[#2a2a2a] bg-[#0d1f1f]/30">
+              <tr className="border-b border-border bg-teal-subtle/30">
                 <td colSpan={sortedMonths.length + 2} className="px-5 py-2 text-xs font-bold text-green-400 uppercase tracking-widest">Revenue</td>
               </tr>
               {Object.entries(incomeByCategory).map(([cat, vals]) => {
                 const total = Object.values(vals).reduce((s, v) => s + v, 0);
                 return (
-                  <tr key={`inc-${cat}`} className="border-b border-[#2a2a2a]/50 hover:bg-[#1a1a1a]">
-                    <td className="px-5 py-2.5 text-sm text-gray-300 sticky left-0 bg-[#101010]">{incomeCategoryLabels[cat] || cat}</td>
+                  <tr key={`inc-${cat}`} className="border-b border-border/50 hover:bg-card">
+                    <td className="px-5 py-2.5 text-sm text-gray-300 sticky left-0 bg-background">{incomeCategoryLabels[cat] || cat}</td>
                     {sortedMonths.map((m) => (
                       <td key={m} className="px-4 py-2.5 text-sm text-gray-400 text-right font-mono">{vals[m] ? formatCurrency(vals[m]) : "—"}</td>
                     ))}
-                    <td className="px-5 py-2.5 text-sm text-white text-right font-mono font-medium">{formatCurrency(total)}</td>
+                    <td className="px-5 py-2.5 text-sm text-foreground text-right font-mono font-medium">{formatCurrency(total)}</td>
                   </tr>
                 );
               })}
-              <tr className="border-b border-[#2a2a2a]">
-                <td className="px-5 py-2.5 text-sm font-semibold text-green-400 sticky left-0 bg-[#101010]">Total Income</td>
+              <tr className="border-b border-border">
+                <td className="px-5 py-2.5 text-sm font-semibold text-green-400 sticky left-0 bg-background">Total Income</td>
                 {sortedMonths.map((m) => (
                   <td key={m} className="px-4 py-2.5 text-sm text-green-400 text-right font-mono font-semibold">{formatCurrency(monthlyIncome[m] || 0)}</td>
                 ))}
@@ -166,23 +166,23 @@ export default async function ReportsPage() {
               </tr>
 
               {/* Expense section */}
-              <tr className="border-b border-[#2a2a2a] bg-[#1f0d0d]/30">
+              <tr className="border-b border-border bg-danger-subtle/30">
                 <td colSpan={sortedMonths.length + 2} className="px-5 py-2 text-xs font-bold text-red-400 uppercase tracking-widest">Expenses</td>
               </tr>
               {Object.entries(expenseByCategory).map(([cat, vals]) => {
                 const total = Object.values(vals).reduce((s, v) => s + v, 0);
                 return (
-                  <tr key={`exp-${cat}`} className="border-b border-[#2a2a2a]/50 hover:bg-[#1a1a1a]">
-                    <td className="px-5 py-2.5 text-sm text-gray-300 sticky left-0 bg-[#101010]">{expenseCategoryLabels[cat] || cat}</td>
+                  <tr key={`exp-${cat}`} className="border-b border-border/50 hover:bg-card">
+                    <td className="px-5 py-2.5 text-sm text-gray-300 sticky left-0 bg-background">{expenseCategoryLabels[cat] || cat}</td>
                     {sortedMonths.map((m) => (
                       <td key={m} className="px-4 py-2.5 text-sm text-gray-400 text-right font-mono">{vals[m] ? formatCurrency(vals[m]) : "—"}</td>
                     ))}
-                    <td className="px-5 py-2.5 text-sm text-white text-right font-mono font-medium">{formatCurrency(total)}</td>
+                    <td className="px-5 py-2.5 text-sm text-foreground text-right font-mono font-medium">{formatCurrency(total)}</td>
                   </tr>
                 );
               })}
-              <tr className="border-b border-[#2a2a2a]">
-                <td className="px-5 py-2.5 text-sm font-semibold text-red-400 sticky left-0 bg-[#101010]">Total Expenses</td>
+              <tr className="border-b border-border">
+                <td className="px-5 py-2.5 text-sm font-semibold text-red-400 sticky left-0 bg-background">Total Expenses</td>
                 {sortedMonths.map((m) => (
                   <td key={m} className="px-4 py-2.5 text-sm text-red-400 text-right font-mono font-semibold">{formatCurrency(monthlyExpenses[m] || 0)}</td>
                 ))}
@@ -190,17 +190,17 @@ export default async function ReportsPage() {
               </tr>
 
               {/* Net row */}
-              <tr className="border-t-2 border-[#30B0B0]/30">
-                <td className="px-5 py-3 text-sm font-bold text-white sticky left-0 bg-[#101010]">Net Profit / Loss</td>
+              <tr className="border-t-2 border-teal/30">
+                <td className="px-5 py-3 text-sm font-bold text-foreground sticky left-0 bg-background">Net Profit / Loss</td>
                 {sortedMonths.map((m) => {
                   const net = (monthlyIncome[m] || 0) - (monthlyExpenses[m] || 0);
                   return (
-                    <td key={m} className={`px-4 py-3 text-sm text-right font-mono font-bold ${net >= 0 ? "text-[#30B0B0]" : "text-red-400"}`}>
+                    <td key={m} className={`px-4 py-3 text-sm text-right font-mono font-bold ${net >= 0 ? "text-teal" : "text-red-400"}`}>
                       {net < 0 ? "-" : ""}{formatCurrency(Math.abs(net))}
                     </td>
                   );
                 })}
-                <td className={`px-5 py-3 text-sm text-right font-mono font-bold ${ytdNet >= 0 ? "text-[#30B0B0]" : "text-red-400"}`}>
+                <td className={`px-5 py-3 text-sm text-right font-mono font-bold ${ytdNet >= 0 ? "text-teal" : "text-red-400"}`}>
                   {ytdNet < 0 ? "-" : ""}{formatCurrency(Math.abs(ytdNet))}
                 </td>
               </tr>

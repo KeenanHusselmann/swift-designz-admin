@@ -36,7 +36,7 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
           name="current_password"
           type="password"
           required
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal"
         />
       </div>
 
@@ -50,7 +50,7 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
           type="password"
           required
           minLength={10}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal"
         />
         <p className="text-xs text-gray-600 mt-1">Min 10 chars, 1 uppercase, 1 number</p>
       </div>
@@ -65,7 +65,7 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
           type="password"
           required
           minLength={8}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal"
         />
       </div>
 
@@ -73,7 +73,7 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#303030] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-4 py-2 bg-border hover:bg-dark-gray disabled:opacity-50 text-foreground text-sm font-medium rounded-lg transition-colors"
         >
           {pending ? "Updating..." : "Change Password"}
         </button>

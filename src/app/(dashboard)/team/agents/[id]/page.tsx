@@ -29,7 +29,7 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
           <div className="flex gap-2">
             <Link
               href={`/team/agents/${agent.id}/edit`}
-              className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#303030] text-white text-sm font-medium rounded-lg transition-colors"
+              className="px-4 py-2 bg-border hover:bg-dark-gray text-foreground text-sm font-medium rounded-lg transition-colors"
             >
               Edit
             </Link>
@@ -46,15 +46,15 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
               <div>
                 <dt className="text-xs text-gray-500">Purpose</dt>
-                <dd className="text-sm text-white mt-1 whitespace-pre-wrap" style={{ overflowWrap: "break-word" }}>{agent.purpose}</dd>
+                <dd className="text-sm text-foreground mt-1 whitespace-pre-wrap" style={{ overflowWrap: "break-word" }}>{agent.purpose}</dd>
               </div>
               <div>
                 <dt className="text-xs text-gray-500">Model</dt>
-                <dd className="text-sm text-white mt-1">{agent.model}</dd>
+                <dd className="text-sm text-foreground mt-1">{agent.model}</dd>
               </div>
               <div>
                 <dt className="text-xs text-gray-500">Provider</dt>
-                <dd className="text-sm text-white mt-1">{agent.provider}</dd>
+                <dd className="text-sm text-foreground mt-1">{agent.provider}</dd>
               </div>
               <div>
                 <dt className="text-xs text-gray-500">Status</dt>
@@ -75,19 +75,19 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
         <div className="space-y-6">
           <div className="glass-card p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
-                <Bot className="h-5 w-5 text-[#30B0B0]" />
+              <div className="p-2.5 rounded-lg bg-teal/10">
+                <Bot className="h-5 w-5 text-teal" />
               </div>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Cost</h2>
             </div>
             <div className="space-y-4">
               <div>
                 <p className="text-xs text-gray-500">Monthly Cost</p>
-                <p className="text-2xl font-bold text-white">{formatCurrency(agent.monthly_cost)}</p>
+                <p className="text-2xl font-bold text-foreground">{formatCurrency(agent.monthly_cost)}</p>
               </div>
-              <div className="border-t border-[#2a2a2a] pt-4">
+              <div className="border-t border-border pt-4">
                 <p className="text-xs text-gray-500">Annual Cost</p>
-                <p className="text-lg font-semibold text-[#30B0B0]">{formatCurrency(agent.monthly_cost * 12)}</p>
+                <p className="text-lg font-semibold text-teal">{formatCurrency(agent.monthly_cost * 12)}</p>
               </div>
             </div>
           </div>

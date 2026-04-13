@@ -31,27 +31,27 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
           <div>
             <label htmlFor="company_name" className="block text-xs text-gray-500 mb-1">Company Name</label>
             <input id="company_name" name="company_name" type="text" defaultValue={settings.company_name}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="tagline" className="block text-xs text-gray-500 mb-1">Tagline</label>
             <input id="tagline" name="tagline" type="text" defaultValue={settings.tagline || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="email" className="block text-xs text-gray-500 mb-1">Email</label>
             <input id="email" name="email" type="email" defaultValue={settings.email || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="phone" className="block text-xs text-gray-500 mb-1">Phone</label>
             <input id="phone" name="phone" type="text" defaultValue={settings.phone || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="website" className="block text-xs text-gray-500 mb-1">Website</label>
             <input id="website" name="website" type="url" defaultValue={settings.website || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
         </div>
       </div>
@@ -63,17 +63,17 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
           <div className="sm:col-span-2">
             <label htmlFor="address" className="block text-xs text-gray-500 mb-1">Street Address</label>
             <input id="address" name="address" type="text" defaultValue={settings.address || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="city" className="block text-xs text-gray-500 mb-1">City</label>
             <input id="city" name="city" type="text" defaultValue={settings.city || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="country" className="block text-xs text-gray-500 mb-1">Country</label>
             <input id="country" name="country" type="text" defaultValue={settings.country || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
         </div>
       </div>
@@ -85,12 +85,12 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
           <div>
             <label htmlFor="vat_number" className="block text-xs text-gray-500 mb-1">VAT Number</label>
             <input id="vat_number" name="vat_number" type="text" defaultValue={settings.vat_number || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="registration_number" className="block text-xs text-gray-500 mb-1">Registration Number</label>
             <input id="registration_number" name="registration_number" type="text" defaultValue={settings.registration_number || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
         </div>
       </div>
@@ -102,17 +102,17 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
           <div>
             <label htmlFor="bank_name" className="block text-xs text-gray-500 mb-1">Bank Name</label>
             <input id="bank_name" name="bank_name" type="text" defaultValue={settings.bank_name || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="bank_account_number" className="block text-xs text-gray-500 mb-1">Account Number</label>
             <input id="bank_account_number" name="bank_account_number" type="text" defaultValue={settings.bank_account_number || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
             <label htmlFor="bank_branch_code" className="block text-xs text-gray-500 mb-1">Branch Code</label>
             <input id="bank_branch_code" name="bank_branch_code" type="text" defaultValue={settings.bank_branch_code || ""}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]" />
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-4 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
         >
           {pending ? "Saving..." : "Save Business Settings"}
         </button>

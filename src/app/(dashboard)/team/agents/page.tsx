@@ -25,7 +25,7 @@ export default async function AgentsPage() {
         actions={
           <Link
             href="/team/agents/new"
-            className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors"
           >
             Add Agent
           </Link>
@@ -35,30 +35,30 @@ export default async function AgentsPage() {
       {/* Summary card */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="glass-card p-5 flex items-center gap-4">
-          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
-            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          <div className="p-2.5 rounded-lg bg-teal/10">
+            <Bot className="h-5 w-5 text-teal" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Active Agents</p>
-            <p className="text-lg font-semibold text-white">{activeAgents.length}</p>
+            <p className="text-lg font-semibold text-foreground">{activeAgents.length}</p>
           </div>
         </div>
         <div className="glass-card p-5 flex items-center gap-4">
-          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
-            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          <div className="p-2.5 rounded-lg bg-teal/10">
+            <Bot className="h-5 w-5 text-teal" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Total Monthly AI Spend</p>
-            <p className="text-lg font-semibold text-white">{formatCurrency(totalMonthlySpend)}</p>
+            <p className="text-lg font-semibold text-foreground">{formatCurrency(totalMonthlySpend)}</p>
           </div>
         </div>
         <div className="glass-card p-5 flex items-center gap-4">
-          <div className="p-2.5 rounded-lg bg-[#30B0B0]/10">
-            <Bot className="h-5 w-5 text-[#30B0B0]" />
+          <div className="p-2.5 rounded-lg bg-teal/10">
+            <Bot className="h-5 w-5 text-teal" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Annual AI Spend</p>
-            <p className="text-lg font-semibold text-[#30B0B0]">{formatCurrency(totalMonthlySpend * 12)}</p>
+            <p className="text-lg font-semibold text-teal">{formatCurrency(totalMonthlySpend * 12)}</p>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default async function AgentsPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
@@ -76,7 +76,7 @@ export default async function AgentsPage() {
                 <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {agents.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
@@ -85,16 +85,16 @@ export default async function AgentsPage() {
                 </tr>
               ) : (
                 agents.map((agent) => (
-                  <tr key={agent.id} className="hover:bg-[#1a1a1a] transition-colors">
+                  <tr key={agent.id} className="hover:bg-card transition-colors">
                     <td className="px-5 py-3">
-                      <Link href={`/team/agents/${agent.id}`} className="text-sm font-medium text-white hover:text-[#30B0B0]">
+                      <Link href={`/team/agents/${agent.id}`} className="text-sm font-medium text-foreground hover:text-teal">
                         {agent.name}
                       </Link>
                     </td>
                     <td className="px-5 py-3 text-sm text-gray-400 max-w-xs truncate">{agent.purpose}</td>
                     <td className="px-5 py-3 text-sm text-gray-400">{agent.model}</td>
                     <td className="px-5 py-3 text-sm text-gray-400">{agent.provider}</td>
-                    <td className="px-5 py-3 text-sm text-white font-medium">{formatCurrency(agent.monthly_cost)}</td>
+                    <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(agent.monthly_cost)}</td>
                     <td className="px-5 py-3"><StatusBadge status={agent.status} /></td>
                   </tr>
                 ))

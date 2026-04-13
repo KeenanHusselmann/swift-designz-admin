@@ -53,7 +53,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
           type="text"
           required
           defaultValue={expense?.description}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -68,7 +68,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
             min="0.01"
             required
             defaultValue={expense ? (expense.amount / 100).toFixed(2) : ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -79,7 +79,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
             type="date"
             required
             defaultValue={expense?.date || new Date().toISOString().split("T")[0]}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
           name="category"
           required
           defaultValue={expense?.category || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         >
           <option value="">Select category</option>
           {categories.map((c) => (
@@ -108,7 +108,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
             name="recurring"
             checked={recurring}
             onChange={(e) => setRecurring(e.target.checked)}
-            className="h-4 w-4 rounded border-[#2a2a2a] bg-[#1a1a1a] text-[#30B0B0] focus:ring-[#30B0B0]"
+            className="h-4 w-4 rounded border-border bg-card text-teal focus:ring-teal"
           />
           <span className="text-sm text-gray-300">Recurring expense</span>
         </label>
@@ -120,7 +120,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
               id="recurring_interval"
               name="recurring_interval"
               defaultValue={expense?.recurring_interval || "monthly"}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
             >
               {intervals.map((i) => (
                 <option key={i.value} value={i.value}>{i.label}</option>
@@ -140,10 +140,10 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
           name="receipt"
           type="file"
           accept=".pdf,.png,.jpg,.jpeg,.webp"
-          className="w-full text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[#2a2a2a] file:bg-[#1a1a1a] file:text-sm file:text-white file:cursor-pointer hover:file:border-[#30B0B0]"
+          className="w-full text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-border file:bg-card file:text-sm file:text-foreground file:cursor-pointer hover:file:border-teal"
         />
         {expense?.receipt_url && (
-          <a href={expense.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#30B0B0] hover:underline mt-1 inline-block">
+          <a href={expense.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs text-teal hover:underline mt-1 inline-block">
             View current receipt
           </a>
         )}
@@ -156,14 +156,14 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
           name="notes"
           rows={3}
           defaultValue={expense?.notes || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none resize-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Saving..." : submitLabel}
       </button>

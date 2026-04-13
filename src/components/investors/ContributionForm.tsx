@@ -30,7 +30,7 @@ export default function ContributionForm({ action }: ContributionFormProps) {
             type="text"
             required
             placeholder="Monthly contribution"
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -42,7 +42,7 @@ export default function ContributionForm({ action }: ContributionFormProps) {
             step="0.01"
             min="0.01"
             required
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -53,7 +53,7 @@ export default function ContributionForm({ action }: ContributionFormProps) {
             type="date"
             required
             defaultValue={new Date().toISOString().split("T")[0]}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -64,14 +64,14 @@ export default function ContributionForm({ action }: ContributionFormProps) {
           id="notes"
           name="notes"
           type="text"
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-4 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Recording..." : "Record Contribution"}
       </button>

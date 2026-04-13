@@ -34,7 +34,7 @@ export default function ProfileForm({ profile, action }: ProfileFormProps) {
           type="text"
           defaultValue={profile.full_name}
           required
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm text-white focus:outline-none focus:border-[#30B0B0]"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal"
         />
       </div>
 
@@ -45,14 +45,14 @@ export default function ProfileForm({ profile, action }: ProfileFormProps) {
 
       <div>
         <label className="block text-xs text-gray-500 mb-1">Role</label>
-        <p className="px-3 py-2 text-sm text-[#30B0B0] capitalize">{profile.role}</p>
+        <p className="px-3 py-2 text-sm text-teal capitalize">{profile.role}</p>
       </div>
 
       <div className="pt-2">
         <button
           type="submit"
           disabled={pending}
-          className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-4 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
         >
           {pending ? "Saving..." : "Update Profile"}
         </button>

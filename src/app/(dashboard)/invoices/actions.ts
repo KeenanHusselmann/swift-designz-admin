@@ -20,6 +20,10 @@ export async function createInvoiceAction(formData: FormData) {
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const status = (formData.get("status") as InvoiceStatus) || "draft";
+  const docType = (formData.get("doc_type") as string) || "invoice";
+  const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
+  const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
+  const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
 
   // Parse line items from JSON hidden input
   const itemsJson = formData.get("items") as string;
@@ -41,14 +45,16 @@ export async function createInvoiceAction(formData: FormData) {
     total += Math.round(item.quantity * item.unit_rate);
   }
 
-  // Generate invoice number
+  // Generate number based on doc type
+  const prefix = docType === "quotation" ? "QUO" : "INV";
   const { count } = await supabase
     .from("invoices")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true })
+    .eq("doc_type", docType);
 
   const sequence = (count ?? 0) + 1;
   const year = new Date().getFullYear();
-  const invoiceNumber = `INV-${year}-${String(sequence).padStart(3, "0")}`;
+  const invoiceNumber = `${prefix}-${year}-${String(sequence).padStart(3, "0")}`;
 
   // Insert invoice
   const { data: invoice, error: invError } = await supabase
@@ -57,10 +63,14 @@ export async function createInvoiceAction(formData: FormData) {
       invoice_number: invoiceNumber,
       client_id: clientId,
       project_id: projectId,
+      doc_type: docType,
       amount: total,
       status,
       due_date: dueDate,
       notes,
+      payment_plan_enabled: paymentPlanEnabled,
+      installment_count: installmentCount,
+      installment_interval: installmentInterval,
     })
     .select("id")
     .single();
@@ -99,6 +109,10 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
 
   const notes = (formData.get("notes") as string)?.trim() || null;
   const status = (formData.get("status") as InvoiceStatus) || "draft";
+  const docType = (formData.get("doc_type") as string) || "invoice";
+  const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
+  const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
+  const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
 
   // Parse line items
   const itemsJson = formData.get("items") as string;
@@ -124,10 +138,14 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
     .update({
       client_id: clientId,
       project_id: projectId,
+      doc_type: docType,
       amount: total,
       status,
       due_date: dueDate,
       notes,
+      payment_plan_enabled: paymentPlanEnabled,
+      installment_count: installmentCount,
+      installment_interval: installmentInterval,
     })
     .eq("id", id);
 

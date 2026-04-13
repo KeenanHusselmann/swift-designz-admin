@@ -2,7 +2,19 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import InvoicePDF from "@/components/invoices/InvoicePDF";
-import type { InvoiceItem } from "@/types/database";
+import type { InvoiceItem, Payment } from "@/types/database";
+import fs from "fs";
+import path from "path";
+
+function loadLogoBase64(): string | null {
+  try {
+    const logoPath = path.join(process.cwd(), "public", "favicon.png");
+    const buf = fs.readFileSync(logoPath);
+    return `data:image/png;base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(
   _request: Request,
@@ -11,10 +23,10 @@ export async function GET(
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: invoice }, { data: items }] = await Promise.all([
+  const [{ data: invoice }, { data: items }, { data: payments }] = await Promise.all([
     supabase
       .from("invoices")
-      .select("*, clients(name, email, phone, company)")
+      .select("*, clients(name, email, phone, company), projects(name)")
       .eq("id", id)
       .single(),
     supabase
@@ -22,6 +34,11 @@ export async function GET(
       .select("*")
       .eq("invoice_id", id)
       .order("sort_order"),
+    supabase
+      .from("payments")
+      .select("*")
+      .eq("invoice_id", id)
+      .order("paid_at", { ascending: false }),
   ]);
 
   if (!invoice) {
@@ -29,10 +46,17 @@ export async function GET(
   }
 
   const client = invoice.clients as { name: string; email: string; phone: string | null; company: string | null } | null;
+  const project = invoice.projects as { name: string } | null;
   const typedItems = (items || []) as InvoiceItem[];
+  const typedPayments = (payments || []) as Payment[];
+  const logoSrc = loadLogoBase64();
+
+  const docType = (invoice.doc_type as "invoice" | "quotation") || "invoice";
+  const isQuotation = docType === "quotation";
 
   const buffer = await renderToBuffer(
     InvoicePDF({
+      docType,
       invoiceNumber: invoice.invoice_number,
       status: invoice.status,
       dueDate: invoice.due_date,
@@ -41,6 +65,7 @@ export async function GET(
       clientEmail: client?.email || "",
       clientCompany: client?.company,
       clientPhone: client?.phone,
+      projectName: project?.name || null,
       items: typedItems.map((i) => ({
         description: i.description,
         quantity: i.quantity,
@@ -50,13 +75,27 @@ export async function GET(
       total: invoice.amount,
       paidAmount: invoice.paid_amount,
       notes: invoice.notes,
+      paymentPlanEnabled: invoice.payment_plan_enabled ?? false,
+      installmentCount: invoice.installment_count ?? null,
+      installmentInterval: invoice.installment_interval ?? null,
+      payments: typedPayments.map((p) => ({
+        amount: p.amount,
+        method: p.method,
+        reference: p.reference,
+        paid_at: p.paid_at,
+      })),
+      logoSrc,
     }),
   );
+
+  const filename = isQuotation
+    ? invoice.invoice_number.replace("QUO", "Quotation")
+    : invoice.invoice_number;
 
   return new Response(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${invoice.invoice_number}.pdf"`,
+      "Content-Disposition": `attachment; filename="${filename}.pdf"`,
       "Cache-Control": "no-store, no-cache, must-revalidate",
       "Pragma": "no-cache",
     },

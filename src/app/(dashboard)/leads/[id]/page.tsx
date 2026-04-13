@@ -69,7 +69,7 @@ export default async function LeadDetailPage({ params }: Props) {
             )}
             <Link
               href={`/leads/${id}/edit`}
-              className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#303030] text-white text-sm font-medium rounded-lg border border-[#2a2a2a] transition-colors"
+              className="px-4 py-2 bg-border hover:bg-dark-gray text-foreground text-sm font-medium rounded-lg border border-border transition-colors"
             >
               Edit
             </Link>
@@ -87,7 +87,7 @@ export default async function LeadDetailPage({ params }: Props) {
               {linkedClient && (
                 <Link
                   href={`/clients/${linkedClient.id}`}
-                  className="text-xs text-[#30B0B0] hover:underline"
+                  className="text-xs text-teal hover:underline"
                 >
                   Converted to client: {linkedClient.name}
                 </Link>

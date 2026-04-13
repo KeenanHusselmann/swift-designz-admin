@@ -21,7 +21,7 @@ export default async function AppShell({ children }: AppShellProps) {
   const [profile, counts] = await Promise.all([getProfile(), getNavCounts()]);
 
   return (
-    <div className="min-h-screen bg-[#101010]">
+    <div className="min-h-screen bg-background">
       <Sidebar profile={profile} counts={counts} />
       <main className="lg:pl-64 min-h-screen">
         <div className="p-6 lg:p-8 pt-16 lg:pt-8">{children}</div>

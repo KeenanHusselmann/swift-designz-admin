@@ -37,7 +37,7 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
     }
   }
 
-  const inputCls = "w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0]";
+  const inputCls = "w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-teal";
   const labelCls = "block text-xs text-gray-400 mb-1";
 
   const today = new Date().toISOString().split("T")[0];
@@ -116,7 +116,7 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
           name="proof"
           type="file"
           accept=".pdf,.png,.jpg,.jpeg,.webp"
-          className="w-full text-xs text-gray-400 file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-[#2a2a2a] file:bg-[#1a1a1a] file:text-sm file:text-gray-300 file:cursor-pointer hover:file:border-[#30B0B0] transition-colors"
+          className="w-full text-xs text-gray-400 file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-border file:bg-card file:text-sm file:text-gray-300 file:cursor-pointer hover:file:border-teal transition-colors"
         />
       </div>
 
@@ -128,7 +128,7 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
       >
         {loading ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Recording…</> : "Record Payment"}
       </button>

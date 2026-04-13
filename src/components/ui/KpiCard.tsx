@@ -27,7 +27,7 @@ export default function KpiCard({
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
             {title}
           </p>
-          <p className="text-2xl font-bold text-white mt-1">{value}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
           {subtitle && (
             <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
           )}
@@ -44,8 +44,8 @@ export default function KpiCard({
             </p>
           )}
         </div>
-        <div className="h-10 w-10 rounded-lg bg-[#30B0B0]/10 flex items-center justify-center">
-          <Icon className="h-5 w-5 text-[#30B0B0]" />
+        <div className="h-10 w-10 rounded-lg bg-teal/10 flex items-center justify-center">
+          <Icon className="h-5 w-5 text-teal" />
         </div>
       </div>
     </div>

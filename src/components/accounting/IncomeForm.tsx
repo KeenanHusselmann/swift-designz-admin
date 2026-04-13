@@ -42,7 +42,7 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
           type="text"
           required
           defaultValue={entry?.description}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -57,7 +57,7 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
             min="0.01"
             required
             defaultValue={entry ? (entry.amount / 100).toFixed(2) : ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -68,7 +68,7 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
             type="date"
             required
             defaultValue={entry?.date || new Date().toISOString().split("T")[0]}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
           name="category"
           required
           defaultValue={entry?.category || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         >
           <option value="">Select category</option>
           {categories.map((c) => (
@@ -96,14 +96,14 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
           name="notes"
           rows={3}
           defaultValue={entry?.notes || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none resize-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Saving..." : submitLabel}
       </button>

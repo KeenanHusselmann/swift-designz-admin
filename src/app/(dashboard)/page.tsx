@@ -103,13 +103,13 @@ export default async function DashboardPage() {
         {/* Recent Leads */}
         <div className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Users className="h-4 w-4 text-[#30B0B0]" />
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Users className="h-4 w-4 text-teal" />
               Recent Leads
             </h2>
             <Link
               href="/leads"
-              className="text-xs text-[#30B0B0] hover:underline"
+              className="text-xs text-teal hover:underline"
             >
               View all
             </Link>
@@ -125,10 +125,10 @@ export default async function DashboardPage() {
                 <Link
                   key={lead.id}
                   href={`/leads/${lead.id}`}
-                  className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-[#1a1a1a] transition-colors"
+                  className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card transition-colors"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-foreground">
                       {lead.name}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -145,13 +145,13 @@ export default async function DashboardPage() {
         {/* Recent Payments */}
         <div className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[#30B0B0]" />
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4 text-teal" />
               Recent Payments
             </h2>
             <Link
               href="/invoices"
-              className="text-xs text-[#30B0B0] hover:underline"
+              className="text-xs text-teal hover:underline"
             >
               View all
             </Link>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
                   className="flex items-center justify-between py-2 px-3"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-foreground">
                       {formatCurrency(payment.amount)}
                     </p>
                     <p className="text-xs text-gray-500">

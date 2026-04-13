@@ -18,9 +18,12 @@ import {
   Menu,
   X,
   ChevronRight,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 import type { Profile } from "@/types/database";
 
 interface SidebarProps {
@@ -56,6 +59,7 @@ const NAV_SECTIONS = [
 export default function Sidebar({ profile, counts = {} }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, toggle: toggleTheme } = useTheme();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -65,7 +69,7 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
   const navContent = (
     <>
       {/* Brand */}
-      <div className="px-5 py-5 border-b border-[#2a2a2a] flex items-center gap-3">
+      <div className="px-5 py-5 border-b border-border flex items-center gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/favicon.png"
@@ -75,10 +79,10 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
           className="shrink-0"
         />
         <div>
-          <h1 className="text-lg font-bold text-[#30B0B0] tracking-tight leading-tight">
+          <h1 className="text-lg font-bold text-teal tracking-tight leading-tight">
             Swift Designz
           </h1>
-          <p className="text-xs text-[#509090]">Admin Portal</p>
+          <p className="text-xs text-teal-muted">Admin Portal</p>
         </div>
       </div>
 
@@ -87,7 +91,7 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
         {NAV_SECTIONS.map((section, sIdx) => (
           <div key={sIdx}>
             {sIdx > 0 && (
-              <hr className="my-3 border-[#2a2a2a]" />
+              <hr className="my-3 border-border" />
             )}
             <ul className="space-y-1">
               {section.items.map((item) => {
@@ -106,14 +110,14 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
                       className={cn(
                         "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         active
-                          ? "bg-[#30B0B0]/10 text-[#30B0B0] border border-[#30B0B0]/20"
-                          : "text-gray-400 hover:text-white hover:bg-[#1a1a1a]"
+                          ? "bg-teal/10 text-teal border border-teal/20"
+                          : "text-gray-400 hover:text-foreground hover:bg-card"
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {item.label}
                       {count !== null && count > 0 && (
-                        <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-[#2a2a2a] text-gray-400">
+                        <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-border text-gray-400">
                           {count}
                         </span>
                       )}
@@ -127,27 +131,36 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
       </nav>
 
       {/* User section */}
-      <div className="px-4 py-4 border-t border-[#2a2a2a]">
+      <div className="px-4 py-4 border-t border-border">
         <div className="flex items-center gap-3 mb-3">
-          <div className="h-8 w-8 rounded-full bg-[#30B0B0]/20 flex items-center justify-center text-[#30B0B0] text-sm font-bold">
+          <div className="h-8 w-8 rounded-full bg-teal/20 flex items-center justify-center text-teal text-sm font-bold">
             {profile?.full_name?.charAt(0)?.toUpperCase() || "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">
+            <p className="text-sm font-medium text-foreground truncate">
               {profile?.full_name || "User"}
             </p>
             <p className="text-xs text-gray-500">{profile?.role || "admin"}</p>
           </div>
         </div>
-        <form action={signOut}>
+        <div className="flex items-center gap-2 mb-2">
+          <form action={signOut} className="flex-1">
+            <button
+              type="submit"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors w-full px-1"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </button>
+          </form>
           <button
-            type="submit"
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors w-full px-1"
+            onClick={toggleTheme}
+            className="p-1.5 rounded-lg text-gray-500 hover:text-teal hover:bg-card transition-colors"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
-            <LogOut className="h-4 w-4" />
-            Sign out
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-        </form>
+        </div>
       </div>
     </>
   );
@@ -157,7 +170,7 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-gray-400 hover:text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card border border-border rounded-lg text-gray-400 hover:text-foreground"
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -173,13 +186,13 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
       {/* Sidebar — mobile (slide-over) */}
       <aside
         className={cn(
-          "lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-[#141414] border-r border-[#2a2a2a] flex flex-col transition-transform duration-200",
+          "lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-border flex flex-col transition-transform duration-200",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-white"
+          className="absolute top-4 right-4 text-gray-500 hover:text-foreground"
         >
           <X className="h-5 w-5" />
         </button>
@@ -187,7 +200,7 @@ export default function Sidebar({ profile, counts = {} }: SidebarProps) {
       </aside>
 
       {/* Sidebar — desktop (fixed) */}
-      <aside className="hidden lg:flex fixed inset-y-0 left-0 z-30 w-64 bg-[#141414] border-r border-[#2a2a2a] flex-col">
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 z-30 w-64 bg-sidebar border-r border-border flex-col">
         {navContent}
       </aside>
     </>

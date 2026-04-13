@@ -39,7 +39,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
           required
           placeholder="e.g. Swift Marketing Agent"
           defaultValue={agent?.name}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -52,7 +52,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
           required
           placeholder="e.g. Social media content generation"
           defaultValue={agent?.purpose}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
         />
       </div>
 
@@ -66,7 +66,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
             required
             placeholder="e.g. GPT-4o, Claude Sonnet"
             defaultValue={agent?.model}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -78,7 +78,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
             required
             placeholder="e.g. OpenAI, Anthropic"
             defaultValue={agent?.provider}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
             step="0.01"
             min="0"
             defaultValue={agent ? (agent.monthly_cost / 100).toFixed(2) : ""}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           />
         </div>
         <div>
@@ -102,7 +102,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
             id="status"
             name="status"
             defaultValue={agent?.status || "active"}
-            className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none"
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
           >
             {statuses.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
@@ -119,14 +119,14 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
           rows={4}
           placeholder="API keys, system prompts, integration details..."
           defaultValue={agent?.config_notes || ""}
-          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:border-[#30B0B0] focus:outline-none resize-none"
+          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none resize-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+        className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
       >
         {pending ? "Saving..." : submitLabel}
       </button>

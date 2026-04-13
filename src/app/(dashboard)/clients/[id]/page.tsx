@@ -73,20 +73,20 @@ export default async function ClientDetailPage({
           <div className="flex items-center gap-2 flex-wrap">
             {/* Generate Document dropdown */}
             <div className="relative group">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#30B0B0] border border-[#30B0B0]/40 hover:border-[#30B0B0] rounded-lg transition-colors">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-teal border border-teal/40 hover:border-teal rounded-lg transition-colors">
                 <FileText className="h-3.5 w-3.5" />
                 Generate Doc
               </button>
-              <div className="absolute right-0 top-full mt-1 w-64 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg shadow-xl z-20 hidden group-hover:block">
+              <div className="absolute right-0 top-full mt-1 w-64 bg-card border border-border rounded-lg shadow-xl z-20 hidden group-hover:block">
                 {DOC_TEMPLATES.map((t) => (
                   <div
                     key={t.key}
-                    className="flex items-center justify-between px-3 py-2 hover:bg-[#2a2a2a] first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    className="flex items-center justify-between px-3 py-2 hover:bg-border first:rounded-t-lg last:rounded-b-lg transition-colors"
                   >
                     <Link
                       href={`/api/docs/${id}/${t.key}`}
                       target="_blank"
-                      className="flex-1 text-sm text-gray-300 hover:text-white transition-colors"
+                      className="flex-1 text-sm text-gray-300 hover:text-foreground transition-colors"
                     >
                       {t.label}
                     </Link>
@@ -101,7 +101,7 @@ export default async function ClientDetailPage({
             </div>
             <Link
               href={`/clients/${id}/edit`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white border border-[#2a2a2a] hover:border-[#30B0B0] rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground border border-border hover:border-teal rounded-lg transition-colors"
             >
               <Edit className="h-3.5 w-3.5" />
               Edit
@@ -121,35 +121,35 @@ export default async function ClientDetailPage({
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Email</dt>
-                <dd className="text-sm text-white">
-                  <a href={`mailto:${client.email}`} className="hover:text-[#30B0B0] transition-colors">{client.email}</a>
+                <dd className="text-sm text-foreground">
+                  <a href={`mailto:${client.email}`} className="hover:text-teal transition-colors">{client.email}</a>
                 </dd>
               </div>
               {client.phone && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Phone</dt>
-                  <dd className="text-sm text-white">{client.phone}</dd>
+                  <dd className="text-sm text-foreground">{client.phone}</dd>
                 </div>
               )}
               {client.company && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Company</dt>
-                  <dd className="text-sm text-white">{client.company}</dd>
+                  <dd className="text-sm text-foreground">{client.company}</dd>
                 </div>
               )}
               {client.location && (
                 <div>
                   <dt className="text-xs text-gray-500 mb-1">Location</dt>
-                  <dd className="text-sm text-white">{client.location}</dd>
+                  <dd className="text-sm text-foreground">{client.location}</dd>
                 </div>
               )}
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Client Since</dt>
-                <dd className="text-sm text-white">{formatDate(client.created_at)}</dd>
+                <dd className="text-sm text-foreground">{formatDate(client.created_at)}</dd>
               </div>
             </dl>
             {client.notes && (
-              <div className="mt-4 pt-4 border-t border-[#2a2a2a]">
+              <div className="mt-4 pt-4 border-t border-border">
                 <dt className="text-xs text-gray-500 mb-1">Notes</dt>
                 <dd className="text-sm text-gray-300 whitespace-pre-wrap">{client.notes}</dd>
               </div>
@@ -158,13 +158,13 @@ export default async function ClientDetailPage({
 
           {/* Projects */}
           <div className="glass-card overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <FolderOpen className="h-3.5 w-3.5 text-[#30B0B0]" />
+                <FolderOpen className="h-3.5 w-3.5 text-teal" />
                 Projects
               </h2>
               <Link href={`/projects/new?client_id=${id}`}
-                className="text-xs text-[#30B0B0] hover:underline">
+                className="text-xs text-teal hover:underline">
                 + New Project
               </Link>
             </div>
@@ -173,18 +173,18 @@ export default async function ClientDetailPage({
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Quoted</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {projects.map((p) => (
-                    <tr key={p.id} className="hover:bg-[#1a1a1a] transition-colors">
+                    <tr key={p.id} className="hover:bg-card transition-colors">
                       <td className="px-6 py-3">
-                        <Link href={`/projects/${p.id}`} className="text-sm font-medium text-white hover:text-[#30B0B0] flex items-center gap-1">
+                        <Link href={`/projects/${p.id}`} className="text-sm font-medium text-foreground hover:text-teal flex items-center gap-1">
                           {p.name} <ExternalLink className="h-3 w-3 opacity-50" />
                         </Link>
                         {p.service && <p className="text-xs text-gray-500 mt-0.5">{p.service}</p>}
@@ -205,12 +205,12 @@ export default async function ClientDetailPage({
 
           {/* Invoices */}
           <div className="glass-card overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a2a]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <FileText className="h-3.5 w-3.5 text-[#30B0B0]" />
+                <FileText className="h-3.5 w-3.5 text-teal" />
                 Invoices
               </h2>
-              <Link href={`/invoices?client_id=${id}`} className="text-xs text-[#30B0B0] hover:underline">
+              <Link href={`/invoices?client_id=${id}`} className="text-xs text-teal hover:underline">
                 View all
               </Link>
             </div>
@@ -219,17 +219,17 @@ export default async function ClientDetailPage({
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a]">
+                  <tr className="border-b border-border">
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#2a2a2a]">
+                <tbody className="divide-y divide-border">
                   {invoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-[#1a1a1a] transition-colors">
-                      <td className="px-6 py-3 text-sm font-medium text-white">{inv.invoice_number}</td>
+                    <tr key={inv.id} className="hover:bg-card transition-colors">
+                      <td className="px-6 py-3 text-sm font-medium text-foreground">{inv.invoice_number}</td>
                       <td className="px-6 py-3 text-sm text-gray-300">{formatCurrency(inv.amount)}</td>
                       <td className="px-6 py-3"><StatusBadge status={inv.status} /></td>
                       <td className="px-6 py-3 text-sm text-gray-500">{formatDate(inv.due_date)}</td>
@@ -247,11 +247,11 @@ export default async function ClientDetailPage({
           <div className="glass-card p-6">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Financial Summary</h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-[#2a2a2a]">
+              <div className="flex justify-between items-center py-2 border-b border-border">
                 <span className="text-xs text-gray-500">Total Billed</span>
-                <span className="text-sm font-semibold text-white">{formatCurrency(totalBilled)}</span>
+                <span className="text-sm font-semibold text-foreground">{formatCurrency(totalBilled)}</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-[#2a2a2a]">
+              <div className="flex justify-between items-center py-2 border-b border-border">
                 <span className="text-xs text-gray-500">Total Paid</span>
                 <span className="text-sm font-semibold text-green-400">{formatCurrency(totalPaid)}</span>
               </div>
@@ -268,13 +268,13 @@ export default async function ClientDetailPage({
           {linkedLead && (
             <div className="glass-card p-6">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <User className="h-3.5 w-3.5 text-[#30B0B0]" />
+                <User className="h-3.5 w-3.5 text-teal" />
                 Converted From Lead
               </h2>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-gray-500">Lead</span>
-                  <Link href={`/leads/${linkedLead.id}`} className="text-sm text-[#30B0B0] hover:underline flex items-center gap-1">
+                  <Link href={`/leads/${linkedLead.id}`} className="text-sm text-teal hover:underline flex items-center gap-1">
                     {linkedLead.name} <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>

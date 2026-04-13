@@ -21,7 +21,7 @@ export default function ExportCSV({ csv, filename }: ExportCSVProps) {
   return (
     <button
       onClick={handleExport}
-      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[#30B0B0] border border-[#30B0B0]/40 hover:border-[#30B0B0] rounded-lg transition-colors"
+      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-teal border border-teal/40 hover:border-teal rounded-lg transition-colors"
     >
       <Download className="h-3.5 w-3.5" />
       Export CSV

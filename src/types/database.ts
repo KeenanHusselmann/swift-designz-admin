@@ -8,6 +8,8 @@ export type ExpenseCategory = "hosting" | "software" | "subscriptions" | "hardwa
 export type RecurringInterval = "monthly" | "quarterly" | "yearly";
 export type IncomeCategory = "web_dev" | "ecommerce" | "apps" | "training" | "consulting" | "other" | "investment";
 export type DocumentType = "contract" | "proposal" | "invoice" | "receipt" | "agreement" | "report" | "other";
+export type InvoiceDocType = "invoice" | "quotation";
+export type InstallmentInterval = "weekly" | "bi-weekly" | "monthly";
 export type InvestorStatus = "prospective" | "active" | "exited";
 export type EmployeeStatus = "active" | "inactive" | "terminated";
 export type Department = "development" | "design" | "marketing" | "operations" | "other";
@@ -96,11 +98,15 @@ export interface Invoice {
   invoice_number: string;
   project_id: string | null;
   client_id: string;
+  doc_type: InvoiceDocType;
   amount: number;
   status: InvoiceStatus;
   due_date: string;
   paid_date: string | null;
   paid_amount: number;
+  payment_plan_enabled: boolean;
+  installment_count: number | null;
+  installment_interval: InstallmentInterval | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

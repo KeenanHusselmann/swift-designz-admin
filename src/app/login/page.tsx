@@ -19,19 +19,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#101010] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[#30B0B0] tracking-tight">
+          <h1 className="text-3xl font-bold text-teal tracking-tight">
             Swift Designz
           </h1>
-          <p className="text-sm text-[#509090] mt-1">Admin Portal</p>
+          <p className="text-sm text-teal-muted mt-1">Admin Portal</p>
         </div>
 
         {/* Login Card */}
         <div className="glass-card p-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Sign In</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-6">Sign In</h2>
 
           <form action={handleSubmit} className="space-y-5">
             <div>
@@ -47,7 +47,7 @@ export default function LoginPage() {
                 type="email"
                 required
                 autoComplete="email"
-                className="w-full px-4 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                className="w-full px-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder-gray-500 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 placeholder="keenan@swiftdesignz.co.za"
               />
             </div>
@@ -65,7 +65,7 @@ export default function LoginPage() {
                 type="password"
                 required
                 autoComplete="current-password"
-                className="w-full px-4 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                className="w-full px-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder-gray-500 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 placeholder="Enter your password"
               />
             </div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 bg-teal hover:bg-teal-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? "Signing in..." : "Sign In"}

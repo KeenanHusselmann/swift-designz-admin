@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Plus, Trash2, Loader2 } from "lucide-react";
-import type { Invoice, InvoiceItem, Client, Project } from "@/types/database";
+import type { Invoice, InvoiceItem, Client, Project, InvoiceDocType, InstallmentInterval } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
 
 const INVOICE_STATUSES = [
@@ -27,6 +27,7 @@ interface InvoiceFormProps {
   projects: Project[];
   preselectedClientId?: string;
   preselectedProjectId?: string;
+  preselectedDocType?: InvoiceDocType;
   action: (formData: FormData) => Promise<{ error: string } | void>;
   submitLabel: string;
 }
@@ -38,6 +39,7 @@ export default function InvoiceForm({
   projects,
   preselectedClientId,
   preselectedProjectId,
+  preselectedDocType,
   action,
   submitLabel,
 }: InvoiceFormProps) {
@@ -45,6 +47,12 @@ export default function InvoiceForm({
   const [loading, setLoading] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState(
     invoice?.client_id || preselectedClientId || ""
+  );
+  const [docType, setDocType] = useState<InvoiceDocType>(invoice?.doc_type || preselectedDocType || "invoice");
+  const [paymentPlan, setPaymentPlan] = useState(invoice?.payment_plan_enabled || false);
+  const [installmentCount, setInstallmentCount] = useState(invoice?.installment_count || 3);
+  const [installmentInterval, setInstallmentInterval] = useState<InstallmentInterval>(
+    (invoice?.installment_interval as InstallmentInterval) || "monthly"
   );
 
   const initialItems: LineItem[] = existingItems?.length
@@ -91,6 +99,12 @@ export default function InvoiceForm({
 
     // Inject items as JSON
     formData.set("items", JSON.stringify(items));
+    formData.set("doc_type", docType);
+    formData.set("payment_plan_enabled", paymentPlan ? "true" : "false");
+    if (paymentPlan) {
+      formData.set("installment_count", String(installmentCount));
+      formData.set("installment_interval", installmentInterval);
+    }
 
     const result = await action(formData);
     if (result?.error) {
@@ -99,7 +113,7 @@ export default function InvoiceForm({
     }
   }
 
-  const inputCls = "w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0]";
+  const inputCls = "w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-teal";
   const labelCls = "block text-xs text-gray-400 mb-1";
 
   return (
@@ -109,6 +123,35 @@ export default function InvoiceForm({
           {error}
         </div>
       )}
+
+      {/* Document Type Toggle */}
+      <div>
+        <label className={labelCls}>Document Type</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setDocType("invoice")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+              docType === "invoice"
+                ? "bg-teal text-white border-teal"
+                : "bg-transparent text-gray-400 border-border hover:border-teal/50"
+            }`}
+          >
+            Invoice
+          </button>
+          <button
+            type="button"
+            onClick={() => setDocType("quotation")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
+              docType === "quotation"
+                ? "bg-teal text-white border-teal"
+                : "bg-transparent text-gray-400 border-border hover:border-teal/50"
+            }`}
+          >
+            Quotation
+          </button>
+        </div>
+      </div>
 
       {/* Client + Project */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -177,7 +220,7 @@ export default function InvoiceForm({
           <button
             type="button"
             onClick={addItem}
-            className="flex items-center gap-1 text-xs text-[#30B0B0] hover:text-white transition-colors"
+            className="flex items-center gap-1 text-xs text-teal hover:text-foreground transition-colors"
           >
             <Plus className="h-3 w-3" /> Add Item
           </button>
@@ -186,7 +229,7 @@ export default function InvoiceForm({
         <div className="glass-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#2a2a2a]">
+              <tr className="border-b border-border">
                 <th className="text-left px-3 py-2 text-xs text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="text-left px-3 py-2 text-xs text-gray-500 uppercase tracking-wider w-20">Qty</th>
                 <th className="text-left px-3 py-2 text-xs text-gray-500 uppercase tracking-wider w-28">Rate (R)</th>
@@ -194,7 +237,7 @@ export default function InvoiceForm({
                 <th className="w-10" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
+            <tbody className="divide-y divide-border">
               {items.map((item, i) => {
                 const lineAmount = Math.round(item.quantity * item.unit_rate);
                 return (
@@ -205,7 +248,7 @@ export default function InvoiceForm({
                         placeholder="Service description"
                         value={item.description}
                         onChange={(e) => updateItem(i, "description", e.target.value)}
-                        className="w-full bg-transparent border-0 text-sm text-white placeholder-gray-600 focus:outline-none"
+                        className="w-full bg-transparent border-0 text-sm text-foreground placeholder-gray-600 focus:outline-none"
                       />
                     </td>
                     <td className="px-3 py-2">
@@ -215,7 +258,7 @@ export default function InvoiceForm({
                         min="0"
                         value={item.quantity}
                         onChange={(e) => updateItem(i, "quantity", e.target.value)}
-                        className="w-full bg-transparent border-0 text-sm text-white text-center focus:outline-none"
+                        className="w-full bg-transparent border-0 text-sm text-foreground text-center focus:outline-none"
                       />
                     </td>
                     <td className="px-3 py-2">
@@ -225,7 +268,7 @@ export default function InvoiceForm({
                         min="0"
                         value={item.unit_rate / 100}
                         onChange={(e) => updateItem(i, "unit_rate", e.target.value)}
-                        className="w-full bg-transparent border-0 text-sm text-white text-center focus:outline-none"
+                        className="w-full bg-transparent border-0 text-sm text-foreground text-center focus:outline-none"
                       />
                     </td>
                     <td className="px-3 py-2 text-right text-sm text-gray-300 font-mono">
@@ -247,9 +290,9 @@ export default function InvoiceForm({
               })}
             </tbody>
             <tfoot>
-              <tr className="border-t border-[#2a2a2a]">
+              <tr className="border-t border-border">
                 <td colSpan={3} className="px-3 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Total</td>
-                <td className="px-3 py-3 text-right text-sm font-bold text-[#30B0B0] font-mono">
+                <td className="px-3 py-3 text-right text-sm font-bold text-teal font-mono">
                   {formatCurrency(total)}
                 </td>
                 <td />
@@ -271,12 +314,67 @@ export default function InvoiceForm({
         />
       </div>
 
+      {/* Payment Plan */}
+      <div className="glass-card p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={paymentPlan}
+              onChange={(e) => setPaymentPlan(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-teal transition-colors after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
+          </label>
+          <span className="text-sm text-foreground font-medium">Payment Plan</span>
+        </div>
+
+        {paymentPlan && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label className={labelCls}>Number of Installments</label>
+              <input
+                type="number"
+                min="2"
+                max="24"
+                value={installmentCount}
+                onChange={(e) => setInstallmentCount(Math.max(2, Number(e.target.value)))}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>Interval</label>
+              <select
+                value={installmentInterval}
+                onChange={(e) => setInstallmentInterval(e.target.value as InstallmentInterval)}
+                className={inputCls}
+              >
+                <option value="weekly">Weekly</option>
+                <option value="bi-weekly">Bi-Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            {total > 0 && (
+              <div className="sm:col-span-2">
+                <p className="text-xs text-gray-400">
+                  {installmentCount} payments of{" "}
+                  <span className="text-teal font-semibold">
+                    {formatCurrency(Math.ceil(total / installmentCount))}
+                  </span>{" "}
+                  ({installmentInterval})
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Submit */}
       <div className="flex justify-end gap-3 pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-2.5 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
         >
           {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           {submitLabel}

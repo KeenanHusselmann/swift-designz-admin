@@ -33,7 +33,7 @@ export default async function IncomePage() {
         actions={
           <Link
             href="/accounting/income/new"
-            className="px-4 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors"
           >
             Add Income
           </Link>
@@ -43,7 +43,7 @@ export default async function IncomePage() {
       <div className="glass-card overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-[#2a2a2a]">
+            <tr className="border-b border-border">
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
@@ -52,17 +52,17 @@ export default async function IncomePage() {
               <th className="w-12" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#2a2a2a]">
+          <tbody className="divide-y divide-border">
             {entries.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">No income records yet.</td>
               </tr>
             ) : (
               entries.map((e) => (
-                <tr key={e.id} className="hover:bg-[#1a1a1a] transition-colors">
+                <tr key={e.id} className="hover:bg-card transition-colors">
                   <td className="px-5 py-3 text-sm text-gray-400">{formatDate(e.date)}</td>
-                  <td className="px-5 py-3 text-sm text-white">
-                    <Link href={`/accounting/income/${e.id}/edit`} className="hover:text-[#30B0B0]">
+                  <td className="px-5 py-3 text-sm text-foreground">
+                    <Link href={`/accounting/income/${e.id}/edit`} className="hover:text-teal">
                       {e.description}
                     </Link>
                   </td>

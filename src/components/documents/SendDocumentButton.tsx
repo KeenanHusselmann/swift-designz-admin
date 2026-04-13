@@ -60,7 +60,7 @@ export default function SendDocumentButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white border border-[#2a2a2a] hover:border-[#30B0B0] rounded-lg transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-foreground border border-border hover:border-teal rounded-lg transition-colors"
       >
         <Send className="h-3 w-3" />
         Send
@@ -71,12 +71,12 @@ export default function SendDocumentButton({
           <div className="glass-card w-full max-w-md p-6 relative">
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-white"
+              className="absolute top-4 right-4 text-gray-500 hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
 
-            <h2 className="text-sm font-semibold text-white mb-1">Send {templateLabel}</h2>
+            <h2 className="text-sm font-semibold text-foreground mb-1">Send {templateLabel}</h2>
             <p className="text-xs text-gray-500 mb-5">Deliver this document directly to a client via email.</p>
 
             {sent ? (
@@ -95,7 +95,7 @@ export default function SendDocumentButton({
                     type="email"
                     defaultValue={clientEmail}
                     required
-                    className="w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0]"
+                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
                   />
                 </div>
 
@@ -106,7 +106,7 @@ export default function SendDocumentButton({
                     type="text"
                     defaultValue={defaultSubject}
                     required
-                    className="w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0]"
+                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
                   />
                 </div>
 
@@ -116,7 +116,7 @@ export default function SendDocumentButton({
                     name="message"
                     rows={3}
                     placeholder="Add a short note…"
-                    className="w-full px-3 py-2 bg-[#111] border border-[#2a2a2a] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] resize-none"
+                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal resize-none"
                   />
                 </div>
 
@@ -128,14 +128,14 @@ export default function SendDocumentButton({
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="px-4 py-2 text-sm text-gray-400 hover:text-white border border-[#2a2a2a] rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm text-gray-400 hover:text-foreground border border-border rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-[#30B0B0] hover:bg-[#2a9a9a] text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-teal hover:bg-teal-hover text-white rounded-lg transition-colors disabled:opacity-50"
                   >
                     {loading ? (
                       <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending…</>

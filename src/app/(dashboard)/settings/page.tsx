@@ -61,10 +61,10 @@ function renderPage(
         {profile ? (
         <div className="glass-card p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 rounded-lg bg-[#30B0B0]/10">
-              <User className="h-4 w-4 text-[#30B0B0]" />
+            <div className="p-2 rounded-lg bg-teal/10">
+              <User className="h-4 w-4 text-teal" />
             </div>
-            <h2 className="text-sm font-semibold text-white">Profile</h2>
+            <h2 className="text-sm font-semibold text-foreground">Profile</h2>
           </div>
           <ProfileForm profile={profile} action={updateProfileAction} />
         </div>
@@ -77,10 +77,10 @@ function renderPage(
         {/* Change Password */}
         <div className="glass-card p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 rounded-lg bg-[#30B0B0]/10">
-              <Lock className="h-4 w-4 text-[#30B0B0]" />
+            <div className="p-2 rounded-lg bg-teal/10">
+              <Lock className="h-4 w-4 text-teal" />
             </div>
-            <h2 className="text-sm font-semibold text-white">Change Password</h2>
+            <h2 className="text-sm font-semibold text-foreground">Change Password</h2>
           </div>
           <ChangePasswordForm action={changePasswordAction} />
         </div>
@@ -89,10 +89,10 @@ function renderPage(
         {settings && (
           <div className="glass-card p-6">
             <div className="flex items-center gap-3 mb-5">
-              <div className="p-2 rounded-lg bg-[#30B0B0]/10">
-                <Building2 className="h-4 w-4 text-[#30B0B0]" />
+              <div className="p-2 rounded-lg bg-teal/10">
+                <Building2 className="h-4 w-4 text-teal" />
               </div>
-              <h2 className="text-sm font-semibold text-white">Business Settings</h2>
+              <h2 className="text-sm font-semibold text-foreground">Business Settings</h2>
             </div>
             <BusinessSettingsForm settings={settings} action={updateBusinessSettingsAction} />
           </div>

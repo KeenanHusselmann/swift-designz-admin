@@ -25,7 +25,7 @@ export default function DeleteClientButton({ id }: { id: string }) {
         {error && <span className="text-xs text-red-400">{error}</span>}
         <span className="text-xs text-gray-400">Delete client and all linked data?</span>
         <button onClick={() => setConfirming(false)}
-          className="px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white border border-[#2a2a2a] rounded-lg transition-colors">
+          className="px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-foreground border border-border rounded-lg transition-colors">
           Cancel
         </button>
         <button onClick={handleDelete} disabled={loading}

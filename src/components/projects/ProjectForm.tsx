@@ -71,15 +71,15 @@ export default function ProjectForm({
       {/* Client Section */}
       {!isEdit && (
         <div className="glass-card p-6">
-          <h2 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Client</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">Client</h2>
           <div className="flex gap-3 mb-4">
             <button
               type="button"
               onClick={() => setClientMode("existing")}
               className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
                 clientMode === "existing"
-                  ? "bg-[#30B0B0]/10 border-[#30B0B0]/60 text-[#30B0B0]"
-                  : "border-[#2a2a2a] text-gray-400 hover:text-white"
+                  ? "bg-teal/10 border-teal/60 text-teal"
+                  : "border-border text-gray-400 hover:text-foreground"
               }`}
             >
               Existing Client
@@ -89,8 +89,8 @@ export default function ProjectForm({
               onClick={() => setClientMode("new")}
               className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors ${
                 clientMode === "new"
-                  ? "bg-[#30B0B0]/10 border-[#30B0B0]/60 text-[#30B0B0]"
-                  : "border-[#2a2a2a] text-gray-400 hover:text-white"
+                  ? "bg-teal/10 border-teal/60 text-teal"
+                  : "border-border text-gray-400 hover:text-foreground"
               }`}
             >
               New Client
@@ -110,7 +110,7 @@ export default function ProjectForm({
                 <select
                   name="client_id"
                   defaultValue={preselectedClientId || ""}
-                  className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                  className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 >
                   <option value="">Choose a client...</option>
                   {clients.map((c) => (
@@ -130,7 +130,7 @@ export default function ProjectForm({
                 <input
                   name="new_client_name"
                   placeholder="Full name"
-                  className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                  className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 />
               </div>
               <div>
@@ -141,7 +141,7 @@ export default function ProjectForm({
                   name="new_client_email"
                   type="email"
                   placeholder="client@email.com"
-                  className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                  className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 />
               </div>
               <div>
@@ -149,7 +149,7 @@ export default function ProjectForm({
                 <input
                   name="new_client_phone"
                   placeholder="+264 81 000 0000"
-                  className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                  className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 />
               </div>
               <div>
@@ -157,7 +157,7 @@ export default function ProjectForm({
                 <input
                   name="new_client_company"
                   placeholder="Company or organisation"
-                  className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+                  className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
                 />
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function ProjectForm({
 
       {/* Project Details */}
       <div className="glass-card p-6">
-        <h2 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Project Details</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">Project Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
             <label className="block text-xs font-medium text-gray-400 mb-1.5">
@@ -178,7 +178,7 @@ export default function ProjectForm({
               defaultValue={project?.name}
               required
               placeholder="e.g. Swift Designz E-Commerce Store"
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             />
           </div>
           <div>
@@ -186,7 +186,7 @@ export default function ProjectForm({
             <select
               name="service"
               defaultValue={project?.service || ""}
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             >
               <option value="">Select service...</option>
               {SERVICES.map((s) => (
@@ -200,7 +200,7 @@ export default function ProjectForm({
               name="package"
               defaultValue={project?.package ?? ""}
               placeholder="e.g. Starter, Pro, Custom"
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             />
           </div>
           <div>
@@ -208,7 +208,7 @@ export default function ProjectForm({
             <select
               name="status"
               defaultValue={project?.status || "planning"}
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             >
               {PROJECT_STATUSES.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
@@ -224,7 +224,7 @@ export default function ProjectForm({
               min="0"
               defaultValue={quotedDisplay}
               placeholder="0.00"
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             />
           </div>
           <div>
@@ -233,7 +233,7 @@ export default function ProjectForm({
               name="start_date"
               type="date"
               defaultValue={project?.start_date ?? ""}
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             />
           </div>
           <div>
@@ -242,7 +242,7 @@ export default function ProjectForm({
               name="due_date"
               type="date"
               defaultValue={project?.due_date ?? ""}
-              className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors"
+              className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors"
             />
           </div>
         </div>
@@ -250,13 +250,13 @@ export default function ProjectForm({
 
       {/* Notes */}
       <div className="glass-card p-6">
-        <h2 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Notes</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-4 uppercase tracking-wider">Notes</h2>
         <textarea
           name="notes"
           rows={4}
           defaultValue={project?.notes ?? ""}
           placeholder="Project scope, requirements, or internal notes..."
-          className="w-full px-3 py-2.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#30B0B0] focus:ring-1 focus:ring-[#30B0B0] transition-colors resize-none"
+          className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-foreground text-sm placeholder-gray-600 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors resize-none"
         />
       </div>
 
@@ -264,14 +264,14 @@ export default function ProjectForm({
         <button
           type="button"
           onClick={() => history.back()}
-          className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-[#2a2a2a] rounded-lg transition-colors"
+          className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-foreground border border-border rounded-lg transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-5 py-2 bg-[#30B0B0] hover:bg-[#2a9a9a] disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-5 py-2 bg-teal hover:bg-teal-hover disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
         >
           {loading ? "Saving..." : submitLabel}
         </button>

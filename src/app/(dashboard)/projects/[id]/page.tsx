@@ -69,7 +69,7 @@ export default async function ProjectDetailPage({
           <div className="flex items-center gap-2">
             <Link
               href={`/projects/${id}/edit`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white border border-[#2a2a2a] hover:border-[#30B0B0] rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-foreground border border-border hover:border-teal rounded-lg transition-colors"
             >
               <Edit className="h-3.5 w-3.5" />
               Edit
@@ -83,11 +83,11 @@ export default async function ProjectDetailPage({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <User className="h-3.5 w-3.5 text-[#30B0B0]" />
+            <User className="h-3.5 w-3.5 text-teal" />
             <span className="text-xs text-gray-500 uppercase tracking-wider">Client</span>
           </div>
           {client ? (
-            <Link href={`/clients/${client.id}`} className="text-sm font-semibold text-white hover:text-[#30B0B0] transition-colors">
+            <Link href={`/clients/${client.id}`} className="text-sm font-semibold text-foreground hover:text-teal transition-colors">
               {client.name}
             </Link>
           ) : (
@@ -97,17 +97,17 @@ export default async function ProjectDetailPage({
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <DollarSign className="h-3.5 w-3.5 text-[#30B0B0]" />
+            <DollarSign className="h-3.5 w-3.5 text-teal" />
             <span className="text-xs text-gray-500 uppercase tracking-wider">Quoted</span>
           </div>
-          <span className="text-sm font-semibold text-white">
+          <span className="text-sm font-semibold text-foreground">
             {project.quoted_amount ? formatCurrency(project.quoted_amount) : "—"}
           </span>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Calendar className="h-3.5 w-3.5 text-[#30B0B0]" />
+            <Calendar className="h-3.5 w-3.5 text-teal" />
             <span className="text-xs text-gray-500 uppercase tracking-wider">Dates</span>
           </div>
           <span className="text-xs text-gray-300">
@@ -119,7 +119,7 @@ export default async function ProjectDetailPage({
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Clock className="h-3.5 w-3.5 text-[#30B0B0]" />
+            <Clock className="h-3.5 w-3.5 text-teal" />
             <span className="text-xs text-gray-500 uppercase tracking-wider">Deadline</span>
           </div>
           {daysRemaining !== null ? (
@@ -177,7 +177,7 @@ export default async function ProjectDetailPage({
               )}
               <div className="flex justify-between items-center">
                 <dt className="text-xs text-gray-500">Progress</dt>
-                <dd className="text-sm font-semibold text-[#30B0B0]">{progress}%</dd>
+                <dd className="text-sm font-semibold text-teal">{progress}%</dd>
               </div>
               <div className="flex justify-between items-center">
                 <dt className="text-xs text-gray-500">Created</dt>
@@ -190,11 +190,11 @@ export default async function ProjectDetailPage({
           <div className="glass-card p-6">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Billing</h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-1.5 border-b border-[#2a2a2a]">
+              <div className="flex justify-between items-center py-1.5 border-b border-border">
                 <span className="text-xs text-gray-500">Total Billed</span>
-                <span className="text-sm font-semibold text-white">{formatCurrency(totalBilled)}</span>
+                <span className="text-sm font-semibold text-foreground">{formatCurrency(totalBilled)}</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-[#2a2a2a]">
+              <div className="flex justify-between items-center py-1.5 border-b border-border">
                 <span className="text-xs text-gray-500">Total Paid</span>
                 <span className="text-sm font-semibold text-green-400">{formatCurrency(totalPaid)}</span>
               </div>
