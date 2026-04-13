@@ -223,6 +223,26 @@ export interface SalaryHistory {
   created_at: string;
 }
 
+export interface BusinessSettings {
+  id: string;
+  company_name: string;
+  tagline: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  website: string | null;
+  vat_number: string | null;
+  registration_number: string | null;
+  bank_name: string | null;
+  bank_account_number: string | null;
+  bank_branch_code: string | null;
+  logo_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // Supabase Database type (used by the client generics)
 export interface Database {
   public: {
@@ -242,6 +262,7 @@ export interface Database {
       employees: { Row: Employee; Insert: Partial<Employee> & Pick<Employee, "name" | "role" | "department" | "salary" | "start_date">; Update: Partial<Employee> };
       ai_agents: { Row: AiAgent; Insert: Partial<AiAgent> & Pick<AiAgent, "name" | "purpose" | "model" | "provider">; Update: Partial<AiAgent> };
       salary_history: { Row: SalaryHistory; Insert: Partial<SalaryHistory> & Pick<SalaryHistory, "employee_id" | "amount" | "effective_date">; Update: Partial<SalaryHistory> };
+      business_settings: { Row: BusinessSettings; Insert: Partial<BusinessSettings> & Pick<BusinessSettings, "company_name">; Update: Partial<BusinessSettings> };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

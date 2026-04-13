@@ -1,0 +1,78 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+
+export async function updateProfileAction(formData: FormData) {
+  const fullName = formData.get("full_name") as string;
+  if (!fullName?.trim()) return { error: "Full name is required." };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ full_name: fullName.trim(), updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/settings");
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const newPassword = formData.get("new_password") as string;
+  const confirmPassword = formData.get("confirm_password") as string;
+
+  if (!newPassword || newPassword.length < 8) {
+    return { error: "Password must be at least 8 characters." };
+  }
+  if (newPassword !== confirmPassword) {
+    return { error: "Passwords do not match." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+  if (error) return { error: error.message };
+  revalidatePath("/settings");
+  return { success: "Password updated successfully." };
+}
+
+export async function updateBusinessSettingsAction(formData: FormData) {
+  const supabase = await createClient();
+
+  // Get the singleton row
+  const { data: existing } = await supabase
+    .from("business_settings")
+    .select("id")
+    .limit(1)
+    .single();
+
+  if (!existing) return { error: "Business settings not found." };
+
+  const updates = {
+    company_name: (formData.get("company_name") as string)?.trim() || "Swift Designz",
+    tagline: (formData.get("tagline") as string)?.trim() || null,
+    email: (formData.get("email") as string)?.trim() || null,
+    phone: (formData.get("phone") as string)?.trim() || null,
+    address: (formData.get("address") as string)?.trim() || null,
+    city: (formData.get("city") as string)?.trim() || null,
+    country: (formData.get("country") as string)?.trim() || null,
+    website: (formData.get("website") as string)?.trim() || null,
+    vat_number: (formData.get("vat_number") as string)?.trim() || null,
+    registration_number: (formData.get("registration_number") as string)?.trim() || null,
+    bank_name: (formData.get("bank_name") as string)?.trim() || null,
+    bank_account_number: (formData.get("bank_account_number") as string)?.trim() || null,
+    bank_branch_code: (formData.get("bank_branch_code") as string)?.trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("business_settings")
+    .update(updates)
+    .eq("id", existing.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/settings");
+}
