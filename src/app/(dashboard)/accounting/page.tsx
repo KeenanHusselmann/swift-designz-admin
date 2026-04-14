@@ -4,6 +4,7 @@ import KpiCard from "@/components/ui/KpiCard";
 import { formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, DollarSign, Receipt } from "lucide-react";
 import Link from "next/link";
+import PrintAccountantStatementButton from "@/components/statements/PrintAccountantStatementButton";
 
 export default async function AccountingPage() {
   const supabase = await createClient();
@@ -37,6 +38,7 @@ export default async function AccountingPage() {
       <PageHeader
         title="Accounting"
         description="Income, expenses, and financial overview"
+        actions={<PrintAccountantStatementButton />}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

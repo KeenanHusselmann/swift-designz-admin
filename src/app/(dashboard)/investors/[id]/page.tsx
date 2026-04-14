@@ -5,6 +5,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import StatusBadge from "@/components/ui/StatusBadge";
 import DeleteInvestorButton from "@/components/investors/DeleteInvestorButton";
 import ContributionForm from "@/components/investors/ContributionForm";
+import PrintInvestorStatementButton from "@/components/statements/PrintInvestorStatementButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Edit, DollarSign, FileText, ExternalLink } from "lucide-react";
 import { addContributionAction } from "../actions";
@@ -66,6 +67,7 @@ export default async function InvestorDetailPage({
               Edit
             </Link>
             <DeleteInvestorButton id={id} />
+            <PrintInvestorStatementButton investorId={id} />
           </div>
         }
       />
