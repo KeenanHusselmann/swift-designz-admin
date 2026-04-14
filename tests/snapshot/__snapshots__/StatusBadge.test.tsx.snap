@@ -1,0 +1,181 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StatusBadge snapshots > renders "active" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-active"
+  >
+    active
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "cancelled" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-lost"
+  >
+    cancelled
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "completed" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-won"
+  >
+    completed
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "contacted" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-contacted"
+  >
+    contacted
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "draft" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-draft"
+  >
+    draft
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "exited" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-lost"
+  >
+    exited
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "in_progress" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-contacted"
+  >
+    in progress
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "lost" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-lost"
+  >
+    lost
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "new" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-new"
+  >
+    new
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "overdue" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-overdue"
+  >
+    overdue
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "paid" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-paid"
+  >
+    paid
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "partial" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-partial"
+  >
+    partial
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "planning" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-sent"
+  >
+    planning
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "prospective" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-sent"
+  >
+    prospective
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "quoted" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-quoted"
+  >
+    quoted
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "sent" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-sent"
+  >
+    sent
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "unknown_status" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-draft"
+  >
+    unknown status
+  </span>
+</div>
+`;
+
+exports[`StatusBadge snapshots > renders "won" variant 1`] = `
+<div>
+  <span
+    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize badge-won"
+  >
+    won
+  </span>
+</div>
+`;

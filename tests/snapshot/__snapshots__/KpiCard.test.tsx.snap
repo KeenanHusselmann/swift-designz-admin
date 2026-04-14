@@ -1,0 +1,223 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`KpiCard snapshots > renders with neutral trend 1`] = `
+<div>
+  <div
+    class="glass-card p-5"
+  >
+    <div
+      class="flex items-start justify-between"
+    >
+      <div>
+        <p
+          class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Invoices
+        </p>
+        <p
+          class="text-2xl font-bold text-foreground mt-1"
+        >
+          14
+        </p>
+        <p
+          class="text-xs font-medium mt-2 text-gray-400"
+        >
+          No change
+        </p>
+      </div>
+      <div
+        class="h-10 w-10 rounded-lg bg-teal/10 flex items-center justify-center"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-dollar-sign h-5 w-5 text-teal"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="12"
+            x2="12"
+            y1="2"
+            y2="22"
+          />
+          <path
+            d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`KpiCard snapshots > renders with required props only 1`] = `
+<div>
+  <div
+    class="glass-card p-5"
+  >
+    <div
+      class="flex items-start justify-between"
+    >
+      <div>
+        <p
+          class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Revenue
+        </p>
+        <p
+          class="text-2xl font-bold text-foreground mt-1"
+        >
+          R12,500.00
+        </p>
+      </div>
+      <div
+        class="h-10 w-10 rounded-lg bg-teal/10 flex items-center justify-center"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-dollar-sign h-5 w-5 text-teal"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="12"
+            x2="12"
+            y1="2"
+            y2="22"
+          />
+          <path
+            d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`KpiCard snapshots > renders with subtitle and trend up 1`] = `
+<div>
+  <div
+    class="glass-card p-5"
+  >
+    <div
+      class="flex items-start justify-between"
+    >
+      <div>
+        <p
+          class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Net Profit
+        </p>
+        <p
+          class="text-2xl font-bold text-foreground mt-1"
+        >
+          R8,000.00
+        </p>
+        <p
+          class="text-xs text-gray-500 mt-1"
+        >
+          This month
+        </p>
+        <p
+          class="text-xs font-medium mt-2 text-green-400"
+        >
+          +12%
+        </p>
+      </div>
+      <div
+        class="h-10 w-10 rounded-lg bg-teal/10 flex items-center justify-center"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-trending-up h-5 w-5 text-teal"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 7h6v6"
+          />
+          <path
+            d="m22 7-8.5 8.5-5-5L2 17"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`KpiCard snapshots > renders with trend down 1`] = `
+<div>
+  <div
+    class="glass-card p-5"
+  >
+    <div
+      class="flex items-start justify-between"
+    >
+      <div>
+        <p
+          class="text-xs font-medium text-gray-500 uppercase tracking-wider"
+        >
+          Expenses
+        </p>
+        <p
+          class="text-2xl font-bold text-foreground mt-1"
+        >
+          R4,500.00
+        </p>
+        <p
+          class="text-xs font-medium mt-2 text-red-400"
+        >
+          -5%
+        </p>
+      </div>
+      <div
+        class="h-10 w-10 rounded-lg bg-teal/10 flex items-center justify-center"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-trending-up h-5 w-5 text-teal"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 7h6v6"
+          />
+          <path
+            d="m22 7-8.5 8.5-5-5L2 17"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
