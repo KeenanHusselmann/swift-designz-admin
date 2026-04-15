@@ -79,6 +79,31 @@ export default function EquipmentForm({ equipment, action, submitLabel }: Equipm
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
+          <label htmlFor="brand" className="block text-xs font-medium text-gray-400 mb-1.5">Brand</label>
+          <input
+            id="brand"
+            name="brand"
+            type="text"
+            placeholder="e.g. Apple, Dell, Samsung"
+            defaultValue={equipment?.brand || ""}
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor="model" className="block text-xs font-medium text-gray-400 mb-1.5">Model</label>
+          <input
+            id="model"
+            name="model"
+            type="text"
+            placeholder="e.g. MacBook Pro 14-inch, OptiPlex 3050"
+            defaultValue={equipment?.model || ""}
+            className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground text-sm focus:border-teal focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
           <label htmlFor="serial_number" className="block text-xs font-medium text-gray-400 mb-1.5">Serial Number</label>
           <input
             id="serial_number"

@@ -238,6 +238,8 @@ export interface Equipment {
   id: string;
   name: string;
   category: EquipmentCategory;
+  brand: string | null;
+  model: string | null;
   serial_number: string | null;
   purchased_at: string | null;
   purchase_price: number;

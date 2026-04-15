@@ -268,6 +268,8 @@ CREATE TABLE equipment (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   category equipment_category NOT NULL,
+  brand TEXT,
+  model TEXT,
   serial_number TEXT,
   purchased_at DATE,
   purchase_price INTEGER NOT NULL DEFAULT 0, -- cents

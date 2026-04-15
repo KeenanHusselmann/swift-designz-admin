@@ -16,6 +16,8 @@ export async function createEquipmentAction(formData: FormData) {
   const category = (formData.get("category") as EquipmentCategory)?.trim();
   if (!category) return { error: "Category is required." };
 
+  const brand = (formData.get("brand") as string)?.trim() || null;
+  const model = (formData.get("model") as string)?.trim() || null;
   const serial_number = (formData.get("serial_number") as string)?.trim() || null;
   const purchased_at = (formData.get("purchased_at") as string)?.trim() || null;
 
@@ -36,6 +38,8 @@ export async function createEquipmentAction(formData: FormData) {
   const { error } = await supabase.from("equipment").insert({
     name,
     category,
+    brand,
+    model,
     serial_number,
     purchased_at,
     purchase_price,
@@ -61,6 +65,8 @@ export async function updateEquipmentAction(id: string, formData: FormData) {
   const category = (formData.get("category") as EquipmentCategory)?.trim();
   if (!category) return { error: "Category is required." };
 
+  const brand = (formData.get("brand") as string)?.trim() || null;
+  const model = (formData.get("model") as string)?.trim() || null;
   const serial_number = (formData.get("serial_number") as string)?.trim() || null;
   const purchased_at = (formData.get("purchased_at") as string)?.trim() || null;
 
@@ -80,7 +86,7 @@ export async function updateEquipmentAction(id: string, formData: FormData) {
 
   const { error } = await supabase
     .from("equipment")
-    .update({ name, category, serial_number, purchased_at, purchase_price, current_value, condition, status, notes })
+    .update({ name, category, brand, model, serial_number, purchased_at, purchase_price, current_value, condition, status, notes })
     .eq("id", id);
 
   if (error) return { error: error.message };

@@ -149,6 +149,9 @@ export default async function EquipmentPage() {
                     <tr key={item.id} className="hover:bg-card transition-colors">
                       <td className="px-5 py-3">
                         <div className="text-sm font-medium text-foreground">{item.name}</div>
+                        {(item.brand || item.model) && (
+                          <div className="text-xs text-gray-400 mt-0.5">{[item.brand, item.model].filter(Boolean).join(" ")}</div>
+                        )}
                         {item.serial_number && (
                           <div className="text-xs text-gray-500 mt-0.5">S/N: {item.serial_number}</div>
                         )}

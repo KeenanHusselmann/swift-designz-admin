@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const INVESTOR_ALLOWED_PATHS = ["/", "/investors", "/projects", "/accounting/reports"];
+const INVESTOR_ALLOWED_PATHS = ["/", "/investors", "/projects", "/accounting/reports", "/equipment"];
 
 function isInvestorAllowed(pathname: string): boolean {
   return INVESTOR_ALLOWED_PATHS.some(
