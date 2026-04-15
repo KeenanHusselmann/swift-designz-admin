@@ -238,60 +238,6 @@ export default async function EquipmentPage() {
         </div>
       </div>
 
-      {/* Office Equipment Table */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
-          <Armchair size={15} className="text-teal" />
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Office Equipment</h2>
-          <span className="text-xs text-gray-500 ml-1">({officeItems.length} items)</span>
-        </div>
-        <div className="glass-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {officeItems.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
-                      No office equipment added yet.
-                    </td>
-                  </tr>
-                ) : (
-                  officeItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-card transition-colors">
-                      <td className="px-5 py-3">
-                        <div className="text-sm font-medium text-foreground">{item.name}</div>
-                        {(item.brand || item.model) && (
-                          <div className="text-xs text-gray-400 mt-0.5">{[item.brand, item.model].filter(Boolean).join(" ")}</div>
-                        )}
-                      </td>
-                      <td className="px-5 py-3 text-sm text-gray-400 capitalize">{item.condition}</td>
-                      <td className="px-5 py-3 text-sm text-foreground">{formatCurrency(item.purchase_price)}</td>
-                      <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(item.current_value)}</td>
-                      <td className="px-5 py-3"><StatusBadge status={item.status} /></td>
-                      <td className="px-5 py-3 text-right">
-                        <Link href={`/equipment/${item.id}/edit`} className="text-xs text-gray-500 hover:text-teal transition-colors">
-                          Edit
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
       {/* Software Licences Table */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
