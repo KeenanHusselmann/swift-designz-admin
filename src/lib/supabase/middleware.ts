@@ -2,6 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const INVESTOR_ALLOWED_PATHS = ["/", "/investors", "/projects", "/accounting/reports", "/equipment"];
+const PUBLIC_PATHS = ["/login", "/auth/callback"];
+
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/"));
+}
 
 function isInvestorAllowed(pathname: string): boolean {
   return INVESTOR_ALLOWED_PATHS.some(
@@ -37,8 +42,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If no user and not on login page, redirect to login
-  if (!user && !request.nextUrl.pathname.startsWith("/login")) {
+  // Allow auth callback and login pages to be reached without a session.
+  if (!user && !isPublicPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
