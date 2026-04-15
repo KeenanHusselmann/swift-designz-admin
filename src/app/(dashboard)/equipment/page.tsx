@@ -4,7 +4,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import KpiCard from "@/components/ui/KpiCard";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
-import { Package, DollarSign, Cpu, Key } from "lucide-react";
+import { Package, DollarSign, Cpu, Key, Armchair } from "lucide-react";
 
 const SUGGESTED_EQUIPMENT: { category: string; items: { name: string; purpose: string; estimatedCost: string }[] }[] = [
   {
@@ -72,11 +72,14 @@ export default async function EquipmentPage() {
     .order("name");
 
   const activeItems = equipment?.filter((e) => e.status === "active") ?? [];
-  const hardwareItems = (equipment ?? []).filter((e) => e.category !== "software_licence");
+  const IT_CATEGORIES = ["computing", "peripherals", "mobile", "networking", "other"];
+  const hardwareItems = (equipment ?? []).filter((e) => IT_CATEGORIES.includes(e.category));
+  const officeItems = (equipment ?? []).filter((e) => e.category === "office");
   const softwareItems = (equipment ?? []).filter((e) => e.category === "software_licence");
 
   const totalAssetValue = activeItems.reduce((sum, e) => sum + (e.current_value ?? 0), 0);
   const hardwareValue = hardwareItems.filter((e) => e.status === "active").reduce((sum, e) => sum + (e.current_value ?? 0), 0);
+  const officeValue = officeItems.filter((e) => e.status === "active").reduce((sum, e) => sum + (e.current_value ?? 0), 0);
   const softwareValue = softwareItems.filter((e) => e.status === "active").reduce((sum, e) => sum + (e.current_value ?? 0), 0);
 
   return (
@@ -95,7 +98,7 @@ export default async function EquipmentPage() {
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <KpiCard
           title="Total Asset Value"
           value={formatCurrency(totalAssetValue)}
@@ -103,10 +106,16 @@ export default async function EquipmentPage() {
           icon={DollarSign}
         />
         <KpiCard
-          title="Hardware Value"
+          title="IT Hardware Value"
           value={formatCurrency(hardwareValue)}
-          subtitle={`${hardwareItems.length} hardware items`}
+          subtitle={`${hardwareItems.length} items`}
           icon={Cpu}
+        />
+        <KpiCard
+          title="Office Equipment Value"
+          value={formatCurrency(officeValue)}
+          subtitle={`${officeItems.length} items`}
+          icon={Armchair}
         />
         <KpiCard
           title="Software Licences Value"
@@ -116,11 +125,11 @@ export default async function EquipmentPage() {
         />
       </div>
 
-      {/* Hardware Table */}
+      {/* IT Hardware Table */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
           <Cpu size={15} className="text-teal" />
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Hardware</h2>
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">IT Hardware</h2>
           <span className="text-xs text-gray-500 ml-1">({hardwareItems.length} items)</span>
         </div>
         <div className="glass-card overflow-hidden">
@@ -157,6 +166,114 @@ export default async function EquipmentPage() {
                         )}
                       </td>
                       <td className="px-5 py-3 text-sm text-gray-400 capitalize">{item.category.replace("_", " ")}</td>
+                      <td className="px-5 py-3 text-sm text-gray-400 capitalize">{item.condition}</td>
+                      <td className="px-5 py-3 text-sm text-foreground">{formatCurrency(item.purchase_price)}</td>
+                      <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(item.current_value)}</td>
+                      <td className="px-5 py-3"><StatusBadge status={item.status} /></td>
+                      <td className="px-5 py-3 text-right">
+                        <Link href={`/equipment/${item.id}/edit`} className="text-xs text-gray-500 hover:text-teal transition-colors">
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Office Equipment Table */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Armchair size={15} className="text-teal" />
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Office Equipment</h2>
+          <span className="text-xs text-gray-500 ml-1">({officeItems.length} items)</span>
+        </div>
+        <div className="glass-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {officeItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
+                      No office equipment added yet.
+                    </td>
+                  </tr>
+                ) : (
+                  officeItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-card transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="text-sm font-medium text-foreground">{item.name}</div>
+                        {(item.brand || item.model) && (
+                          <div className="text-xs text-gray-400 mt-0.5">{[item.brand, item.model].filter(Boolean).join(" ")}</div>
+                        )}
+                      </td>
+                      <td className="px-5 py-3 text-sm text-gray-400 capitalize">{item.condition}</td>
+                      <td className="px-5 py-3 text-sm text-foreground">{formatCurrency(item.purchase_price)}</td>
+                      <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(item.current_value)}</td>
+                      <td className="px-5 py-3"><StatusBadge status={item.status} /></td>
+                      <td className="px-5 py-3 text-right">
+                        <Link href={`/equipment/${item.id}/edit`} className="text-xs text-gray-500 hover:text-teal transition-colors">
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Office Equipment Table */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Armchair size={15} className="text-teal" />
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Office Equipment</h2>
+          <span className="text-xs text-gray-500 ml-1">({officeItems.length} items)</span>
+        </div>
+        <div className="glass-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {officeItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
+                      No office equipment added yet.
+                    </td>
+                  </tr>
+                ) : (
+                  officeItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-card transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="text-sm font-medium text-foreground">{item.name}</div>
+                        {(item.brand || item.model) && (
+                          <div className="text-xs text-gray-400 mt-0.5">{[item.brand, item.model].filter(Boolean).join(" ")}</div>
+                        )}
+                      </td>
                       <td className="px-5 py-3 text-sm text-gray-400 capitalize">{item.condition}</td>
                       <td className="px-5 py-3 text-sm text-foreground">{formatCurrency(item.purchase_price)}</td>
                       <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(item.current_value)}</td>
