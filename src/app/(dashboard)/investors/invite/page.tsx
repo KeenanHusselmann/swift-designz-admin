@@ -1,6 +1,5 @@
 import PageHeader from "@/components/ui/PageHeader";
 import InviteInvestorForm from "@/components/investors/InviteInvestorForm";
-import { inviteInvestorAction } from "./actions";
 
 export default function InviteInvestorPage() {
   return (
@@ -11,7 +10,7 @@ export default function InviteInvestorPage() {
         backHref="/investors"
       />
       <div className="max-w-md">
-        <InviteInvestorForm action={inviteInvestorAction} />
+        <InviteInvestorForm />
       </div>
     </>
   );

@@ -1,24 +1,42 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-interface InviteInvestorFormProps {
-  action: (formData: FormData) => Promise<{ error: string } | undefined>;
-}
+export default function InviteInvestorForm() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export default function InviteInvestorForm({ action }: InviteInvestorFormProps) {
-  const [state, formAction, pending] = useActionState(
-    async (_prev: { error?: string } | undefined, formData: FormData) => {
-      const result = await action(formData);
-      return result ?? undefined;
-    },
-    undefined,
-  );
+  async function handleSubmit(formData: FormData) {
+    setPending(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/investors/invite", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        setError(data.error || "Failed to send invitation.");
+        setPending(false);
+        return;
+      }
+
+      router.push("/investors");
+      router.refresh();
+    } catch {
+      setError("Failed to send invitation.");
+      setPending(false);
+    }
+  }
 
   return (
-    <form action={formAction} className="glass-card p-6 space-y-5">
-      {state?.error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">{state.error}</div>
+    <form action={handleSubmit} className="glass-card p-6 space-y-5">
+      {error && (
+        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">{error}</div>
       )}
 
       <div>
