@@ -17,8 +17,10 @@ export async function inviteInvestorAction(formData: FormData) {
   const admin = createAdminClient();
 
   // Invite the user via Supabase Auth (sends invite email automatically)
+  // Note: we do NOT pass role in metadata to avoid trigger cast issues —
+  // role is set explicitly via the upsert below.
   const { data, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { full_name: name, role: "investor" },
+    data: { full_name: name },
   });
 
   if (inviteError) return { error: inviteError.message };
