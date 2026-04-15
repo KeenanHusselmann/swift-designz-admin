@@ -20,6 +20,9 @@ CREATE TYPE employee_status AS ENUM ('active', 'inactive', 'terminated');
 CREATE TYPE department AS ENUM ('development', 'design', 'marketing', 'operations', 'other');
 CREATE TYPE agent_status AS ENUM ('active', 'paused', 'retired');
 CREATE TYPE income_source AS ENUM ('invoice', 'manual');
+CREATE TYPE equipment_category AS ENUM ('computing', 'peripherals', 'mobile', 'networking', 'software_licence', 'office', 'other');
+CREATE TYPE equipment_condition AS ENUM ('new', 'good', 'fair', 'poor');
+CREATE TYPE equipment_status AS ENUM ('active', 'sold', 'disposed');
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- TABLES
@@ -260,6 +263,22 @@ CREATE INDEX idx_documents_client ON documents(client_id);
 CREATE INDEX idx_documents_project ON documents(project_id);
 CREATE INDEX idx_salary_history_employee ON salary_history(employee_id);
 
+-- Equipment
+CREATE TABLE equipment (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  category equipment_category NOT NULL,
+  serial_number TEXT,
+  purchased_at DATE,
+  purchase_price INTEGER NOT NULL DEFAULT 0, -- cents
+  current_value INTEGER NOT NULL DEFAULT 0,  -- cents
+  condition equipment_condition NOT NULL DEFAULT 'good',
+  status equipment_status NOT NULL DEFAULT 'active',
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- AUTO-UPDATE updated_at TRIGGER
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -283,6 +302,7 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON documents FOR EACH ROW EXECUTE FU
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON investors FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON employees FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON ai_agents FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON equipment FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- AUTO-CREATE PROFILE ON SIGNUP

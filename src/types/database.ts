@@ -21,6 +21,9 @@ export type EmployeeStatus = "active" | "inactive" | "terminated";
 export type Department = "development" | "design" | "marketing" | "operations" | "other";
 export type AgentStatus = "active" | "paused" | "retired";
 export type IncomeSource = "invoice" | "manual" | "investor";
+export type EquipmentCategory = "computing" | "peripherals" | "mobile" | "networking" | "software_licence" | "office" | "other";
+export type EquipmentCondition = "new" | "good" | "fair" | "poor";
+export type EquipmentStatus = "active" | "sold" | "disposed";
 
 export interface Profile {
   id: string;
@@ -231,6 +234,21 @@ export interface AiAgent {
   updated_at: string;
 }
 
+export interface Equipment {
+  id: string;
+  name: string;
+  category: EquipmentCategory;
+  serial_number: string | null;
+  purchased_at: string | null;
+  purchase_price: number;
+  current_value: number;
+  condition: EquipmentCondition;
+  status: EquipmentStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SalaryHistory {
   id: string;
   employee_id: string;
@@ -280,6 +298,7 @@ export interface Database {
       ai_agents: { Row: AiAgent; Insert: Partial<AiAgent> & Pick<AiAgent, "name" | "purpose" | "model" | "provider">; Update: Partial<AiAgent> };
       salary_history: { Row: SalaryHistory; Insert: Partial<SalaryHistory> & Pick<SalaryHistory, "employee_id" | "amount" | "effective_date">; Update: Partial<SalaryHistory> };
       business_settings: { Row: BusinessSettings; Insert: Partial<BusinessSettings> & Pick<BusinessSettings, "company_name">; Update: Partial<BusinessSettings> };
+      equipment: { Row: Equipment; Insert: Partial<Equipment> & Pick<Equipment, "name" | "category">; Update: Partial<Equipment> };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -299,6 +318,9 @@ export interface Database {
       department: Department;
       agent_status: AgentStatus;
       income_source: IncomeSource;
+      equipment_category: EquipmentCategory;
+      equipment_condition: EquipmentCondition;
+      equipment_status: EquipmentStatus;
     };
   };
 }

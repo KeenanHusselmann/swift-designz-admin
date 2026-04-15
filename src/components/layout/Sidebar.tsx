@@ -20,6 +20,7 @@ import {
   UserPlus,
   Sun,
   Moon,
+  Package,
 } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ const NAV_SECTIONS = [
       { href: "/documents", label: "Documents", icon: FolderOpen, countKey: "documents" },
       { href: "/investors", label: "Investors", icon: Landmark, countKey: "investors" },
       { href: "/team", label: "Team", icon: UserCog, countKey: "team" },
+      { href: "/equipment", label: "Equipment", icon: Package, countKey: "equipment" },
     ],
   },
   {
@@ -65,7 +67,7 @@ export default function Sidebar({ profile }: SidebarProps) {
   // Fetch nav counts client-side so the layout never blocks on them
   useEffect(() => {
     const supabase = createClient();
-    const tables = ["leads", "clients", "projects", "invoices", "documents", "investors", "employees", "ai_agents"] as const;
+    const tables = ["leads", "clients", "projects", "invoices", "documents", "investors", "employees", "ai_agents", "equipment"] as const;
     Promise.all(
       tables.map((t) => supabase.from(t).select("id", { count: "exact", head: true }))
     ).then((results) => {
