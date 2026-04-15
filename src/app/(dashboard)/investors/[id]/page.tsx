@@ -7,9 +7,45 @@ import DeleteInvestorButton from "@/components/investors/DeleteInvestorButton";
 import ContributionForm from "@/components/investors/ContributionForm";
 import PrintInvestorStatementButton from "@/components/statements/PrintInvestorStatementButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Edit, DollarSign, FileText, ExternalLink } from "lucide-react";
 import { addContributionAction } from "../actions";
 import type { Investor, IncomeEntry, Document as DocType } from "@/types/database";
+
+interface InvestorOnboardingAcceptance {
+  termsAcceptedAt: string | null;
+  ndaAcceptedAt: string | null;
+}
+
+async function getInvestorOnboardingAcceptance(email: string | null): Promise<InvestorOnboardingAcceptance> {
+  if (!email) return { termsAcceptedAt: null, ndaAcceptedAt: null };
+
+  const admin = createAdminClient();
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+
+  if (!profile?.id) {
+    return { termsAcceptedAt: null, ndaAcceptedAt: null };
+  }
+
+  const { data, error } = await admin.auth.admin.getUserById(profile.id);
+  if (error || !data.user) {
+    return { termsAcceptedAt: null, ndaAcceptedAt: null };
+  }
+
+  const metadata = data.user.user_metadata as Record<string, unknown> | null;
+  const termsAcceptedAt = typeof metadata?.investor_terms_accepted_at === "string"
+    ? metadata.investor_terms_accepted_at
+    : null;
+  const ndaAcceptedAt = typeof metadata?.investor_nda_accepted_at === "string"
+    ? metadata.investor_nda_accepted_at
+    : null;
+
+  return { termsAcceptedAt, ndaAcceptedAt };
+}
 
 export default async function InvestorDetailPage({
   params,
@@ -43,8 +79,10 @@ export default async function InvestorDetailPage({
 
   const contributions = (contributionsRaw || []) as IncomeEntry[];
   const documents = (documentsRaw || []) as DocType[];
+  const onboardingAcceptance = await getInvestorOnboardingAcceptance(investor.email);
 
   const totalContributed = contributions.reduce((s, c) => s + c.amount, 0);
+  const acceptedOn = onboardingAcceptance.termsAcceptedAt || onboardingAcceptance.ndaAcceptedAt;
 
   async function contributionAction(formData: FormData) {
     "use server";
@@ -113,6 +151,12 @@ export default async function InvestorDetailPage({
               <div>
                 <dt className="text-xs text-gray-500 mb-1">Since</dt>
                 <dd className="text-sm text-foreground">{formatDate(investor.created_at)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-gray-500 mb-1">Accepted On</dt>
+                <dd className="text-sm text-foreground">
+                  {acceptedOn ? formatDate(acceptedOn) : "Not accepted yet"}
+                </dd>
               </div>
             </dl>
             {investor.notes && (
