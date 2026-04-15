@@ -16,7 +16,6 @@ export default async function DocumentsPage() {
       <PageHeader
         title="Documents"
         description="Client contracts, proposals, and files"
-        actions={null}
       />
 
       <div className="glass-card overflow-hidden">
@@ -34,7 +33,7 @@ export default async function DocumentsPage() {
             <tbody className="divide-y divide-border">
               {(!documents || documents.length === 0) ? (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-sm text-gray-500">
+                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-gray-500">
                     No documents uploaded yet.
                   </td>
                 </tr>

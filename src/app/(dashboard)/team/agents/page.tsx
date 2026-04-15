@@ -4,7 +4,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import type { AiAgent } from "@/types/database";
-import { Bot } from "lucide-react";
+import { Bot, DollarSign, TrendingUp } from "lucide-react";
 
 export default async function AgentsPage() {
   const supabase = await createClient();
@@ -46,7 +46,7 @@ export default async function AgentsPage() {
         </div>
         <div className="glass-card p-5 flex items-center gap-4">
           <div className="p-2.5 rounded-lg bg-teal/10">
-            <Bot className="h-5 w-5 text-teal" />
+            <DollarSign className="h-5 w-5 text-teal" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Total Monthly AI Spend</p>
@@ -55,7 +55,7 @@ export default async function AgentsPage() {
         </div>
         <div className="glass-card p-5 flex items-center gap-4">
           <div className="p-2.5 rounded-lg bg-teal/10">
-            <Bot className="h-5 w-5 text-teal" />
+            <TrendingUp className="h-5 w-5 text-teal" />
           </div>
           <div>
             <p className="text-xs text-gray-500">Annual AI Spend</p>
