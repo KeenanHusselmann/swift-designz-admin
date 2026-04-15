@@ -345,6 +345,7 @@ ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_agents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE salary_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lead_notes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE equipment ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can read all tables
 CREATE POLICY "Authenticated users can read profiles" ON profiles FOR SELECT TO authenticated USING (true);
@@ -362,6 +363,7 @@ CREATE POLICY "Authenticated users can read employees" ON employees FOR SELECT T
 CREATE POLICY "Authenticated users can read agents" ON ai_agents FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read salary history" ON salary_history FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read lead notes" ON lead_notes FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can read equipment" ON equipment FOR SELECT TO authenticated USING (true);
 
 -- Only admins can write (insert, update, delete)
 CREATE POLICY "Admins can manage profiles" ON profiles FOR ALL TO authenticated
@@ -394,6 +396,9 @@ CREATE POLICY "Admins can manage salary history" ON salary_history FOR ALL TO au
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 CREATE POLICY "Admins can manage lead notes" ON lead_notes FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can manage equipment" ON equipment FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- Allow the main website to insert leads via anon key (public API)
 -- Restricted: require name + email, source must be a public form (not manual)
