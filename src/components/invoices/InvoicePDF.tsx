@@ -107,6 +107,7 @@ export interface InvoicePDFProps {
   projectName?: string | null;
   items: { description: string; quantity: number; unit_rate: number; amount: number }[];
   total: number;
+  discountAmount?: number;
   paidAmount: number;
   notes?: string | null;
   paymentPlanEnabled?: boolean;
@@ -177,6 +178,7 @@ export default function InvoicePDF({
   projectName,
   items,
   total,
+  discountAmount = 0,
   paidAmount,
   notes,
   paymentPlanEnabled,
@@ -263,10 +265,24 @@ export default function InvoicePDF({
         </View>
 
         {/* Totals */}
-        <View style={s.totalRow}>
-          <Text style={s.totalLabel}>Subtotal</Text>
-          <Text style={s.totalVal}>{formatR(total)}</Text>
-        </View>
+        {discountAmount > 0 && (
+          <View style={s.totalRow}>
+            <Text style={s.totalLabel}>Subtotal</Text>
+            <Text style={s.totalVal}>{formatR(total + discountAmount)}</Text>
+          </View>
+        )}
+        {discountAmount > 0 && (
+          <View style={s.totalRow}>
+            <Text style={s.totalLabel}>Discount</Text>
+            <Text style={[s.totalVal, { color: "#f87171" }]}>-{formatR(discountAmount)}</Text>
+          </View>
+        )}
+        {!discountAmount && (
+          <View style={s.totalRow}>
+            <Text style={s.totalLabel}>Subtotal</Text>
+            <Text style={s.totalVal}>{formatR(total)}</Text>
+          </View>
+        )}
         {!isQuotation && paidAmount > 0 && (
           <View style={s.totalRow}>
             <Text style={s.totalLabel}>Paid</Text>

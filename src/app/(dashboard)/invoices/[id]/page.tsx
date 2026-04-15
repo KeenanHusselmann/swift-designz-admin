@@ -45,6 +45,8 @@ export default async function InvoiceDetailPage({
   const client = invoice.clients as { id: string; name: string; email: string; phone: string | null; company: string | null } | null;
   const project = invoice.projects as { id: string; name: string } | null;
   const outstanding = invoice.amount - invoice.paid_amount;
+  const itemsSubtotal = (items || []).reduce((s: number, it: { amount: number }) => s + it.amount, 0);
+  const discountAmt = (invoice.discount_amount ?? 0) as number;
   const isQuotation = invoice.doc_type === "quotation";
   const docLabel = isQuotation ? "Quotation" : "Invoice";
 
@@ -105,10 +107,23 @@ export default async function InvoiceDetailPage({
                 ))}
               </tbody>
               <tfoot>
-                <tr className="border-t border-border">
-                  <td colSpan={3} className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Subtotal</td>
-                  <td className="px-6 py-3 text-right text-sm font-bold text-foreground font-mono">{formatCurrency(invoice.amount)}</td>
-                </tr>
+                {discountAmt > 0 ? (
+                  <>
+                    <tr className="border-t border-border">
+                      <td colSpan={3} className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Subtotal</td>
+                      <td className="px-6 py-3 text-right text-sm font-bold text-foreground font-mono">{formatCurrency(itemsSubtotal)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan={3} className="px-6 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Discount</td>
+                      <td className="px-6 py-2 text-right text-sm font-bold text-red-400 font-mono">-{formatCurrency(discountAmt)}</td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr className="border-t border-border">
+                    <td colSpan={3} className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Subtotal</td>
+                    <td className="px-6 py-3 text-right text-sm font-bold text-foreground font-mono">{formatCurrency(invoice.amount)}</td>
+                  </tr>
+                )}
                 {!isQuotation && invoice.paid_amount > 0 && (
                   <tr>
                     <td colSpan={3} className="px-6 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Paid</td>

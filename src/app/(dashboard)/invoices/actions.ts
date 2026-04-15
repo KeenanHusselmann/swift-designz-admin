@@ -52,6 +52,10 @@ export async function createInvoiceAction(formData: FormData) {
     total += Math.round(item.quantity * item.unit_rate);
   }
 
+  const discountAmt = Math.max(0, parseInt(formData.get("discount_amount") as string) || 0);
+  const discountType = (formData.get("discount_type") as string) || "flat";
+  const finalTotal = Math.max(0, total - discountAmt);
+
   // Generate number based on doc type
   const prefix = docType === "quotation" ? "QUO" : "INV";
   const year = new Date().getFullYear();
@@ -80,7 +84,9 @@ export async function createInvoiceAction(formData: FormData) {
       client_id: clientId,
       project_id: projectId,
       doc_type: docType,
-      amount: total,
+      amount: finalTotal,
+      discount_amount: discountAmt,
+      discount_type: discountType,
       status,
       due_date: dueDate,
       notes,
@@ -157,13 +163,19 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
     total += Math.round(item.quantity * item.unit_rate);
   }
 
+  const discountAmt = Math.max(0, parseInt(formData.get("discount_amount") as string) || 0);
+  const discountType = (formData.get("discount_type") as string) || "flat";
+  const finalTotal = Math.max(0, total - discountAmt);
+
   const { error: invError } = await supabase
     .from("invoices")
     .update({
       client_id: clientId,
       project_id: projectId,
       doc_type: docType,
-      amount: total,
+      amount: finalTotal,
+      discount_amount: discountAmt,
+      discount_type: discountType,
       status,
       due_date: dueDate,
       notes,

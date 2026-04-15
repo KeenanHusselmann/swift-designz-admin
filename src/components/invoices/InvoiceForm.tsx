@@ -70,12 +70,26 @@ export default function InvoiceForm({
     : [{ description: "", quantity: 1, unit_rate: 0 }];
 
   const [items, setItems] = useState<LineItem[]>(initialItems);
+  const [discountType, setDiscountType] = useState<"percent" | "flat">(
+    (invoice?.discount_type as "percent" | "flat") || "flat"
+  );
+  const [discountValue, setDiscountValue] = useState<number>(() => {
+    if (!invoice?.discount_amount) return 0;
+    if (invoice.discount_type === "flat") return invoice.discount_amount / 100;
+    const iSubtotal = (existingItems || []).reduce((s, it) => s + it.amount, 0);
+    if (iSubtotal > 0) return Math.round((invoice.discount_amount / iSubtotal) * 10000) / 100;
+    return 0;
+  });
   const formRef = useRef<HTMLFormElement>(null);
 
   // Filter projects by selected client
   const clientProjects = projects.filter((p) => p.client_id === selectedClientId);
 
-  const total = items.reduce((sum, item) => sum + Math.round(item.quantity * item.unit_rate), 0);
+  const subtotal = items.reduce((sum, item) => sum + Math.round(item.quantity * item.unit_rate), 0);
+  const discountAmount = discountType === "percent"
+    ? Math.round(subtotal * Math.min(discountValue, 100) / 100)
+    : Math.round(discountValue * 100);
+  const finalTotal = Math.max(0, subtotal - discountAmount);
 
   // Payment plan presets matching quote template
   const PLAN_PRESETS: { type: PaymentPlanType; title: string; badge?: string; desc: string; detail: string; generate: (t: number) => PaymentPlanInstallment[] }[] = [
@@ -126,7 +140,7 @@ export default function InvoiceForm({
     setPlanType(type);
     const preset = PLAN_PRESETS.find((p) => p.type === type);
     if (preset) {
-      const generated = preset.generate(total);
+      const generated = preset.generate(finalTotal);
       setSchedule(generated);
       setInstallmentCount(generated.length);
       setInstallmentInterval("monthly");
@@ -141,7 +155,7 @@ export default function InvoiceForm({
     if (planType && planType !== "custom") {
       const preset = PLAN_PRESETS.find((p) => p.type === planType);
       if (preset) {
-        const expected = preset.generate(total);
+        const expected = preset.generate(finalTotal);
         const matches = expected.length === updated.length && expected.every((e, i) => e.amount === updated[i].amount);
         if (!matches) setPlanType("custom");
       }
@@ -197,6 +211,8 @@ export default function InvoiceForm({
     // Inject items as JSON
     formData.set("items", JSON.stringify(items));
     formData.set("doc_type", docType);
+    formData.set("discount_type", discountType);
+    formData.set("discount_amount", String(discountAmount));
     formData.set("payment_plan_enabled", paymentPlan ? "true" : "false");
     if (paymentPlan) {
       formData.set("installment_count", String(installmentCount));
@@ -389,10 +405,52 @@ export default function InvoiceForm({
               })}
             </tbody>
             <tfoot>
+              {discountAmount > 0 && (
+                <tr className="border-t border-border/40">
+                  <td colSpan={3} className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</td>
+                  <td className="px-3 py-2 text-right text-sm text-gray-400 font-mono">{formatCurrency(subtotal)}</td>
+                  <td />
+                </tr>
+              )}
+              <tr className="border-t border-border/40">
+                <td colSpan={2} className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</td>
+                <td className="px-3 py-2">
+                  <div className="flex items-center gap-1 justify-end">
+                    <button
+                      type="button"
+                      onClick={() => { setDiscountType("percent"); setDiscountValue(0); }}
+                      className={`px-2 py-0.5 text-xs rounded border transition-colors ${
+                        discountType === "percent" ? "border-teal text-teal bg-teal/10" : "border-border text-gray-500 hover:border-teal/40"
+                      }`}
+                    >%</button>
+                    <button
+                      type="button"
+                      onClick={() => { setDiscountType("flat"); setDiscountValue(0); }}
+                      className={`px-2 py-0.5 text-xs rounded border transition-colors ${
+                        discountType === "flat" ? "border-teal text-teal bg-teal/10" : "border-border text-gray-500 hover:border-teal/40"
+                      }`}
+                    >R</button>
+                    <input
+                      type="number"
+                      step={discountType === "percent" ? "1" : "0.01"}
+                      min="0"
+                      max={discountType === "percent" ? "100" : undefined}
+                      value={discountValue || ""}
+                      onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+                      placeholder="0"
+                      className="w-14 bg-transparent border-0 text-sm text-foreground text-center focus:outline-none"
+                    />
+                  </div>
+                </td>
+                <td className="px-3 py-2 text-right text-sm font-mono text-red-400">
+                  {discountAmount > 0 ? `- ${formatCurrency(discountAmount)}` : "—"}
+                </td>
+                <td />
+              </tr>
               <tr className="border-t border-border">
                 <td colSpan={3} className="px-3 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Total</td>
                 <td className="px-3 py-3 text-right text-sm font-bold text-teal font-mono">
-                  {formatCurrency(total)}
+                  {formatCurrency(finalTotal)}
                 </td>
                 <td />
               </tr>
@@ -530,8 +588,8 @@ export default function InvoiceForm({
                 </div>
                 {(() => {
                   const scheduleTotal = schedule.reduce((s, r) => s + r.amount, 0);
-                  const diff = total - scheduleTotal;
-                  if (diff !== 0 && total > 0) {
+                  const diff = finalTotal - scheduleTotal;
+                  if (diff !== 0 && finalTotal > 0) {
                     return (
                       <p className="text-xs text-amber-400 mt-1">
                         Schedule {diff > 0 ? "is short by" : "exceeds total by"} {formatCurrency(Math.abs(diff))}

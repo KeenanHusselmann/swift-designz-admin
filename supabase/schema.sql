@@ -114,7 +114,9 @@ CREATE TABLE invoices (
   invoice_number TEXT NOT NULL UNIQUE,
   project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
   client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
-  amount INTEGER NOT NULL, -- cents
+  amount INTEGER NOT NULL, -- cents (post-discount final amount)
+  discount_amount INTEGER NOT NULL DEFAULT 0, -- cents
+  discount_type TEXT NOT NULL DEFAULT 'flat', -- 'percent' or 'flat'
   status invoice_status NOT NULL DEFAULT 'draft',
   due_date DATE NOT NULL,
   paid_date DATE,

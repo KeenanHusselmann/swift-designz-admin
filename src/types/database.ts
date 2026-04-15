@@ -107,6 +107,8 @@ export interface Invoice {
   client_id: string;
   doc_type: InvoiceDocType;
   amount: number;
+  discount_amount: number;
+  discount_type: "percent" | "flat";
   status: InvoiceStatus;
   due_date: string;
   paid_date: string | null;

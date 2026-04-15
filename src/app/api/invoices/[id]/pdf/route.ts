@@ -73,6 +73,7 @@ export async function GET(
         amount: i.amount,
       })),
       total: invoice.amount,
+      discountAmount: invoice.discount_amount ?? 0,
       paidAmount: invoice.paid_amount,
       notes: invoice.notes,
       paymentPlanEnabled: invoice.payment_plan_enabled ?? false,
