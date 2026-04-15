@@ -12,6 +12,8 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
+import RevenueChart, { type RevenueDataPoint } from "@/components/dashboard/RevenueChart";
+import LeadPipelineChart, { type LeadStatusDataPoint } from "@/components/dashboard/LeadPipelineChart";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -19,6 +21,7 @@ export default async function DashboardPage() {
   // Fetch KPI data in parallel
   const now = new Date();
   const mtdStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const yearStart = new Date(now.getFullYear() - 1, now.getMonth() + 1, 1).toISOString();
 
   const [
     { count: newLeadsCount },
@@ -27,6 +30,9 @@ export default async function DashboardPage() {
     { data: recentLeads },
     { data: recentPayments },
     { data: mtdPayments },
+    { data: incomeEntries },
+    { data: expenseEntries },
+    { data: allLeads },
   ] = await Promise.all([
     supabase
       .from("leads")
@@ -54,12 +60,70 @@ export default async function DashboardPage() {
       .from("payments")
       .select("amount")
       .gte("paid_at", mtdStart),
+    supabase
+      .from("income_entries")
+      .select("amount, date")
+      .gte("date", yearStart),
+    supabase
+      .from("expenses")
+      .select("amount, date")
+      .gte("date", yearStart),
+    supabase
+      .from("leads")
+      .select("status"),
   ]);
 
   const outstandingAmount = (unpaidInvoices || []).reduce(
     (sum, inv) => sum + (inv.amount - inv.paid_amount),
     0
   );
+
+  // Build 12-month revenue trend
+  const monthMap = new Map<string, { income: number; expenses: number }>();
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = d.toLocaleDateString("en-ZA", { month: "short", year: "2-digit" });
+    monthMap.set(key, { income: 0, expenses: 0 });
+    // store label keyed by key for later
+    void label;
+  }
+  // rebuild with labels
+  const orderedMonths: { key: string; label: string }[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = d.toLocaleDateString("en-ZA", { month: "short", year: "2-digit" });
+    orderedMonths.push({ key, label });
+  }
+  const revenueMap = new Map<string, { income: number; expenses: number }>(
+    orderedMonths.map(({ key }) => [key, { income: 0, expenses: 0 }])
+  );
+  (incomeEntries || []).forEach((e: { amount: number; date: string }) => {
+    const key = e.date.slice(0, 7);
+    const entry = revenueMap.get(key);
+    if (entry) entry.income += e.amount;
+  });
+  (expenseEntries || []).forEach((e: { amount: number; date: string }) => {
+    const key = e.date.slice(0, 7);
+    const entry = revenueMap.get(key);
+    if (entry) entry.expenses += e.amount;
+  });
+  const revenueData: RevenueDataPoint[] = orderedMonths.map(({ key, label }) => ({
+    month: label,
+    income: revenueMap.get(key)?.income ?? 0,
+    expenses: revenueMap.get(key)?.expenses ?? 0,
+  }));
+
+  // Build lead pipeline counts
+  const PIPELINE_ORDER = ["new", "contacted", "qualified", "proposal", "won", "lost"];
+  const leadCountMap = new Map<string, number>();
+  (allLeads || []).forEach((l: { status: string }) => {
+    leadCountMap.set(l.status, (leadCountMap.get(l.status) ?? 0) + 1);
+  });
+  const pipelineData: LeadStatusDataPoint[] = PIPELINE_ORDER
+    .filter((s) => leadCountMap.has(s))
+    .map((s) => ({ status: s, count: leadCountMap.get(s)! }));
 
   return (
     <>
@@ -180,6 +244,15 @@ export default async function DashboardPage() {
               ))}
             </div>
           )}
+        </div>
+      </div>
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
+        <div className="lg:col-span-3">
+          <RevenueChart data={revenueData} />
+        </div>
+        <div className="lg:col-span-2">
+          <LeadPipelineChart data={pipelineData} />
         </div>
       </div>
     </>
