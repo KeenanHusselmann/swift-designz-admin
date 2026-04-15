@@ -17,14 +17,6 @@ export const metadata: Metadata = {
   title: "Swift Designz Admin",
   description: "Business management portal for Swift Designz",
   robots: { index: false, follow: false },
-  icons: {
-    icon: [
-      { url: "/favicon.png", type: "image/png" },
-    ],
-    apple: [
-      { url: "/favicon.png", type: "image/png" },
-    ],
-  },
   openGraph: {
     title: "Swift Designz Admin",
     description: "Business management portal for Swift Designz",
