@@ -3,9 +3,19 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const INVESTOR_ALLOWED_PATHS = ["/", "/investors", "/projects", "/accounting/reports", "/equipment"];
 const PUBLIC_PATHS = ["/login", "/auth/callback"];
+const STATIC_FILE_RE = /\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|map|txt|xml)$/i;
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/"));
+}
+
+function isStaticOrSystemPath(pathname: string): boolean {
+  return (
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/images/") ||
+    pathname.startsWith("/api/") ||
+    STATIC_FILE_RE.test(pathname)
+  );
 }
 
 function isInvestorAllowed(pathname: string): boolean {
@@ -57,7 +67,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Investor route guard — restrict to allowed pages only
-  if (user) {
+  if (user && !isStaticOrSystemPath(request.nextUrl.pathname)) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
