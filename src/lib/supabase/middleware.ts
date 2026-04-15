@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const INVESTOR_ALLOWED_PATHS = ["/", "/investors", "/projects", "/accounting/reports", "/equipment"];
 const PUBLIC_PATHS = ["/login", "/auth/callback"];
-const STATIC_FILE_RE = /\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|map|txt|xml)$/i;
+const INVESTOR_ONBOARDING_PATH = "/investors/onboarding";
+const STATIC_FILE_RE = /\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|map|txt|xml|html|pdf)$/i;
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/"));
@@ -13,9 +14,15 @@ function isStaticOrSystemPath(pathname: string): boolean {
   return (
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
+    pathname.startsWith("/docs/") ||
     pathname.startsWith("/api/") ||
     STATIC_FILE_RE.test(pathname)
   );
+}
+
+function hasCompletedInvestorOnboarding(user: { user_metadata?: Record<string, unknown> }): boolean {
+  const metadata = user.user_metadata ?? {};
+  return Boolean(metadata.investor_terms_accepted_at) && Boolean(metadata.investor_nda_accepted_at);
 }
 
 function isInvestorAllowed(pathname: string): boolean {
@@ -74,10 +81,26 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (profile?.role === "investor" && !isInvestorAllowed(request.nextUrl.pathname)) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      return NextResponse.redirect(url);
+    if (profile?.role === "investor") {
+      const completedOnboarding = hasCompletedInvestorOnboarding(user);
+
+      if (!completedOnboarding && request.nextUrl.pathname !== INVESTOR_ONBOARDING_PATH) {
+        const url = request.nextUrl.clone();
+        url.pathname = INVESTOR_ONBOARDING_PATH;
+        return NextResponse.redirect(url);
+      }
+
+      if (completedOnboarding && request.nextUrl.pathname === INVESTOR_ONBOARDING_PATH) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+
+      if (completedOnboarding && !isInvestorAllowed(request.nextUrl.pathname)) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
     }
   }
 
