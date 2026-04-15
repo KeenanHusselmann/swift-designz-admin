@@ -5,7 +5,7 @@
 -- ENUMS
 -- ═══════════════════════════════════════════════════════════════════════════════
 
-CREATE TYPE user_role AS ENUM ('admin', 'viewer');
+CREATE TYPE user_role AS ENUM ('admin', 'viewer', 'investor');
 CREATE TYPE lead_source AS ENUM ('quote_form', 'contact_form', 'manual');
 CREATE TYPE lead_status AS ENUM ('new', 'contacted', 'quoted', 'won', 'lost');
 CREATE TYPE project_status AS ENUM ('planning', 'in_progress', 'review', 'completed', 'on_hold', 'cancelled');
@@ -316,7 +316,7 @@ BEGIN
     NEW.id,
     COALESCE(NEW.raw_user_meta_data ->> 'full_name', NEW.email),
     NEW.email,
-    'admin'  -- first user gets admin; change to 'viewer' after initial setup
+    COALESCE(NEW.raw_user_meta_data ->> 'role', 'viewer')::user_role
   );
   RETURN NEW;
 END;

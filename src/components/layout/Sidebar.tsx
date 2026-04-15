@@ -21,6 +21,7 @@ import {
   Sun,
   Moon,
   Package,
+  BarChart2,
 } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,13 @@ const NAV_SECTIONS = [
       { href: "/settings", label: "Settings", icon: Settings },
     ],
   },
+];
+
+const INVESTOR_NAV = [
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/projects", label: "Projects", icon: Briefcase, countKey: "projects" },
+  { href: "/investors", label: "Investors", icon: Landmark, countKey: "investors" },
+  { href: "/accounting/reports", label: "Reports", icon: BarChart2 },
 ];
 
 export default function Sidebar({ profile }: SidebarProps) {
@@ -104,7 +112,38 @@ export default function Sidebar({ profile }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
-        {NAV_SECTIONS.map((section, sIdx) => (
+        {profile?.role === "investor" ? (
+          <ul className="space-y-1">
+            {INVESTOR_NAV.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              const count = item.countKey ? counts[item.countKey] ?? 0 : null;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                      active
+                        ? "bg-teal/10 text-teal border border-teal/20"
+                        : "text-gray-400 hover:text-foreground hover:bg-card"
+                    )}
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    {item.label}
+                    {count !== null && count > 0 && (
+                      <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-border text-gray-400">
+                        {count}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          NAV_SECTIONS.map((section, sIdx) => (
           <div key={sIdx}>
             {sIdx > 0 && (
               <hr className="my-3 border-border" />
@@ -143,7 +182,8 @@ export default function Sidebar({ profile }: SidebarProps) {
               })}
             </ul>
           </div>
-        ))}
+        ))
+        )}
       </nav>
 
       {/* User section */}

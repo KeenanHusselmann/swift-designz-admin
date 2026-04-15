@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getProfile } from "@/app/auth/actions";
 import PageHeader from "@/components/ui/PageHeader";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { formatCurrency } from "@/lib/utils";
@@ -8,9 +9,10 @@ import type { Investor, IncomeEntry } from "@/types/database";
 export default async function InvestorsPage() {
   const supabase = await createClient();
 
-  const [{ data: investorsRaw }, { data: contributionsRaw }] = await Promise.all([
+  const [{ data: investorsRaw }, { data: contributionsRaw }, profile] = await Promise.all([
     supabase.from("investors").select("*").order("created_at", { ascending: false }),
     supabase.from("income_entries").select("investor_id, amount").eq("source", "investor"),
+    getProfile(),
   ]);
 
   const investors = (investorsRaw || []) as Investor[];
@@ -30,12 +32,22 @@ export default async function InvestorsPage() {
         title="Investors"
         description="Investor profiles, agreements, and contributions"
         actions={
-          <Link
-            href="/investors/new"
-            className="px-4 py-2 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors"
-          >
-            Add Investor
-          </Link>
+          profile?.role === "admin" ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/investors/invite"
+                className="px-4 py-2 bg-card border border-border hover:border-teal text-gray-400 hover:text-teal text-sm font-medium rounded-lg transition-colors"
+              >
+                Invite Investor
+              </Link>
+              <Link
+                href="/investors/new"
+                className="px-4 py-2 bg-teal hover:bg-teal-hover text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Add Investor
+              </Link>
+            </div>
+          ) : null
         }
       />
 
