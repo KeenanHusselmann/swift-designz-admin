@@ -8,6 +8,12 @@ import { redirect } from "next/navigation";
 export async function inviteInvestorAction(formData: FormData) {
   await requireAuth();
 
+  const appUrl = (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "https://admin.swiftdesignz.co.za"
+  ).replace(/\/$/, "");
+
   const name = (formData.get("name") as string)?.trim();
   if (!name) return { error: "Name is required." };
 
@@ -20,6 +26,7 @@ export async function inviteInvestorAction(formData: FormData) {
   // Note: we do NOT pass role in metadata to avoid trigger cast issues —
   // role is set explicitly via the upsert below.
   const { data, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${appUrl}/auth/callback?next=/investors`,
     data: { full_name: name },
   });
 
