@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import EquipmentForm from "@/components/equipment/EquipmentForm";
+import DeleteEquipmentButton from "@/components/equipment/DeleteEquipmentButton";
 import { updateEquipmentAction, deleteEquipmentAction } from "../../actions";
 import { notFound } from "next/navigation";
 import type { Equipment } from "@/types/database";
@@ -33,17 +34,7 @@ export default async function EditEquipmentPage({ params }: EditEquipmentPagePro
       />
       <div className="max-w-2xl space-y-4">
         <EquipmentForm equipment={equipment} action={updateAction} submitLabel="Save Changes" />
-        <form action={deleteAction}>
-          <button
-            type="submit"
-            className="px-4 py-2 text-sm text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/10 transition-colors"
-            onClick={(e) => {
-              if (!confirm(`Delete "${equipment.name}"? This cannot be undone.`)) e.preventDefault();
-            }}
-          >
-            Delete Equipment
-          </button>
-        </form>
+        <DeleteEquipmentButton name={equipment.name} action={deleteAction} />
       </div>
     </>
   );
