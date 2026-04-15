@@ -5,14 +5,35 @@ import { requireAuth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+function resolveAppUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.SITE_URL,
+    process.env.URL,
+    "https://admin.swiftdesignz.co.za",
+  ];
+
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const value = raw.trim();
+    if (!value) continue;
+
+    // Never send production invite links back to localhost.
+    if (process.env.NODE_ENV === "production" && /localhost|127\.0\.0\.1/i.test(value)) {
+      continue;
+    }
+
+    return value.replace(/\/$/, "");
+  }
+
+  return "https://admin.swiftdesignz.co.za";
+}
+
 export async function inviteInvestorAction(formData: FormData) {
   await requireAuth();
 
-  const appUrl = (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "https://admin.swiftdesignz.co.za"
-  ).replace(/\/$/, "");
+  const appUrl = resolveAppUrl();
 
   const name = (formData.get("name") as string)?.trim();
   if (!name) return { error: "Name is required." };
