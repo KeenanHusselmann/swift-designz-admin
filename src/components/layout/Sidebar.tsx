@@ -33,6 +33,9 @@ interface SidebarProps {
   profile: Profile | null;
 }
 
+// Templates available in Documents > Document Library.
+const DOCUMENT_LIBRARY_COUNT = 12;
+
 const NAV_SECTIONS = [
   {
     items: [
@@ -119,7 +122,11 @@ export default function Sidebar({ profile }: SidebarProps) {
             {INVESTOR_NAV.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
-              const count = item.countKey ? counts[item.countKey] ?? 0 : null;
+              const count = item.countKey
+                ? item.countKey === "documents"
+                  ? (counts.documents ?? 0) + DOCUMENT_LIBRARY_COUNT
+                  : counts[item.countKey] ?? 0
+                : null;
               return (
                 <li key={item.href}>
                   <Link
@@ -157,6 +164,8 @@ export default function Sidebar({ profile }: SidebarProps) {
                 const count = item.countKey
                   ? item.countKey === "team"
                     ? (counts.employees ?? 0) + (counts.ai_agents ?? 0)
+                    : item.countKey === "documents"
+                      ? (counts.documents ?? 0) + DOCUMENT_LIBRARY_COUNT
                     : counts[item.countKey] ?? 0
                   : null;
                 return (
