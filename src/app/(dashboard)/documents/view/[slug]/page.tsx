@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getDocumentTemplatesForRole } from "@/lib/document-templates";
+import { hasTemplateContent } from "@/lib/document-content-registry";
 import type { UserRole } from "@/types/database";
 import DocumentViewer from "@/components/documents/DocumentViewer";
 
@@ -29,5 +30,7 @@ export default async function DocumentViewPage({ params }: Props) {
 
   if (!template) redirect("/documents");
 
-  return <DocumentViewer slug={slug} label={template.label} />;
+  const hasPdf = hasTemplateContent(slug);
+
+  return <DocumentViewer slug={slug} label={template.label} hasPdf={hasPdf} />;
 }
