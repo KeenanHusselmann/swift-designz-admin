@@ -24,6 +24,7 @@ export const DOCUMENT_TEMPLATES: DocumentTemplateDefinition[] = [
   { slug: "investor-terms-and-conditions", label: "Investor Terms and Conditions", audiences: ["admin", "investor"], clientGeneration: false },
   { slug: "investor-reporting-policy", label: "Investor Reporting Policy", audiences: ["admin", "investor"], clientGeneration: false },
   { slug: "investor-governance-charter", label: "Investor Governance Charter", audiences: ["admin", "investor"], clientGeneration: false },
+  { slug: "family-investment-overview", label: "Family Investment Overview", audiences: ["admin", "investor"], clientGeneration: false },
 ];
 
 function audienceForRole(role: UserRole | null | undefined): DocumentTemplateAudience {

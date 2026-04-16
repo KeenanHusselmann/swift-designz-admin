@@ -625,3 +625,109 @@ export const investorGovernanceCharter: TemplateDocument = {
     },
   ],
 };
+
+/* ================================================================
+   FAMILY INVESTMENT OVERVIEW
+   Explains the unit trust investment model for close family,
+   friends, and angel investors
+   ================================================================ */
+
+export const familyInvestmentOverview: TemplateDocument = {
+  title: "Family Investment Overview",
+  subtitle: "Unit Trust Investment Programme",
+  ref: "SD-FIO-2026",
+  version: "1.0",
+  effective: "April 2026",
+  blocks: [
+    {
+      type: "info",
+      text: "This document outlines how investments in Swift Designz are structured through a regulated unit trust vehicle. It is intended for close family, friends, and angel investors only and is not a public offering of any financial product.",
+    },
+    {
+      type: "section",
+      number: "01",
+      title: "Investment Model",
+      body: "When you invest any amount in Swift Designz, your capital is not used for business expenses. Instead, it is deposited into a professionally managed unit trust account and held for a fixed 5-year term. At the end of the term, you receive your full capital back together with all accumulated unit trust growth, plus a bonus payout from Swift Designz.",
+      bullets: [
+        "All invested capital is placed into a Sanlam Namibia Balanced Fund — a regulated, medium-risk unit trust administered by one of Southern Africa's most established financial institutions.",
+        "Your money is ring-fenced from Swift Designz operating funds. It is not used to cover salaries, equipment, or any other business cost.",
+        "The investment term is 5 years from the date of first contribution. Early withdrawal is not available except in extraordinary circumstances agreed in writing.",
+        "This programme is available exclusively to close family, friends, and approved angel investors. It is not open to the general public.",
+      ],
+    },
+    {
+      type: "section",
+      number: "02",
+      title: "How It Works",
+      bullets: [
+        "Step 1 — Contribution: You contribute a monthly or lump-sum amount to Swift Designz. Monthly contributions and lump-sum deposits are both accepted. Each contribution is logged and tracked.",
+        "Step 2 — Unit Trust Deposit: Your funds are deposited into the Sanlam Namibia Balanced Fund. This happens promptly after each contribution is received.",
+        "Step 3 — Growth Period: Your capital grows in the unit trust over the 5-year term. The Balanced Fund targets returns of approximately Inflation + 5% per annum, benefiting from compound growth over time.",
+        "Step 4 — End-of-Term Payout: At the close of year 5, the unit trust is liquidated and you receive: your full original capital, all unit trust growth earned over the period, and a bonus payout from Swift Designz profits.",
+      ],
+    },
+    {
+      type: "section",
+      number: "03",
+      title: "The Investment Vehicle",
+      body: "All investor capital is held in the Sanlam Namibia Balanced Fund — a medium-risk, diversified investment fund regulated under Namibian financial law.",
+      bullets: [
+        "Fund: Sanlam Namibia Balanced Fund",
+        "Administrator: Sanlam Namibia — one of Southern Africa's largest and most trusted financial services groups.",
+        "Risk Level: Medium — the fund invests across equities, bonds, property, and cash to balance growth with capital protection.",
+        "Target Return: Inflation + 5% per annum (approximately 10% nominal). Actual returns may vary year to year.",
+        "Regulation: The fund is regulated by the Namibia Financial Institutions Supervisory Authority (NAMFISA). Your capital is protected by Namibian financial law.",
+      ],
+    },
+    {
+      type: "section",
+      number: "04",
+      title: "Illustrative 5-Year Projection",
+      body: "The following projection is based on a combined monthly contribution of N$3,000 over 60 months, assuming approximately 10% average annual return. These figures are illustrative only — actual returns depend on market performance.",
+    },
+    {
+      type: "table",
+      headers: ["Metric", "Amount"],
+      rows: [
+        ["Total capital contributed (60 months)", "N$180,000"],
+        ["Estimated unit trust growth", "~N$68,000"],
+        ["Estimated total return (before bonus)", "~N$248,000"],
+        ["Swift Designz bonus payout", "Tied to business performance"],
+      ],
+      colWidths: [65, 35],
+    },
+    {
+      type: "section",
+      number: "05",
+      title: "Swift Designz Bonus Commitment",
+      body: "In addition to the full unit trust payout, Swift Designz commits to a bonus payout from business profits at the end of the 5-year term. The exact bonus amount will be determined by the performance of the business over the investment period. This is our way of rewarding the trust and belief of those closest to us.",
+      bullets: [
+        "The bonus is paid from Swift Designz profits and is separate from the unit trust returns.",
+        "The bonus amount will be communicated to investors before the end of year 5.",
+        "The bonus payout is subject to business performance and is not a guaranteed return.",
+      ],
+    },
+    {
+      type: "section",
+      number: "06",
+      title: "Transparency & Reporting",
+      bullets: [
+        "Monthly contribution records are maintained and available to investors on request.",
+        "Unit trust statements from Sanlam are shared with investors periodically so you can see exactly how your capital is performing.",
+        "Swift Designz provides annual summaries of the investment programme's status as part of the Investor Reporting Policy (SD-IRP-2026).",
+        "Investors are welcome to contact Sanlam directly or through our financial advisor for independent verification at any time.",
+      ],
+    },
+    {
+      type: "section",
+      number: "07",
+      title: "Financial Advisor Access",
+      body: "Our Sanlam financial advisor is available to speak with investors directly. If you have questions about the unit trust, fund performance, or the investment vehicle, contact Swift Designz for a referral to schedule a consultation.",
+    },
+    { type: "divider" },
+    {
+      type: "warn",
+      text: "Disclaimer: This document is intended for family, friends, and close trusted individuals only and is not a public offering of any financial product. Swift Designz is not a licensed financial services provider. The unit trust investment is administered by Sanlam Namibia, a regulated entity. Investment returns shown are illustrative projections only and are not guaranteed. Past performance is not indicative of future results. The bonus payout from Swift Designz is subject to business performance and is not a guaranteed return. Recipients are encouraged to seek independent financial advice before committing.",
+    },
+  ],
+};

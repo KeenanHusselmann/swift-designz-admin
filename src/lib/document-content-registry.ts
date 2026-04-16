@@ -14,6 +14,7 @@ import {
   investorNda,
   investorReportingPolicy,
   investorGovernanceCharter,
+  familyInvestmentOverview,
 } from "./document-content-investor";
 
 /**
@@ -33,6 +34,7 @@ const DOCUMENT_CONTENT_REGISTRY: Record<string, TemplateDocument> = {
   "investor-nda": investorNda,
   "investor-reporting-policy": investorReportingPolicy,
   "investor-governance-charter": investorGovernanceCharter,
+  "family-investment-overview": familyInvestmentOverview,
 };
 
 export function getTemplateContent(slug: string): TemplateDocument | null {
