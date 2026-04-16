@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Eye } from "lucide-react";
 import { getDocumentTemplatesForRole } from "@/lib/document-templates";
 import type { UserRole } from "@/types/database";
 
@@ -52,15 +52,14 @@ export default async function DocumentsPage() {
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Document Library</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {libraryDocs.map((doc) => (
-            <a
+            <Link
               key={doc.slug}
-              href={`/docs/${doc.slug}.html`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-2.5 rounded-lg border border-border bg-card hover:border-teal text-sm text-gray-300 hover:text-teal transition-colors"
+              href={`/documents/view/${doc.slug}`}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border bg-card hover:border-teal text-sm text-gray-300 hover:text-teal transition-colors"
             >
+              <Eye className="h-3.5 w-3.5 flex-shrink-0 opacity-50" />
               {doc.label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

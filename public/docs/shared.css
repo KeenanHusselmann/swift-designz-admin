@@ -260,26 +260,63 @@ td.field { display: table-cell; min-width: 0; width: auto; }
 .export-btn:hover { background: #28a0a0; transform: translateY(-2px); }
 .export-btn:active { transform: translateY(0); }
 
-/* ── PDF PAGE-BREAK CONTROL  ─────────────── */
-table, .doc-table { page-break-inside: auto; }
-tr, .doc-table tr { page-break-inside: avoid; page-break-after: auto; }
+/* ── PAGE-BREAK CONTROL  ─────────────────── */
+@page { margin: 12mm 10mm; }
+
+table, .doc-table { page-break-inside: auto; break-inside: auto; }
+thead, .doc-table thead { display: table-header-group; }
+tfoot, .doc-table tfoot { display: table-footer-group; }
+tr, .doc-table tr { page-break-inside: avoid; break-inside: avoid; page-break-after: auto; }
+
 .parties, .check-grid, .check-item, .clause, .banking-block, .sig-row,
-.totals-box, .info-box, .plan-row { page-break-inside: avoid; }
+.totals-box, .info-box, .plan-row, .plan-card,
+.tc-section, .section-head { page-break-inside: avoid; break-inside: avoid; }
+
+/* Keep section heading attached to the content that follows */
+.section-head, .tc-num, .tc-title { page-break-after: avoid; break-after: avoid; }
+
+/* Signature and footer should stay on the same page when possible */
+.sig-row, .doc-footer { page-break-before: auto; break-before: auto; }
+
+/* Orphan / widow control */
+.clause-body, .tc-body, .prose p { orphans: 3; widows: 3; }
 
 /* ── PRINT STYLES  ───────────────────────── */
 @media print {
   body { background: white; }
   .page { box-shadow: none; margin: 0; width: 100%; min-height: 0; }
-  .no-print { display: none !important; }
-  .export-btn { display: none !important; }
-  .doc-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .banking-block { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .doc-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .doc-table .grand-total-row td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print, .export-btn, #new-inv-btn { display: none !important; }
+
+  /* Preserve dark backgrounds */
+  .doc-header,
+  .banking-block,
+  .doc-table th,
+  .doc-table .grand-total-row td,
+  .doc-table .total-row td,
+  .doc-footer,
+  .totals-row.grand {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Fillable fields → clean print */
   .field { background: transparent; border-bottom: 1px solid #aaa; font-style: normal; }
   .field-block { background: transparent; border: 1px solid #ccc; font-style: normal; }
   .field:empty::before { content: '________________________________'; color: #ddd; }
-  .plan-card { page-break-inside: avoid; }
-  .sig-row { page-break-inside: avoid; }
-  .doc-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Repeat table headers on every page */
+  thead { display: table-header-group; }
+
+  /* Prevent content breaking in these blocks */
+  .parties, .sig-row, .plan-card, .banking-block,
+  .tc-section, .info-box, .warn-box, .totals-box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Keep headings with their content */
+  .section-head, .tc-num, .tc-title, h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
 }
