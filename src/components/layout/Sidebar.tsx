@@ -62,6 +62,7 @@ const NAV_SECTIONS = [
 const INVESTOR_NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: Briefcase, countKey: "projects" },
+  { href: "/documents", label: "Documents", icon: FolderOpen, countKey: "documents" },
   { href: "/investors", label: "Investors", icon: Landmark, countKey: "investors" },
   { href: "/equipment", label: "Equipment", icon: Package, countKey: "equipment" },
   { href: "/accounting/reports", label: "Reports", icon: BarChart2 },

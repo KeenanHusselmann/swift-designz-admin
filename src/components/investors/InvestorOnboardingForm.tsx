@@ -30,20 +30,20 @@ export default function InvestorOnboardingForm({ action }: InvestorOnboardingFor
 
       <div className="space-y-3">
         <a
-          href="/docs/terms-and-conditions.html"
+          href="/docs/investor-terms-and-conditions.html"
           target="_blank"
           rel="noreferrer"
           className="block p-3 rounded-lg border border-border bg-card hover:border-teal text-sm text-gray-300 hover:text-teal transition-colors"
         >
-          Read Terms and Conditions
+          Read Investor Terms and Conditions
         </a>
         <a
-          href="/docs/nda.html"
+          href="/docs/investor-nda.html"
           target="_blank"
           rel="noreferrer"
           className="block p-3 rounded-lg border border-border bg-card hover:border-teal text-sm text-gray-300 hover:text-teal transition-colors"
         >
-          Read Non-Disclosure Agreement (NDA)
+          Read Investor Non-Disclosure Agreement (NDA)
         </a>
       </div>
 
@@ -55,7 +55,7 @@ export default function InvestorOnboardingForm({ action }: InvestorOnboardingFor
             required
             className="mt-0.5 h-4 w-4 rounded border-border bg-card text-teal focus:ring-teal"
           />
-          <span>I have read and accept the Terms and Conditions.</span>
+          <span>I have read and accept the Investor Terms and Conditions.</span>
         </label>
 
         <label className="flex items-start gap-3 text-sm text-gray-300">
@@ -65,7 +65,7 @@ export default function InvestorOnboardingForm({ action }: InvestorOnboardingFor
             required
             className="mt-0.5 h-4 w-4 rounded border-border bg-card text-teal focus:ring-teal"
           />
-          <span>I have read and accept the Non-Disclosure Agreement (NDA).</span>
+          <span>I have read and accept the Investor Non-Disclosure Agreement (NDA).</span>
         </label>
       </div>
 
