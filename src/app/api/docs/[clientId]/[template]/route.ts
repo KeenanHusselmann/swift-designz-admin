@@ -2,19 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import fs from "fs";
 import path from "path";
+import { getClientGenerationTemplateSlugs } from "@/lib/document-templates";
 
-const ALLOWED_TEMPLATES = [
-  "quote-template",
-  "invoice-template",
-  "nda",
-  "client-onboarding",
-  "change-request-form",
-  "proceed-to-build",
-  "maintenance-retainer",
-  "payment-plan-agreement",
-  "project-handover",
-  "terms-and-conditions",
-];
+const ALLOWED_TEMPLATES = getClientGenerationTemplateSlugs();
 
 export async function GET(
   _req: NextRequest,
@@ -28,6 +18,24 @@ export async function GET(
   }
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role === "investor") {
+    return new NextResponse("Forbidden", { status: 403 });
+  }
+
   const { data: client } = await supabase
     .from("clients")
     .select("id, name, email, phone, company, location")

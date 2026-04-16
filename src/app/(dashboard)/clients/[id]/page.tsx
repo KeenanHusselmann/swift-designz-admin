@@ -7,6 +7,7 @@ import DeleteClientButton from "@/components/clients/DeleteClientButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Edit, ExternalLink, FolderOpen, FileText, User } from "lucide-react";
 import SendDocumentButton from "@/components/documents/SendDocumentButton";
+import { getClientGenerationTemplates } from "@/lib/document-templates";
 
 export default async function ClientDetailPage({
   params,
@@ -50,19 +51,7 @@ export default async function ClientDetailPage({
   const totalPaid = (invoices || []).reduce((s, inv) => s + inv.paid_amount, 0);
   const outstanding = totalBilled - totalPaid;
 
-  // Document templates
-  const DOC_TEMPLATES = [
-    { key: "quote-template", label: "Quotation" },
-    { key: "invoice-template", label: "Invoice" },
-    { key: "nda", label: "NDA" },
-    { key: "client-onboarding", label: "Onboarding Guide" },
-    { key: "change-request-form", label: "Change Request" },
-    { key: "proceed-to-build", label: "Proceed to Build" },
-    { key: "maintenance-retainer", label: "Maintenance Retainer" },
-    { key: "payment-plan-agreement", label: "Payment Plan" },
-    { key: "project-handover", label: "Project Handover" },
-    { key: "terms-and-conditions", label: "Terms & Conditions" },
-  ];
+  const DOC_TEMPLATES = getClientGenerationTemplates();
 
   return (
     <>
@@ -81,11 +70,11 @@ export default async function ClientDetailPage({
               <div className="absolute right-0 top-full mt-1 w-64 bg-card border border-border rounded-lg shadow-xl z-20 hidden group-hover:block">
                 {DOC_TEMPLATES.map((t) => (
                   <div
-                    key={t.key}
+                    key={t.slug}
                     className="flex items-center justify-between px-3 py-2 hover:bg-border first:rounded-t-lg last:rounded-b-lg transition-colors"
                   >
                     <Link
-                      href={`/api/docs/${id}/${t.key}`}
+                      href={`/api/docs/${id}/${t.slug}`}
                       target="_blank"
                       className="flex-1 text-sm text-gray-300 hover:text-foreground transition-colors"
                     >
@@ -94,7 +83,7 @@ export default async function ClientDetailPage({
                     <SendDocumentButton
                       clientId={id}
                       clientEmail={client.email}
-                      template={t.key}
+                      template={t.slug}
                     />
                   </div>
                 ))}

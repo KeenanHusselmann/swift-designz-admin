@@ -3,40 +3,43 @@ import PageHeader from "@/components/ui/PageHeader";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-
-const DOCUMENT_LIBRARY = [
-  { slug: "quote-template", label: "Quotation" },
-  { slug: "invoice-template", label: "Invoice" },
-  { slug: "nda", label: "Client NDA" },
-  { slug: "terms-and-conditions", label: "Client Terms and Conditions" },
-  { slug: "client-onboarding", label: "Client Onboarding" },
-  { slug: "change-request-form", label: "Change Request Form" },
-  { slug: "proceed-to-build", label: "Proceed to Build" },
-  { slug: "maintenance-retainer", label: "Maintenance Retainer" },
-  { slug: "payment-plan-agreement", label: "Payment Plan Agreement" },
-  { slug: "project-handover", label: "Project Handover" },
-  { slug: "investor-nda", label: "Investor NDA" },
-  { slug: "investor-terms-and-conditions", label: "Investor Terms and Conditions" },
-];
+import { getDocumentTemplatesForRole } from "@/lib/document-templates";
+import type { UserRole } from "@/types/database";
 
 export default async function DocumentsPage() {
   const supabase = await createClient();
-  const [
-    { data: documents },
-    { data: authUser },
-  ] = await Promise.all([
-    supabase
-      .from("documents")
-      .select("*, clients(name)")
-      .order("created_at", { ascending: false }),
-    supabase.auth.getUser(),
-  ]);
+  const { data: authUser } = await supabase.auth.getUser();
 
   const userId = authUser.user?.id;
   const { data: profile } = userId
     ? await supabase.from("profiles").select("role").eq("id", userId).single()
     : { data: null };
-  const canOpenClient = profile?.role !== "investor";
+  const role = (profile?.role as UserRole | undefined) ?? null;
+  const canOpenClient = role !== "investor";
+  const libraryDocs = getDocumentTemplatesForRole(role);
+
+  let investorId: string | null = null;
+  if (role === "investor" && authUser.user?.email) {
+    const { data } = await supabase
+      .from("investors")
+      .select("id")
+      .eq("email", authUser.user.email.toLowerCase())
+      .maybeSingle();
+    investorId = data?.id ?? null;
+  }
+
+  let documentsQuery = supabase
+    .from("documents")
+    .select("*, clients(name)")
+    .order("created_at", { ascending: false });
+
+  if (role === "investor") {
+    documentsQuery = investorId
+      ? documentsQuery.eq("investor_id", investorId)
+      : documentsQuery.eq("id", "00000000-0000-0000-0000-000000000000");
+  }
+
+  const { data: documents } = await documentsQuery;
 
   return (
     <>
@@ -48,7 +51,7 @@ export default async function DocumentsPage() {
       <div className="glass-card p-5 mb-6">
         <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Document Library</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-          {DOCUMENT_LIBRARY.map((doc) => (
+          {libraryDocs.map((doc) => (
             <a
               key={doc.slug}
               href={`/docs/${doc.slug}.html`}

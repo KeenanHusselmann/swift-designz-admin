@@ -27,14 +27,12 @@ import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
 import { createClient } from "@/lib/supabase/client";
+import { getDocumentLibraryCountForRole } from "@/lib/document-templates";
 import type { Profile } from "@/types/database";
 
 interface SidebarProps {
   profile: Profile | null;
 }
-
-// Templates available in Documents > Document Library.
-const DOCUMENT_LIBRARY_COUNT = 12;
 
 const NAV_SECTIONS = [
   {
@@ -76,6 +74,7 @@ export default function Sidebar({ profile }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
 
   // Fetch nav counts client-side so the layout never blocks on them
   useEffect(() => {
@@ -124,7 +123,9 @@ export default function Sidebar({ profile }: SidebarProps) {
               const active = isActive(item.href);
               const count = item.countKey
                 ? item.countKey === "documents"
-                  ? (counts.documents ?? 0) + DOCUMENT_LIBRARY_COUNT
+                  ? profile?.role === "investor"
+                    ? documentLibraryCount
+                    : (counts.documents ?? 0) + documentLibraryCount
                   : counts[item.countKey] ?? 0
                 : null;
               return (
@@ -165,7 +166,9 @@ export default function Sidebar({ profile }: SidebarProps) {
                   ? item.countKey === "team"
                     ? (counts.employees ?? 0) + (counts.ai_agents ?? 0)
                     : item.countKey === "documents"
-                      ? (counts.documents ?? 0) + DOCUMENT_LIBRARY_COUNT
+                      ? profile?.role === "investor"
+                        ? documentLibraryCount
+                        : (counts.documents ?? 0) + documentLibraryCount
                     : counts[item.countKey] ?? 0
                   : null;
                 return (

@@ -3,19 +3,9 @@
 import { useState, useRef } from "react";
 import { Send, X, Loader2 } from "lucide-react";
 import { sendDocumentAction } from "@/app/(dashboard)/documents/actions";
+import { getTemplateLabelMap } from "@/lib/document-templates";
 
-const TEMPLATE_LABELS: Record<string, string> = {
-  "quote-template": "Quotation",
-  "invoice-template": "Invoice",
-  "nda": "NDA",
-  "client-onboarding": "Onboarding Guide",
-  "change-request-form": "Change Request",
-  "proceed-to-build": "Proceed to Build",
-  "maintenance-retainer": "Maintenance Retainer",
-  "payment-plan-agreement": "Payment Plan Agreement",
-  "project-handover": "Project Handover",
-  "terms-and-conditions": "Terms & Conditions",
-};
+const TEMPLATE_LABELS = getTemplateLabelMap();
 
 interface SendDocumentButtonProps {
   clientId: string;
