@@ -110,7 +110,7 @@ export default function Sidebar({ profile }: SidebarProps) {
           <h1 className="text-lg font-bold text-teal tracking-tight leading-tight">
             Swift Designz
           </h1>
-          <p className="text-xs text-teal-muted">Admin Portal</p>
+          <p className="text-xs text-teal-muted">{profile?.role === "investor" ? "Investor Portal" : "Admin Portal"}</p>
         </div>
       </div>
 
