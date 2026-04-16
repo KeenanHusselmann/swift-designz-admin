@@ -18,29 +18,29 @@ Font.register({
 });
 
 const teal = "#30B0B0";
-const bg = "#101010";
-const surface = "#1a1a1a";
-const border = "#2a2a2a";
+const bg = "#ffffff";
+const surface = "#f5f5f5";
+const border = "#e0e0e0";
 
 const s = StyleSheet.create({
-  page: { backgroundColor: bg, padding: 40, fontFamily: "Inter", fontSize: 9, color: "#ccc" },
+  page: { backgroundColor: bg, padding: 40, fontFamily: "Inter", fontSize: 9, color: "#333" },
   // Header
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 30 },
   brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   logo: { width: 40, height: 40 },
   brand: {},
   brandName: { fontSize: 16, fontWeight: 700, letterSpacing: 3, color: teal, textTransform: "uppercase" as const },
-  brandSub: { fontSize: 8, color: "#4a8080", letterSpacing: 2, marginTop: 2, textTransform: "uppercase" as const },
+  brandSub: { fontSize: 8, color: "#208080", letterSpacing: 2, marginTop: 2, textTransform: "uppercase" as const },
   docTitle: { textAlign: "right" as const },
-  docLabel: { fontSize: 18, fontWeight: 700, color: "#fff", letterSpacing: 2, textTransform: "uppercase" as const },
-  docMeta: { fontSize: 8, color: "#888", marginTop: 4 },
-  docMetaVal: { color: "#ccc", fontWeight: 600 },
+  docLabel: { fontSize: 18, fontWeight: 700, color: "#111", letterSpacing: 2, textTransform: "uppercase" as const },
+  docMeta: { fontSize: 8, color: "#777", marginTop: 4 },
+  docMetaVal: { color: "#333", fontWeight: 600 },
   // Parties
   parties: { flexDirection: "row", justifyContent: "space-between", marginBottom: 24 },
   party: { width: "48%" },
   partyLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, textTransform: "uppercase" as const, marginBottom: 6 },
-  partyName: { fontSize: 11, fontWeight: 700, color: "#fff", marginBottom: 2 },
-  partyLine: { fontSize: 8, color: "#999", marginBottom: 1.5 },
+  partyName: { fontSize: 11, fontWeight: 700, color: "#111", marginBottom: 2 },
+  partyLine: { fontSize: 8, color: "#555", marginBottom: 1.5 },
   // Table
   table: { marginBottom: 20 },
   tableHead: { flexDirection: "row", backgroundColor: surface, borderBottomWidth: 1, borderColor: border, paddingVertical: 6, paddingHorizontal: 8 },
@@ -49,41 +49,41 @@ const s = StyleSheet.create({
   colQty: { width: 50, textAlign: "center" as const },
   colRate: { width: 70, textAlign: "right" as const },
   colAmt: { width: 80, textAlign: "right" as const },
-  headText: { fontSize: 7, fontWeight: 700, letterSpacing: 2, color: "#888", textTransform: "uppercase" as const },
-  cellText: { fontSize: 9, color: "#ccc" },
-  cellBold: { fontSize: 9, fontWeight: 600, color: "#fff" },
+  headText: { fontSize: 7, fontWeight: 700, letterSpacing: 2, color: "#777", textTransform: "uppercase" as const },
+  cellText: { fontSize: 9, color: "#333" },
+  cellBold: { fontSize: 9, fontWeight: 600, color: "#111" },
   // Totals
   totalRow: { flexDirection: "row", justifyContent: "flex-end", marginBottom: 4 },
-  totalLabel: { fontSize: 9, color: "#888", marginRight: 20, width: 100, textAlign: "right" as const },
-  totalVal: { fontSize: 9, color: "#fff", fontWeight: 700, width: 80, textAlign: "right" as const },
-  totalTeal: { fontSize: 12, color: teal, fontWeight: 700, width: 80, textAlign: "right" as const },
+  totalLabel: { fontSize: 9, color: "#777", marginRight: 20, width: 100, textAlign: "right" as const },
+  totalVal: { fontSize: 9, color: "#111", fontWeight: 700, width: 80, textAlign: "right" as const },
+  totalTeal: { fontSize: 12, color: "#111", fontWeight: 700, width: 80, textAlign: "right" as const },
   // Status badge
   statusRow: { flexDirection: "row", justifyContent: "flex-end", marginTop: 8, marginBottom: 20 },
   badge: { paddingVertical: 3, paddingHorizontal: 10, borderRadius: 4, fontSize: 8, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" as const },
   // Payment plan
   planBox: { backgroundColor: surface, borderWidth: 1, borderColor: border, borderRadius: 6, padding: 12, marginBottom: 16 },
   planLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, marginBottom: 6, textTransform: "uppercase" as const },
-  planText: { fontSize: 8, color: "#ccc", marginBottom: 2 },
+  planText: { fontSize: 8, color: "#333", marginBottom: 2 },
   planScheduleHead: { flexDirection: "row", marginTop: 6, paddingBottom: 4, borderBottomWidth: 1, borderColor: border },
-  planScheduleRow: { flexDirection: "row", paddingVertical: 3, borderBottomWidth: 1, borderColor: "#1f1f1f" },
+  planScheduleRow: { flexDirection: "row", paddingVertical: 3, borderBottomWidth: 1, borderColor: "#eee" },
   planCol: { width: "33%", fontSize: 8 },
-  planColHead: { width: "33%", fontSize: 7, fontWeight: 700, color: "#888", textTransform: "uppercase" as const, letterSpacing: 1 },
+  planColHead: { width: "33%", fontSize: 7, fontWeight: 700, color: "#777", textTransform: "uppercase" as const, letterSpacing: 1 },
   // Payment history
   historyBox: { backgroundColor: surface, borderWidth: 1, borderColor: border, borderRadius: 6, padding: 12, marginBottom: 16 },
   historyHead: { flexDirection: "row", marginBottom: 4, paddingBottom: 4, borderBottomWidth: 1, borderColor: border },
-  historyRow: { flexDirection: "row", paddingVertical: 3, borderBottomWidth: 1, borderColor: "#1f1f1f" },
+  historyRow: { flexDirection: "row", paddingVertical: 3, borderBottomWidth: 1, borderColor: "#eee" },
   histCol1: { width: "25%", fontSize: 8 },
   histCol2: { width: "25%", fontSize: 8 },
   histCol3: { width: "25%", fontSize: 8 },
   histCol4: { width: "25%", fontSize: 8, textAlign: "right" as const },
-  histColHead: { fontSize: 7, fontWeight: 700, color: "#888", textTransform: "uppercase" as const, letterSpacing: 1 },
+  histColHead: { fontSize: 7, fontWeight: 700, color: "#777", textTransform: "uppercase" as const, letterSpacing: 1 },
   // Notes
   notesBox: { backgroundColor: surface, borderWidth: 1, borderColor: border, borderRadius: 6, padding: 12, marginBottom: 20 },
   notesLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, marginBottom: 4, textTransform: "uppercase" as const },
-  notesText: { fontSize: 8, color: "#aaa", lineHeight: 1.6 },
+  notesText: { fontSize: 8, color: "#555", lineHeight: 1.6 },
   // Footer
   footer: { position: "absolute", bottom: 30, left: 40, right: 40, borderTopWidth: 1, borderColor: border, paddingTop: 10, flexDirection: "row", justifyContent: "space-between" },
-  footerText: { fontSize: 7, color: "#555" },
+  footerText: { fontSize: 7, color: "#999" },
   footerTeal: { fontSize: 7, color: teal },
 });
 
@@ -130,12 +130,12 @@ function fmtDate(d: string) {
 
 function badgeColor(status: string) {
   switch (status) {
-    case "paid": return { backgroundColor: "#0d3320", color: "#4ade80" };
-    case "partial": return { backgroundColor: "#302010", color: "#fbbf24" };
-    case "overdue": return { backgroundColor: "#301010", color: "#f87171" };
-    case "sent": return { backgroundColor: "#102030", color: "#60a5fa" };
-    case "cancelled": return { backgroundColor: "#1a1a1a", color: "#888" };
-    default: return { backgroundColor: surface, color: "#ccc" };
+    case "paid": return { backgroundColor: "#dcfce7", color: "#166534" };
+    case "partial": return { backgroundColor: "#fef3c7", color: "#92400e" };
+    case "overdue": return { backgroundColor: "#fee2e2", color: "#991b1b" };
+    case "sent": return { backgroundColor: "#dbeafe", color: "#1e40af" };
+    case "cancelled": return { backgroundColor: "#f3f4f6", color: "#6b7280" };
+    default: return { backgroundColor: surface, color: "#333" };
   }
 }
 
@@ -242,7 +242,7 @@ export default function InvoicePDF({
         {projectName && (
           <View style={{ marginBottom: 12 }}>
             <Text style={{ fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, textTransform: "uppercase" as const, marginBottom: 2 }}>Project</Text>
-            <Text style={{ fontSize: 9, color: "#ccc" }}>{projectName}</Text>
+            <Text style={{ fontSize: 9, color: "#333" }}>{projectName}</Text>
           </View>
         )}
 
@@ -274,7 +274,7 @@ export default function InvoicePDF({
         {discountAmount > 0 && (
           <View style={s.totalRow}>
             <Text style={s.totalLabel}>Discount</Text>
-            <Text style={[s.totalVal, { color: "#f87171" }]}>-{formatR(discountAmount)}</Text>
+            <Text style={[s.totalVal, { color: "#b91c1c" }]}>-{formatR(discountAmount)}</Text>
           </View>
         )}
         {!discountAmount && (
@@ -286,7 +286,7 @@ export default function InvoicePDF({
         {!isQuotation && paidAmount > 0 && (
           <View style={s.totalRow}>
             <Text style={s.totalLabel}>Paid</Text>
-            <Text style={[s.totalVal, { color: "#4ade80" }]}>-{formatR(paidAmount)}</Text>
+            <Text style={[s.totalVal, { color: "#166534" }]}>-{formatR(paidAmount)}</Text>
           </View>
         )}
         <View style={[s.totalRow, { marginTop: 4, paddingTop: 6, borderTopWidth: 1, borderColor: border }]}>
@@ -318,8 +318,8 @@ export default function InvoicePDF({
                 </View>
                 {paymentPlanSchedule.map((row, i) => (
                   <View key={i} style={s.planScheduleRow}>
-                    <Text style={[{ flex: 2, fontSize: 8, color: "#ccc" }]}>{row.label}</Text>
-                    <Text style={[s.planCol, { color: "#fff", textAlign: "right" as const, fontWeight: 600 }]}>
+                    <Text style={[{ flex: 2, fontSize: 8, color: "#333" }]}>{row.label}</Text>
+                    <Text style={[s.planCol, { color: "#111", textAlign: "right" as const, fontWeight: 600 }]}>
                       {formatR(row.amount)}
                     </Text>
                   </View>
@@ -330,7 +330,7 @@ export default function InvoicePDF({
                 <Text style={s.planText}>
                   {installmentCount} installments · {installmentInterval}
                 </Text>
-                <Text style={[s.planText, { color: "#888", marginBottom: 4 }]}>
+                <Text style={[s.planText, { color: "#777", marginBottom: 4 }]}>
                   {formatR(Math.ceil((isQuotation ? total : outstanding) / installmentCount))} per installment
                 </Text>
                 <View style={s.planScheduleHead}>
@@ -346,9 +346,9 @@ export default function InvoicePDF({
                   dueDate,
                 ).map((row) => (
                   <View key={row.number} style={s.planScheduleRow}>
-                    <Text style={[s.planCol, { color: "#ccc" }]}>{row.number}</Text>
-                    <Text style={[s.planCol, { color: "#ccc" }]}>{fmtDate(row.date)}</Text>
-                    <Text style={[s.planCol, { color: "#fff", textAlign: "right" as const, fontWeight: 600 }]}>
+                    <Text style={[s.planCol, { color: "#333" }]}>{row.number}</Text>
+                    <Text style={[s.planCol, { color: "#333" }]}>{fmtDate(row.date)}</Text>
+                    <Text style={[s.planCol, { color: "#111", textAlign: "right" as const, fontWeight: 600 }]}>
                       {formatR(row.amount)}
                     </Text>
                   </View>
@@ -370,10 +370,10 @@ export default function InvoicePDF({
             </View>
             {payments.map((pay, i) => (
               <View key={i} style={s.historyRow}>
-                <Text style={[s.histCol1, { color: "#ccc" }]}>{fmtDate(pay.paid_at)}</Text>
-                <Text style={[s.histCol2, { color: "#999", textTransform: "capitalize" as const }]}>{pay.method}</Text>
+                <Text style={[s.histCol1, { color: "#333" }]}>{fmtDate(pay.paid_at)}</Text>
+                <Text style={[s.histCol2, { color: "#555", textTransform: "capitalize" as const }]}>{pay.method}</Text>
                 <Text style={[s.histCol3, { color: "#777" }]}>{pay.reference || "—"}</Text>
-                <Text style={[s.histCol4, { color: "#4ade80", fontWeight: 600 }]}>{formatR(pay.amount)}</Text>
+                <Text style={[s.histCol4, { color: "#111", fontWeight: 600 }]}>{formatR(pay.amount)}</Text>
               </View>
             ))}
           </View>

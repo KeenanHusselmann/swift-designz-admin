@@ -13,15 +13,15 @@ Font.register({
 /* ── Brand Colours ─────────────────────────── */
 export const C = {
   teal: "#30B0B0",
-  tealDim: "#4a8080",
-  bg: "#101010",
-  surface: "#1a1a1a",
-  border: "#2a2a2a",
-  white: "#ffffff",
-  text: "#cccccc",
-  textDim: "#999999",
-  textMuted: "#888888",
-  textFaint: "#555555",
+  tealDim: "#208080",
+  bg: "#ffffff",
+  surface: "#f5f5f5",
+  border: "#e0e0e0",
+  white: "#111111",
+  text: "#333333",
+  textDim: "#555555",
+  textMuted: "#777777",
+  textFaint: "#999999",
 } as const;
 
 /* ── Shared Styles ─────────────────────────── */
@@ -57,14 +57,14 @@ export const ds = StyleSheet.create({
   },
   infoText: { fontSize: 8.5, color: C.text, lineHeight: 1.65 },
   warnBox: {
-    backgroundColor: "#1e1810",
+    backgroundColor: "#fff8f0",
     borderLeftWidth: 3,
     borderLeftColor: "#e09030",
     padding: 12,
     marginBottom: 16,
     borderRadius: 4,
   },
-  warnText: { fontSize: 8.5, color: "#d4a060", lineHeight: 1.65 },
+  warnText: { fontSize: 8.5, color: "#8a5a20", lineHeight: 1.65 },
 
   /* Section Heading */
   sectionNum: { fontSize: 8, fontWeight: 700, letterSpacing: 3, color: C.teal, marginBottom: 2 },
@@ -81,7 +81,7 @@ export const ds = StyleSheet.create({
   table: { marginBottom: 14 },
   tableHead: { flexDirection: "row", backgroundColor: C.surface, paddingVertical: 6, paddingHorizontal: 8, borderBottomWidth: 1, borderColor: C.border },
   tableRow: { flexDirection: "row", paddingVertical: 5, paddingHorizontal: 8, borderBottomWidth: 1, borderColor: C.border },
-  tableRowAlt: { flexDirection: "row", paddingVertical: 5, paddingHorizontal: 8, borderBottomWidth: 1, borderColor: C.border, backgroundColor: "#151515" },
+  tableRowAlt: { flexDirection: "row", paddingVertical: 5, paddingHorizontal: 8, borderBottomWidth: 1, borderColor: C.border, backgroundColor: "#fafafa" },
   thText: { fontSize: 7, fontWeight: 700, letterSpacing: 2, color: C.textMuted, textTransform: "uppercase" as const },
   tdText: { fontSize: 8.5, color: C.text },
   tdBold: { fontSize: 8.5, color: C.white, fontWeight: 600 },
@@ -107,7 +107,7 @@ export const ds = StyleSheet.create({
 
   /* Banking Block */
   bankingBox: {
-    backgroundColor: "#1e4848",
+    backgroundColor: "#f0fafa",
     borderLeftWidth: 4,
     borderLeftColor: C.teal,
     padding: 14,
@@ -117,8 +117,8 @@ export const ds = StyleSheet.create({
   bankingLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: C.teal, textTransform: "uppercase" as const, marginBottom: 10 },
   bankingGrid: { flexDirection: "row", flexWrap: "wrap" },
   bankingItem: { width: "50%", marginBottom: 6 },
-  bankingKey: { fontSize: 7, letterSpacing: 2, textTransform: "uppercase" as const, color: "#70b0b0" },
-  bankingVal: { fontSize: 10, fontWeight: 700, color: "#e8fafa" },
+  bankingKey: { fontSize: 7, letterSpacing: 2, textTransform: "uppercase" as const, color: C.tealDim },
+  bankingVal: { fontSize: 10, fontWeight: 700, color: "#111111" },
 
   /* Divider */
   divider: { borderBottomWidth: 1, borderColor: C.border, marginVertical: 14 },
