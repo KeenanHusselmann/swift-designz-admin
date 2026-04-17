@@ -49,7 +49,7 @@ export default function LeadForm({ lead, action, submitLabel }: Props) {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="space-y-6">
       {error && (
         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400">
           {error}

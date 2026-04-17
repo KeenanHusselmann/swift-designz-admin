@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { Profile } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -13,7 +13,6 @@ export default function ProfileForm({ profile, action }: ProfileFormProps) {
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string; success?: string } | undefined, formData: FormData) => {
-      toast.loading("Saving profile...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success("Profile saved!");
@@ -21,6 +20,7 @@ export default function ProfileForm({ profile, action }: ProfileFormProps) {
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading("Saving profile..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="space-y-4">

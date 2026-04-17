@@ -67,7 +67,7 @@ export default function ProjectForm({
     : "";
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="space-y-6">
       {error && (
         <div className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-3">
           {error}

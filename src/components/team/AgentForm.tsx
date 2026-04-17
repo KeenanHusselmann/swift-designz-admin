@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { AiAgent, AgentStatus } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -20,7 +20,6 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading(agent ? "Saving changes..." : "Adding AI agent...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success(agent ? "Agent updated!" : "Agent added!");
@@ -28,6 +27,7 @@ export default function AgentForm({ agent, action, submitLabel }: AgentFormProps
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading(agent ? "Saving changes..." : "Adding AI agent..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="glass-card p-6 space-y-5">

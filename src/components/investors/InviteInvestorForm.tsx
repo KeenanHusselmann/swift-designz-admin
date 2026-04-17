@@ -41,7 +41,7 @@ export default function InviteInvestorForm() {
   }
 
   return (
-    <form action={handleSubmit} className="glass-card p-6 space-y-5">
+    <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="glass-card p-6 space-y-5">
       {error && (
         <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-400">{error}</div>
       )}

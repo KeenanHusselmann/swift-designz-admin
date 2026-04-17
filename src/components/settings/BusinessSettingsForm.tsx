@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { BusinessSettings } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -13,7 +13,6 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading("Saving settings...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success("Settings saved!");
@@ -21,6 +20,7 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading("Saving settings..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="space-y-6">

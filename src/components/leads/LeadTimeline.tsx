@@ -50,7 +50,7 @@ export default function LeadTimeline({ leadId, notes }: Props) {
       </h3>
 
       {/* Add note form */}
-      <form ref={formRef} action={handleSubmit} className="mb-6">
+      <form ref={formRef} onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="mb-6">
         <textarea
           name="content"
           rows={3}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useToast } from "@/components/ui/ToastProvider";
 
 interface ChangePasswordFormProps {
@@ -11,7 +11,6 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string; success?: string } | undefined, formData: FormData) => {
-      toast.loading("Updating password...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success("Password updated!");
@@ -19,6 +18,7 @@ export default function ChangePasswordForm({ action }: ChangePasswordFormProps) 
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading("Updating password..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="space-y-4">

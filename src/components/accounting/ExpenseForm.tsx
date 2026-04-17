@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useActionState } from "react";
 import type { Expense, ExpenseCategory, RecurringInterval } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
@@ -35,7 +35,6 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
 
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading(expense ? "Saving changes..." : "Saving expense...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success(expense ? "Expense updated!" : "Expense saved!");
@@ -43,6 +42,7 @@ export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFor
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading(expense ? "Saving changes..." : "Saving expense..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="glass-card p-6 space-y-5">

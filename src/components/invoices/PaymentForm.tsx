@@ -48,7 +48,7 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="space-y-4">
       <input type="hidden" name="invoice_id" value={invoiceId} />
 
       {error && (

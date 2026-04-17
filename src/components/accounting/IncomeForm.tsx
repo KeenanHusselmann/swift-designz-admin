@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { IncomeEntry, IncomeCategory } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -24,7 +24,6 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading(entry ? "Saving changes..." : "Saving income entry...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success(entry ? "Entry updated!" : "Income entry saved!");
@@ -32,6 +31,7 @@ export default function IncomeForm({ entry, action, submitLabel }: IncomeFormPro
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading(entry ? "Saving changes..." : "Saving income entry..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="glass-card p-6 space-y-5">

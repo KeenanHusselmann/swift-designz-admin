@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { Employee, Department, EmployeeStatus } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -28,7 +28,6 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading(employee ? "Saving changes..." : "Adding employee...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success(employee ? "Employee updated!" : "Employee added!");
@@ -36,6 +35,7 @@ export default function EmployeeForm({ employee, action, submitLabel }: Employee
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading(employee ? "Saving changes..." : "Adding employee..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="glass-card p-6 space-y-5">

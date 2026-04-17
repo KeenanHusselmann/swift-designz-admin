@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import type { Equipment, EquipmentCategory, EquipmentCondition, EquipmentStatus } from "@/types/database";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -37,7 +37,6 @@ export default function EquipmentForm({ equipment, action, submitLabel }: Equipm
   const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      toast.loading(equipment ? "Saving changes..." : "Adding equipment...");
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
       else toast.success(equipment ? "Equipment updated!" : "Equipment added!");
@@ -45,6 +44,7 @@ export default function EquipmentForm({ equipment, action, submitLabel }: Equipm
     },
     undefined,
   );
+  useEffect(() => { if (pending) toast.loading(equipment ? "Saving changes..." : "Adding equipment..."); }, [pending]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form action={formAction} className="glass-card p-6 space-y-5">
