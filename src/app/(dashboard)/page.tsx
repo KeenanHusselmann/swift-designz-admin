@@ -1,94 +1,109 @@
 import {
-  ChevronRight,
+  Users,
   Briefcase,
   FileText,
   TrendingUp,
-  Users,
-  Clock,
+  Trophy,
+  AlertCircle,
+  Calendar,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import KpiCard from "@/components/ui/KpiCard";
+import StatCard from "@/components/ui/StatCard";
 import StatusBadge from "@/components/ui/StatusBadge";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import RevenueChart, { type RevenueDataPoint } from "@/components/dashboard/RevenueChart";
-import LeadPipelineChart, { type LeadStatusDataPoint } from "@/components/dashboard/LeadPipelineChart";
+import RevenueDonutChart, { type DonutDataPoint } from "@/components/dashboard/RevenueDonutChart";
+import SparklineChart from "@/components/dashboard/SparklineChart";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  // Fetch KPI data in parallel
   const now = new Date();
-  const mtdStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const mtdStartDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
   const yearStart = new Date(now.getFullYear() - 1, now.getMonth() + 1, 1).toISOString();
 
   const [
     { count: newLeadsCount },
     { count: activeProjectsCount },
+    { count: clientsCount },
+    { count: overdueCount },
     { data: unpaidInvoices },
     { data: recentLeads },
-    { data: recentPayments },
-    { data: mtdPayments },
     { data: incomeEntries },
     { data: expenseEntries },
     { data: allLeads },
+    { data: activeProjectsList },
   ] = await Promise.all([
-    supabase
-      .from("leads")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "new"),
+    supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("projects").select("*", { count: "exact", head: true }).eq("status", "in_progress"),
+    supabase.from("clients").select("*", { count: "exact", head: true }),
+    supabase.from("invoices").select("*", { count: "exact", head: true }).eq("status", "overdue"),
+    supabase.from("invoices").select("amount, paid_amount").in("status", ["sent", "partial", "overdue"]),
+    supabase.from("leads").select("id, name, email, service, status, created_at").order("created_at", { ascending: false }).limit(6),
+    supabase.from("income_entries").select("amount, date, category").gte("date", yearStart.slice(0, 10)),
+    supabase.from("expenses").select("amount, date").gte("date", yearStart.slice(0, 10)),
+    supabase.from("leads").select("status"),
     supabase
       .from("projects")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "in_progress"),
-    supabase
-      .from("invoices")
-      .select("amount, paid_amount")
-      .in("status", ["sent", "partial", "overdue"]),
-    supabase
-      .from("leads")
-      .select("id, name, email, service, status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("payments")
-      .select("id, amount, method, paid_at, invoice_id")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("payments")
-      .select("amount")
-      .gte("paid_at", mtdStart),
-    supabase
-      .from("income_entries")
-      .select("amount, date")
-      .gte("date", yearStart),
-    supabase
-      .from("expenses")
-      .select("amount, date")
-      .gte("date", yearStart),
-    supabase
-      .from("leads")
-      .select("status"),
+      .select("id, name, progress_override, due_date, status")
+      .eq("status", "in_progress")
+      .order("due_date", { ascending: true, nullsFirst: false })
+      .limit(6),
   ]);
 
+  // ── Derived stats ────────────────────────────────────────────────────────
   const outstandingAmount = (unpaidInvoices || []).reduce(
     (sum, inv) => sum + (inv.amount - inv.paid_amount),
     0
   );
 
-  // Build 12-month revenue trend
-  const monthMap = new Map<string, { income: number; expenses: number }>();
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const label = d.toLocaleDateString("en-ZA", { month: "short", year: "2-digit" });
-    monthMap.set(key, { income: 0, expenses: 0 });
-    // store label keyed by key for later
-    void label;
+  const incomeMTD = (incomeEntries || [])
+    .filter((e) => e.date >= mtdStartDate)
+    .reduce((s, e) => s + e.amount, 0);
+
+  const expensesMTD = (expenseEntries || [])
+    .filter((e) => e.date >= mtdStartDate)
+    .reduce((s, e) => s + e.amount, 0);
+
+  const netRevenueMTD = incomeMTD - expensesMTD;
+  const marginPct = incomeMTD > 0 ? Math.round((netRevenueMTD / incomeMTD) * 100) : 0;
+
+  const wonLeads = (allLeads || []).filter((l) => l.status === "won").length;
+  const closedLeads = (allLeads || []).filter((l) => l.status === "won" || l.status === "lost").length;
+  const winRate = closedLeads > 0 ? Math.round((wonLeads / closedLeads) * 100) : 0;
+
+  // Daily cumulative income sparkline for this month
+  const daysInMonth = now.getDate();
+  const dailyMap = new Map<string, number>();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    dailyMap.set(key, 0);
   }
-  // rebuild with labels
+  (incomeEntries || [])
+    .filter((e) => e.date >= mtdStartDate)
+    .forEach((e) => {
+      const day = e.date.slice(0, 10);
+      if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) ?? 0) + e.amount);
+    });
+  let cumulative = 0;
+  const sparklineData = Array.from(dailyMap.values()).map((v) => {
+    cumulative += v;
+    return { v: cumulative };
+  });
+
+  // Income by category for donut (12-month)
+  const categoryMap = new Map<string, number>();
+  (incomeEntries || []).forEach((e) => {
+    categoryMap.set(e.category, (categoryMap.get(e.category) ?? 0) + e.amount);
+  });
+  const donutData: DonutDataPoint[] = Array.from(categoryMap.entries())
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([category, value]) => ({ category, value }));
+
+  // 12-month revenue trend
   const orderedMonths: { key: string; label: string }[] = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -99,14 +114,12 @@ export default async function DashboardPage() {
   const revenueMap = new Map<string, { income: number; expenses: number }>(
     orderedMonths.map(({ key }) => [key, { income: 0, expenses: 0 }])
   );
-  (incomeEntries || []).forEach((e: { amount: number; date: string }) => {
-    const key = e.date.slice(0, 7);
-    const entry = revenueMap.get(key);
+  (incomeEntries || []).forEach((e) => {
+    const entry = revenueMap.get(e.date.slice(0, 7));
     if (entry) entry.income += e.amount;
   });
-  (expenseEntries || []).forEach((e: { amount: number; date: string }) => {
-    const key = e.date.slice(0, 7);
-    const entry = revenueMap.get(key);
+  (expenseEntries || []).forEach((e) => {
+    const entry = revenueMap.get(e.date.slice(0, 7));
     if (entry) entry.expenses += e.amount;
   });
   const revenueData: RevenueDataPoint[] = orderedMonths.map(({ key, label }) => ({
@@ -115,54 +128,100 @@ export default async function DashboardPage() {
     expenses: revenueMap.get(key)?.expenses ?? 0,
   }));
 
-  // Build lead pipeline counts
-  const PIPELINE_ORDER = ["new", "contacted", "qualified", "proposal", "won", "lost"];
-  const leadCountMap = new Map<string, number>();
-  (allLeads || []).forEach((l: { status: string }) => {
-    leadCountMap.set(l.status, (leadCountMap.get(l.status) ?? 0) + 1);
-  });
-  const pipelineData: LeadStatusDataPoint[] = PIPELINE_ORDER
-    .filter((s) => leadCountMap.has(s))
-    .map((s) => ({ status: s, count: leadCountMap.get(s)! }));
-
   return (
     <>
-      <PageHeader
-        title="Dashboard"
-        description="Overview of your business at a glance"
-      />
+      <PageHeader title="Dashboard" description="Overview of your business at a glance" />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <KpiCard
+      {/* ── Hero Card ───────────────────────────────────────────────────── */}
+      <div className="glass-card p-6 mb-6 relative overflow-hidden">
+        <div className="absolute -top-16 -right-16 w-56 h-56 bg-teal/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          {/* Primary stat */}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+              Net Revenue — Month to Date
+            </p>
+            <p className={`text-5xl font-bold leading-none ${netRevenueMTD >= 0 ? "text-foreground" : "text-red-400"}`}>
+              {formatCurrency(netRevenueMTD)}
+            </p>
+            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+              <span className="text-teal font-medium">{formatCurrency(incomeMTD)} income</span>
+              <span>&mdash;</span>
+              <span className="text-red-400/80 font-medium">{formatCurrency(expensesMTD)} expenses</span>
+            </div>
+          </div>
+
+          {/* Sparkline */}
+          <div className="w-full md:w-48 shrink-0">
+            <p className="text-xs text-gray-600 mb-1 text-center">Income this month</p>
+            <SparklineChart data={sparklineData} />
+          </div>
+
+          {/* Margin */}
+          <div className="text-right shrink-0">
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Net Margin</p>
+            <p className={`text-4xl font-bold ${marginPct >= 0 ? "text-teal" : "text-red-400"}`}>
+              {marginPct}%
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 6-stat compact grid ─────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+        <StatCard
           title="New Leads"
           value={String(newLeadsCount ?? 0)}
-          subtitle="Awaiting response"
-          icon={ChevronRight}
+          sub="Awaiting response"
+          icon={Users}
+          accent="teal"
         />
-        <KpiCard
+        <StatCard
           title="Active Projects"
           value={String(activeProjectsCount ?? 0)}
-          subtitle="In progress"
+          sub="In progress"
           icon={Briefcase}
         />
-        <KpiCard
+        <StatCard
           title="Outstanding"
           value={formatCurrency(outstandingAmount)}
-          subtitle="Unpaid invoices"
+          sub="Unpaid invoices"
           icon={FileText}
+          accent={outstandingAmount > 0 ? "amber" : "default"}
         />
-        <KpiCard
-          title="Revenue (MTD)"
-          value={formatCurrency(
-            (mtdPayments || []).reduce((s, p) => s + p.amount, 0)
-          )}
-          subtitle="Month to date"
+        <StatCard
+          title="Win Rate"
+          value={`${winRate}%`}
+          sub={closedLeads > 0 ? `${wonLeads} of ${closedLeads} closed` : "No closed leads"}
+          icon={Trophy}
+          accent={winRate >= 50 ? "green" : winRate > 0 ? "amber" : "default"}
+        />
+        <StatCard
+          title="Total Clients"
+          value={String(clientsCount ?? 0)}
+          sub="All time"
           icon={TrendingUp}
+        />
+        <StatCard
+          title="Overdue"
+          value={String(overdueCount ?? 0)}
+          sub="Overdue invoices"
+          icon={AlertCircle}
+          accent={(overdueCount ?? 0) > 0 ? "red" : "default"}
         />
       </div>
 
-      {/* Recent Activity */}
+      {/* ── Charts row ──────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+        <div className="lg:col-span-2">
+          <RevenueDonutChart data={donutData} />
+        </div>
+        <div className="lg:col-span-3">
+          <RevenueChart data={revenueData} />
+        </div>
+      </div>
+
+      {/* ── Activity row ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Leads */}
         <div className="glass-card p-5">
@@ -171,32 +230,28 @@ export default async function DashboardPage() {
               <Users className="h-4 w-4 text-teal" />
               Recent Leads
             </h2>
-            <Link
-              href="/leads"
-              className="text-xs text-teal hover:underline"
-            >
+            <Link href="/leads" className="text-xs text-teal hover:underline">
               View all
             </Link>
           </div>
           {(recentLeads?.length ?? 0) === 0 ? (
-            <p className="text-sm text-gray-500 py-4 text-center">
-              No leads yet. They will appear here when quote or contact forms are
-              submitted.
+            <p className="text-sm text-gray-500 py-6 text-center">
+              No leads yet.
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-1">
               {recentLeads!.map((lead) => (
                 <Link
                   key={lead.id}
                   href={`/leads/${lead.id}`}
-                  className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card transition-colors"
+                  className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card transition-colors group"
                 >
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground group-hover:text-teal transition-colors truncate">
                       {lead.name}
                     </p>
-                    <p className="text-xs text-gray-500">
-                      {lead.service || lead.email}
+                    <p className="text-xs text-gray-500 truncate">
+                      {lead.service || lead.email} &mdash; {formatDate(lead.created_at)}
                     </p>
                   </div>
                   <StatusBadge status={lead.status} />
@@ -206,53 +261,66 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* Recent Payments */}
+        {/* Active Projects */}
         <div className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4 text-teal" />
-              Recent Payments
+              <Briefcase className="h-4 w-4 text-teal" />
+              Active Projects
             </h2>
-            <Link
-              href="/invoices"
-              className="text-xs text-teal hover:underline"
-            >
+            <Link href="/projects" className="text-xs text-teal hover:underline">
               View all
             </Link>
           </div>
-          {(recentPayments?.length ?? 0) === 0 ? (
-            <p className="text-sm text-gray-500 py-4 text-center">
-              No payments recorded yet.
+          {(activeProjectsList?.length ?? 0) === 0 ? (
+            <p className="text-sm text-gray-500 py-6 text-center">
+              No active projects.
             </p>
           ) : (
-            <div className="space-y-3">
-              {recentPayments!.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="flex items-center justify-between py-2 px-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {formatCurrency(payment.amount)}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {payment.method.toUpperCase()} &mdash;{" "}
-                      {formatDate(payment.paid_at)}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-4">
+              {activeProjectsList!.map((project) => {
+                const progress = project.progress_override ?? null;
+                const isOverdue =
+                  project.due_date && new Date(project.due_date) < now;
+
+                return (
+                  <Link
+                    key={project.id}
+                    href={`/projects/${project.id}`}
+                    className="block group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-sm font-medium text-foreground group-hover:text-teal transition-colors truncate pr-2">
+                        {project.name}
+                      </p>
+                      {project.due_date && (
+                        <div className={`flex items-center gap-1 shrink-0 text-xs ${isOverdue ? "text-red-400" : "text-gray-500"}`}>
+                          <Calendar className="h-3 w-3" />
+                          {formatDate(project.due_date)}
+                        </div>
+                      )}
+                    </div>
+                    {progress !== null ? (
+                      <div>
+                        <div className="flex justify-between text-xs text-gray-600 mb-1">
+                          <span>Progress</span>
+                          <span>{progress}%</span>
+                        </div>
+                        <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-teal rounded-full transition-all"
+                            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-600">No progress tracked</p>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           )}
-        </div>
-      </div>
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
-        <div className="lg:col-span-3">
-          <RevenueChart data={revenueData} />
-        </div>
-        <div className="lg:col-span-2">
-          <LeadPipelineChart data={pipelineData} />
         </div>
       </div>
     </>
