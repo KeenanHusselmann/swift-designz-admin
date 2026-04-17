@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Swift Designz Admin",
   description: "Business management portal for Swift Designz",
+  icons: { icon: "/favicon.png", shortcut: "/favicon.png" },
   robots: { index: false, follow: false },
   openGraph: {
     title: "Swift Designz Admin",
