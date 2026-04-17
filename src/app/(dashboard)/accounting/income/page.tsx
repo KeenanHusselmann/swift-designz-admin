@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { deleteIncomeAction } from "./actions";
 import Link from "next/link";
-import { Trash2 } from "lucide-react";
+import { Trash2, TrendingUp, DollarSign, Hash, Tag } from "lucide-react";
 import type { IncomeEntry } from "@/types/database";
 
 const categoryLabels: Record<string, string> = {
@@ -25,6 +26,15 @@ export default async function IncomePage() {
 
   const entries = (data || []) as IncomeEntry[];
 
+  const totalIncome = entries.reduce((s, e) => s + e.amount, 0);
+  const avgIncome = entries.length > 0 ? Math.round(totalIncome / entries.length) : 0;
+  const categoryTotals = entries.reduce<Record<string, number>>((acc, e) => {
+    acc[e.category] = (acc[e.category] ?? 0) + e.amount;
+    return acc;
+  }, {});
+  const topCategoryKey = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const topCategory = topCategoryKey ? (categoryLabels[topCategoryKey] ?? topCategoryKey) : "—";
+
   return (
     <>
       <PageHeader
@@ -40,6 +50,13 @@ export default async function IncomePage() {
           </Link>
         }
       />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <StatCard title="Total Income" value={formatCurrency(totalIncome)} sub="All time" icon={TrendingUp} accent="green" />
+        <StatCard title="Transactions" value={String(entries.length)} sub="All time" icon={Hash} />
+        <StatCard title="Avg Transaction" value={formatCurrency(avgIncome)} sub="Per entry" icon={DollarSign} accent="teal" />
+        <StatCard title="Top Category" value={topCategory} sub="By revenue" icon={Tag} accent="teal" />
+      </div>
 
       <div className="glass-card overflow-hidden">
         <table className="w-full">

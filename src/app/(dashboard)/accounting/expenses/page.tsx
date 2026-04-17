@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { deleteExpenseAction } from "./actions";
 import Link from "next/link";
-import { Trash2, ExternalLink, RefreshCw } from "lucide-react";
+import { Trash2, ExternalLink, RefreshCw, TrendingDown, DollarSign, Hash, Tag } from "lucide-react";
 import type { Expense } from "@/types/database";
 
 const categoryLabels: Record<string, string> = {
@@ -27,6 +28,16 @@ export default async function ExpensesPage() {
 
   const entries = (data || []) as Expense[];
 
+  const totalExpenses = entries.reduce((s, e) => s + e.amount, 0);
+  const avgExpense = entries.length > 0 ? Math.round(totalExpenses / entries.length) : 0;
+  const recurringCount = entries.filter((e) => e.recurring).length;
+  const categoryTotals = entries.reduce<Record<string, number>>((acc, e) => {
+    acc[e.category] = (acc[e.category] ?? 0) + e.amount;
+    return acc;
+  }, {});
+  const topCategoryKey = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const topCategory = topCategoryKey ? (categoryLabels[topCategoryKey] ?? topCategoryKey) : "—";
+
   return (
     <>
       <PageHeader
@@ -42,6 +53,13 @@ export default async function ExpensesPage() {
           </Link>
         }
       />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <StatCard title="Total Expenses" value={formatCurrency(totalExpenses)} sub="All time" icon={TrendingDown} accent="red" />
+        <StatCard title="Transactions" value={String(entries.length)} sub="All time" icon={Hash} />
+        <StatCard title="Avg Expense" value={formatCurrency(avgExpense)} sub="Per entry" icon={DollarSign} />
+        <StatCard title="Top Category" value={topCategory} sub={`${recurringCount} recurring`} icon={Tag} />
+      </div>
 
       <div className="glass-card overflow-hidden">
         <table className="w-full">

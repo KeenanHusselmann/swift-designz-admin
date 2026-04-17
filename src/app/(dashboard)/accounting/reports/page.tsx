@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
 import { formatCurrency } from "@/lib/utils";
 import ExportCSV from "@/components/accounting/ExportCSV";
+import RevenueChart, { type RevenueDataPoint } from "@/components/dashboard/RevenueChart";
 import type { IncomeEntry, Expense } from "@/types/database";
 
 const incomeCategoryLabels: Record<string, string> = {
@@ -86,6 +87,31 @@ export default async function ReportsPage() {
   const ytdExpenses = expenses.reduce((s, e) => s + e.amount, 0);
   const ytdNet = ytdIncome - ytdExpenses;
 
+  // 12-month chart data
+  const chartMonths: { key: string; label: string }[] = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = d.toLocaleDateString("en-ZA", { month: "short", year: "2-digit" });
+    chartMonths.push({ key, label });
+  }
+  const chartMap = new Map<string, { income: number; expenses: number }>(
+    chartMonths.map(({ key }) => [key, { income: 0, expenses: 0 }])
+  );
+  income.forEach((i) => {
+    const entry = chartMap.get(i.date.slice(0, 7));
+    if (entry) entry.income += i.amount;
+  });
+  expenses.forEach((e) => {
+    const entry = chartMap.get(e.date.slice(0, 7));
+    if (entry) entry.expenses += e.amount;
+  });
+  const revenueData: RevenueDataPoint[] = chartMonths.map(({ key, label }) => ({
+    month: label,
+    income: chartMap.get(key)?.income ?? 0,
+    expenses: chartMap.get(key)?.expenses ?? 0,
+  }));
+
   // CSV data for export
   const csvRows: string[][] = [["Month", "Type", "Category", "Amount"]];
   sortedMonths.forEach((m) => {
@@ -123,6 +149,11 @@ export default async function ReportsPage() {
             {ytdNet < 0 ? "-" : ""}{formatCurrency(Math.abs(ytdNet))}
           </p>
         </div>
+      </div>
+
+      {/* Revenue Chart */}
+      <div className="mb-8">
+        <RevenueChart data={revenueData} />
       </div>
 
       {/* Monthly P&L Table */}
