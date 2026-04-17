@@ -32,6 +32,7 @@ import type { Profile } from "@/types/database";
 
 interface SidebarProps {
   profile: Profile | null;
+  initialCounts: Record<string, number>;
 }
 
 const NAV_SECTIONS = [
@@ -69,14 +70,14 @@ const INVESTOR_NAV = [
   { href: "/accounting/reports", label: "Reports", icon: BarChart2 },
 ];
 
-export default function Sidebar({ profile }: SidebarProps) {
+export default function Sidebar({ profile, initialCounts }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
-  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [counts, setCounts] = useState<Record<string, number>>(initialCounts);
   const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
 
-  // Fetch nav counts client-side so the layout never blocks on them
+  // Refresh counts once on mount — not on every route change
   useEffect(() => {
     const supabase = createClient();
     const tables = ["leads", "clients", "projects", "invoices", "documents", "investors", "employees", "ai_agents", "equipment"] as const;
@@ -87,7 +88,7 @@ export default function Sidebar({ profile }: SidebarProps) {
         Object.fromEntries(tables.map((t, i) => [t, results[i].count ?? 0]))
       );
     });
-  }, [pathname]); // re-fetch when route changes
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
