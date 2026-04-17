@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { deleteLead } from "@/app/(dashboard)/leads/actions";
 import { Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface Props {
   leadId: string;
@@ -10,12 +11,14 @@ interface Props {
 
 export default function DeleteLeadButton({ leadId }: Props) {
   const [pending, setPending] = useState(false);
+  const toast = useToast();
 
   async function handleDelete() {
     if (!confirm("Are you sure you want to delete this lead? This action cannot be undone.")) return;
-
     setPending(true);
+    toast.loading("Deleting lead...");
     await deleteLead(leadId);
+    toast.success("Lead deleted.");
   }
 
   return (

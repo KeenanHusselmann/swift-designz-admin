@@ -3,19 +3,25 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { deleteClientAction } from "@/app/(dashboard)/clients/actions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 export default function DeleteClientButton({ id }: { id: string }) {
   const [confirming, setConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function handleDelete() {
     setLoading(true);
+    toast.loading("Deleting client...");
     const result = await deleteClientAction(id);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setLoading(false);
       setConfirming(false);
+    } else {
+      toast.success("Client deleted.");
     }
   }
 

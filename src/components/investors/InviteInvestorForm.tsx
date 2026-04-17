@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/ToastProvider";
 
 export default function InviteInvestorForm() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
     setError(null);
+    toast.loading("Sending invitation...");
 
     try {
       const response = await fetch("/api/investors/invite", {
@@ -20,15 +23,19 @@ export default function InviteInvestorForm() {
 
       const data = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(data.error || "Failed to send invitation.");
+        const msg = data.error || "Failed to send invitation.";
+        setError(msg);
+        toast.error(msg);
         setPending(false);
         return;
       }
 
+      toast.success("Invitation sent!");
       router.push("/investors");
       router.refresh();
     } catch {
       setError("Failed to send invitation.");
+      toast.error("Failed to send invitation.");
       setPending(false);
     }
   }

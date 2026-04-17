@@ -1,15 +1,20 @@
 "use client";
 
 import { useActionState } from "react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ContributionFormProps {
   action: (formData: FormData) => Promise<{ error: string } | undefined>;
 }
 
 export default function ContributionForm({ action }: ContributionFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading("Recording contribution...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success("Contribution recorded!");
       return result ?? undefined;
     },
     undefined,

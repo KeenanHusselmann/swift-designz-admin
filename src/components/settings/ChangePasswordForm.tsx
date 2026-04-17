@@ -1,15 +1,21 @@
 "use client";
 
 import { useActionState } from "react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ChangePasswordFormProps {
   action: (formData: FormData) => Promise<{ error?: string; success?: string } | undefined>;
 }
 
 export default function ChangePasswordForm({ action }: ChangePasswordFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string; success?: string } | undefined, formData: FormData) => {
-      return await action(formData);
+      toast.loading("Updating password...");
+      const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success("Password updated!");
+      return result;
     },
     undefined,
   );

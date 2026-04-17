@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Send, X, Loader2 } from "lucide-react";
 import { sendDocumentAction } from "@/app/(dashboard)/documents/actions";
 import { getTemplateLabelMap } from "@/lib/document-templates";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const TEMPLATE_LABELS = getTemplateLabelMap();
 
@@ -23,6 +24,7 @@ export default function SendDocumentButton({
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const toast = useToast();
 
   const templateLabel = TEMPLATE_LABELS[template] ?? template;
   const defaultSubject = `Your ${templateLabel} from Swift Designz`;
@@ -31,13 +33,16 @@ export default function SendDocumentButton({
     e.preventDefault();
     setLoading(true);
     setError(null);
+    toast.loading("Sending email...");
     const formData = new FormData(e.currentTarget);
     const result = await sendDocumentAction(formData);
     setLoading(false);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
     } else {
       setSent(true);
+      toast.success("Email sent!");
       setTimeout(() => {
         setOpen(false);
         setSent(false);

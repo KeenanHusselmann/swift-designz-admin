@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { IncomeEntry, IncomeCategory } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const categories: { value: IncomeCategory; label: string }[] = [
   { value: "web_dev", label: "Web Development" },
@@ -20,9 +21,13 @@ interface IncomeFormProps {
 }
 
 export default function IncomeForm({ entry, action, submitLabel }: IncomeFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(entry ? "Saving changes..." : "Saving income entry...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(entry ? "Entry updated!" : "Income entry saved!");
       return result ?? undefined;
     },
     undefined,

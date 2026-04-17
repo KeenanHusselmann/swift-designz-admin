@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateProgressOverrideAction } from "@/app/(dashboard)/projects/actions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ProgressEditorProps {
   projectId: string;
@@ -19,19 +20,24 @@ export default function ProgressEditor({
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(String(progress));
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   async function handleSave() {
     setSaving(true);
+    toast.loading("Saving progress...");
     const num = parseInt(value, 10);
     const override = isNaN(num) ? null : Math.max(0, Math.min(100, num));
     await updateProgressOverrideAction(projectId, override);
+    toast.success("Progress saved!");
     setSaving(false);
     setEditing(false);
   }
 
   async function handleReset() {
     setSaving(true);
+    toast.loading("Resetting progress...");
     await updateProgressOverrideAction(projectId, null);
+    toast.success("Progress reset to auto.");
     setValue(String(milestoneProgress));
     setSaving(false);
     setEditing(false);

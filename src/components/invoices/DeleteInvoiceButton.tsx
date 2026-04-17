@@ -3,14 +3,18 @@
 import { useState } from "react";
 import { Trash2, Loader2 } from "lucide-react";
 import { deleteInvoiceAction } from "@/app/(dashboard)/invoices/actions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 export default function DeleteInvoiceButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   async function handleDelete() {
     if (!confirm("Delete this invoice? This will also delete all associated payments.")) return;
     setLoading(true);
+    toast.loading("Deleting invoice...");
     await deleteInvoiceAction(id);
+    toast.success("Invoice deleted.");
   }
 
   return (

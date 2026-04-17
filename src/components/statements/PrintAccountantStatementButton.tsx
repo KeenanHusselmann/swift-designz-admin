@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { FileText } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 export default function PrintAccountantStatementButton() {
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const toast = useToast();
 
   function handlePrint() {
+    toast.success("Opening statement...");
     window.open(`/api/accounting/statement?month=${month}`, "_blank");
   }
 

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { Employee, Department, EmployeeStatus } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const departments: { value: Department; label: string }[] = [
   { value: "development", label: "Development" },
@@ -24,9 +25,13 @@ interface EmployeeFormProps {
 }
 
 export default function EmployeeForm({ employee, action, submitLabel }: EmployeeFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(employee ? "Saving changes..." : "Adding employee...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(employee ? "Employee updated!" : "Employee added!");
       return result ?? undefined;
     },
     undefined,

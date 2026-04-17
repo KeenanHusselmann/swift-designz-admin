@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 import type { Invoice, InvoiceItem, Client, Project, InvoiceDocType, InstallmentInterval, PaymentPlanType, PaymentPlanInstallment } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 import { formatCurrency } from "@/lib/utils";
 
 const INVOICE_STATUSES = [
@@ -45,6 +46,7 @@ export default function InvoiceForm({
 }: InvoiceFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
   const [selectedClientId, setSelectedClientId] = useState(
     invoice?.client_id || preselectedClientId || ""
   );
@@ -207,6 +209,7 @@ export default function InvoiceForm({
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    toast.loading(invoice ? "Saving changes..." : "Creating invoice...");
 
     // Inject items as JSON
     formData.set("items", JSON.stringify(items));
@@ -224,7 +227,10 @@ export default function InvoiceForm({
     const result = await action(formData);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setLoading(false);
+    } else {
+      toast.success(invoice ? "Invoice updated!" : "Invoice created!");
     }
   }
 

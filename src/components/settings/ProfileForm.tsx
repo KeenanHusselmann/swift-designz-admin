@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { Profile } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ProfileFormProps {
   profile: Profile;
@@ -9,9 +10,14 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ profile, action }: ProfileFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string; success?: string } | undefined, formData: FormData) => {
-      return await action(formData);
+      toast.loading("Saving profile...");
+      const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success("Profile saved!");
+      return result;
     },
     undefined,
   );

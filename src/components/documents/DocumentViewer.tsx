@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { ArrowLeft, Download, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface Props {
   slug: string;
@@ -15,9 +16,11 @@ export default function DocumentViewer({ slug, label, hasPdf = true }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const toast = useToast();
 
   async function handleDownload() {
     setDownloading(true);
+    toast.loading("Preparing download...");
     try {
       const res = await fetch(`/api/docs/templates/${slug}`);
       if (!res.ok) throw new Error("Download failed");
@@ -30,8 +33,9 @@ export default function DocumentViewer({ slug, label, hasPdf = true }: Props) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      toast.success("PDF downloaded!");
     } catch {
-      // Silently fail — user will see nothing downloaded
+      toast.error("Download failed. Please try again.");
     } finally {
       setDownloading(false);
     }

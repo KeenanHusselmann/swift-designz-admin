@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Project, Client } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const PROJECT_STATUSES = [
   { value: "planning", label: "Planning" },
@@ -44,14 +45,19 @@ export default function ProjectForm({
   const [clientMode, setClientMode] = useState<"existing" | "new">(
     preselectedClientId ? "existing" : "existing"
   );
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    toast.loading(project ? "Saving changes..." : "Creating project...");
     const result = await action(formData);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setLoading(false);
+    } else {
+      toast.success(project ? "Project updated!" : "Project created!");
     }
   }
 

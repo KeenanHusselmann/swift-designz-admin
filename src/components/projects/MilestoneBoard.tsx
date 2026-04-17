@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { LayoutList, Columns, ChevronUp, ChevronDown, Trash2, Plus, Check } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 import {
   addMilestoneAction,
   toggleMilestoneAction,
@@ -25,6 +26,7 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
   const [addTitle, setAddTitle] = useState("");
   const [addDueDate, setAddDueDate] = useState("");
   const [addLoading, setAddLoading] = useState(false);
+  const toast = useToast();
   const [addError, setAddError] = useState<string | null>(null);
 
   // Persist view preference
@@ -75,11 +77,13 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
     if (!addTitle.trim()) return;
     setAddLoading(true);
     setAddError(null);
+    toast.loading("Adding milestone...");
     const fd = new FormData();
     fd.append("title", addTitle.trim());
     if (addDueDate) fd.append("due_date", addDueDate);
     const result = await addMilestoneAction(projectId, fd);
     if (result?.error) {
+      toast.error(result.error);
       setAddError(result.error);
     } else {
       // Optimistic add with temp id
@@ -97,6 +101,7 @@ export default function MilestoneBoard({ projectId, initialMilestones }: Milesto
       ]);
       setAddTitle("");
       setAddDueDate("");
+      toast.success("Milestone added!");
     }
     setAddLoading(false);
   }

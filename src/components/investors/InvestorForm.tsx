@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { Investor, InvestorStatus } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const statuses: { value: InvestorStatus; label: string }[] = [
   { value: "prospective", label: "Prospective" },
@@ -16,9 +17,13 @@ interface InvestorFormProps {
 }
 
 export default function InvestorForm({ investor, action, submitLabel }: InvestorFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(investor ? "Saving changes..." : "Creating investor...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(investor ? "Investor updated!" : "Investor created!");
       return result ?? undefined;
     },
     undefined,

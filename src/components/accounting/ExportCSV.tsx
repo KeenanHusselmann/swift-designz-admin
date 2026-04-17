@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ExportCSVProps {
   csv: string;
@@ -8,7 +9,10 @@ interface ExportCSVProps {
 }
 
 export default function ExportCSV({ csv, filename }: ExportCSVProps) {
+  const toast = useToast();
+
   function handleExport() {
+    toast.loading("Exporting CSV...");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -16,6 +20,7 @@ export default function ExportCSV({ csv, filename }: ExportCSVProps) {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+    toast.success("CSV exported!");
   }
 
   return (

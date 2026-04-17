@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { Equipment, EquipmentCategory, EquipmentCondition, EquipmentStatus } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const categories: { value: EquipmentCategory; label: string }[] = [
   { value: "computing", label: "Computing" },
@@ -33,9 +34,13 @@ interface EquipmentFormProps {
 }
 
 export default function EquipmentForm({ equipment, action, submitLabel }: EquipmentFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(equipment ? "Saving changes..." : "Adding equipment...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(equipment ? "Equipment updated!" : "Equipment added!");
       return result ?? undefined;
     },
     undefined,

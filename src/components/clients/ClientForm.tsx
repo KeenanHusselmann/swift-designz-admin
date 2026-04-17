@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Client } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface ClientFormProps {
   client?: Client;
@@ -12,14 +13,19 @@ interface ClientFormProps {
 export default function ClientForm({ client, action, submitLabel }: ClientFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    toast.loading(client ? "Saving changes..." : "Creating client...");
     const result = await action(formData);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setLoading(false);
+    } else {
+      toast.success(client ? "Client updated!" : "Client created!");
     }
   }
 

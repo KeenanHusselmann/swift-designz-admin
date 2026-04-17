@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { Lead, LeadSource, LeadStatus } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const SOURCES: { value: LeadSource; label: string }[] = [
   { value: "manual", label: "Manual" },
@@ -31,14 +32,19 @@ export default function LeadForm({ lead, action, submitLabel }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
     setError(null);
+    toast.loading(lead ? "Saving changes..." : "Creating lead...");
     const result = await action(formData);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setPending(false);
+    } else {
+      toast.success(lead ? "Lead updated!" : "Lead created!");
     }
   }
 

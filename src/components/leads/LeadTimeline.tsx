@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { addLeadNote, deleteLeadNote } from "@/app/(dashboard)/leads/actions";
 import type { LeadNote } from "@/types/database";
 import { MessageSquare, Trash2, Send } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface Props {
   leadId: string;
@@ -13,17 +14,22 @@ interface Props {
 export default function LeadTimeline({ leadId, notes }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
+    toast.loading("Saving note...");
     await addLeadNote(leadId, formData);
     formRef.current?.reset();
     setPending(false);
+    toast.success("Note saved!");
   }
 
   async function handleDelete(noteId: string) {
     if (!confirm("Delete this note?")) return;
+    toast.loading("Deleting note...");
     await deleteLeadNote(noteId, leadId);
+    toast.success("Note deleted.");
   }
 
   function formatTime(date: string) {

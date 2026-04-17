@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { convertLeadToClient } from "@/app/(dashboard)/leads/actions";
 import { UserPlus } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface Props {
   leadId: string;
@@ -11,16 +12,20 @@ interface Props {
 export default function ConvertToClientButton({ leadId }: Props) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function handleConvert() {
     if (!confirm("Convert this lead to a client? This will create a new client and mark the lead as won.")) return;
-
     setPending(true);
     setError(null);
+    toast.loading("Converting to client...");
     const result = await convertLeadToClient(leadId);
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
       setPending(false);
+    } else {
+      toast.success("Client created!");
     }
   }
 

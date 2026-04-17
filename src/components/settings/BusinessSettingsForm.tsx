@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { BusinessSettings } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface BusinessSettingsFormProps {
   settings: BusinessSettings;
@@ -9,9 +10,14 @@ interface BusinessSettingsFormProps {
 }
 
 export default function BusinessSettingsForm({ settings, action }: BusinessSettingsFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
-      return await action(formData);
+      toast.loading("Saving settings...");
+      const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success("Settings saved!");
+      return result;
     },
     undefined,
   );

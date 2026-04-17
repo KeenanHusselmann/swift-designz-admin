@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useActionState } from "react";
 import type { Expense, ExpenseCategory, RecurringInterval } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const categories: { value: ExpenseCategory; label: string }[] = [
   { value: "hosting", label: "Hosting" },
@@ -30,10 +31,14 @@ interface ExpenseFormProps {
 
 export default function ExpenseForm({ expense, action, submitLabel }: ExpenseFormProps) {
   const [recurring, setRecurring] = useState(expense?.recurring || false);
+  const toast = useToast();
 
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(expense ? "Saving changes..." : "Saving expense...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(expense ? "Expense updated!" : "Expense saved!");
       return result ?? undefined;
     },
     undefined,

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, Upload } from "lucide-react";
 import { addPaymentAction } from "@/app/(dashboard)/invoices/actions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const METHODS = [
   { value: "eft", label: "EFT / Bank Transfer" },
@@ -20,19 +21,23 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const toast = useToast();
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
     setSuccess(false);
+    toast.loading("Recording payment...");
 
     const result = await addPaymentAction(formData);
     setLoading(false);
 
     if (result?.error) {
       setError(result.error);
+      toast.error(result.error);
     } else {
       setSuccess(true);
+      toast.success("Payment recorded!");
       setTimeout(() => setSuccess(false), 2000);
     }
   }

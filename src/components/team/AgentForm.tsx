@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { AiAgent, AgentStatus } from "@/types/database";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const statuses: { value: AgentStatus; label: string }[] = [
   { value: "active", label: "Active" },
@@ -16,9 +17,13 @@ interface AgentFormProps {
 }
 
 export default function AgentForm({ agent, action, submitLabel }: AgentFormProps) {
+  const toast = useToast();
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string } | undefined, formData: FormData) => {
+      toast.loading(agent ? "Saving changes..." : "Adding AI agent...");
       const result = await action(formData);
+      if (result?.error) toast.error(result.error);
+      else toast.success(agent ? "Agent updated!" : "Agent added!");
       return result ?? undefined;
     },
     undefined,
