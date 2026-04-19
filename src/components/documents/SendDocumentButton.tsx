@@ -22,7 +22,6 @@ export default function SendDocumentButton({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const toast = useToast();
 
@@ -41,13 +40,9 @@ export default function SendDocumentButton({
       setError(result.error);
       toast.error(result.error);
     } else {
-      setSent(true);
       toast.success("Email sent!");
-      setTimeout(() => {
-        setOpen(false);
-        setSent(false);
-        formRef.current?.reset();
-      }, 1500);
+      setOpen(false);
+      formRef.current?.reset();
     }
   }
 
@@ -74,73 +69,67 @@ export default function SendDocumentButton({
             <h2 className="text-sm font-semibold text-foreground mb-1">Send {templateLabel}</h2>
             <p className="text-xs text-gray-500 mb-5">Deliver this document directly to a client via email.</p>
 
-            {sent ? (
-              <div className="py-6 text-center">
-                <p className="text-sm font-medium text-green-400">Email sent successfully.</p>
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+              <input type="hidden" name="client_id" value={clientId} />
+              <input type="hidden" name="template" value={template} />
+
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">To</label>
+                <input
+                  name="recipient_email"
+                  type="email"
+                  defaultValue={clientEmail}
+                  required
+                  className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
+                />
               </div>
-            ) : (
-              <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-                <input type="hidden" name="client_id" value={clientId} />
-                <input type="hidden" name="template" value={template} />
 
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">To</label>
-                  <input
-                    name="recipient_email"
-                    type="email"
-                    defaultValue={clientEmail}
-                    required
-                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
-                  />
-                </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Subject</label>
+                <input
+                  name="subject"
+                  type="text"
+                  defaultValue={defaultSubject}
+                  required
+                  className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
+                />
+              </div>
 
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Subject</label>
-                  <input
-                    name="subject"
-                    type="text"
-                    defaultValue={defaultSubject}
-                    required
-                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal"
-                  />
-                </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Personal message <span className="text-gray-600">(optional)</span></label>
+                <textarea
+                  name="message"
+                  rows={3}
+                  placeholder="Add a short note…"
+                  className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal resize-none"
+                />
+              </div>
 
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Personal message <span className="text-gray-600">(optional)</span></label>
-                  <textarea
-                    name="message"
-                    rows={3}
-                    placeholder="Add a short note…"
-                    className="w-full px-3 py-2 bg-[#111] border border-border rounded-lg text-sm text-foreground placeholder-gray-600 focus:outline-none focus:border-teal resize-none"
-                  />
-                </div>
+              {error && (
+                <p className="text-xs text-red-400">{error}</p>
+              )}
 
-                {error && (
-                  <p className="text-xs text-red-400">{error}</p>
-                )}
-
-                <div className="flex justify-end gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    className="px-4 py-2 text-sm text-gray-400 hover:text-foreground border border-border rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-teal hover:bg-teal-hover text-white rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending…</>
-                    ) : (
-                      <><Send className="h-3.5 w-3.5" /> Send Email</>
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-sm text-gray-400 hover:text-foreground border border-border rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium bg-teal hover:bg-teal-hover text-white rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {loading ? (
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending…</>
+                  ) : (
+                    <><Send className="h-3.5 w-3.5" /> Send Email</>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

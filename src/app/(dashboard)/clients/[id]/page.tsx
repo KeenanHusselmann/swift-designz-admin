@@ -18,11 +18,15 @@ export default async function ClientDetailPage({
   const supabase = await createClient();
 
   const [
-    { data: client },
+    { data: clientRaw },
     { data: projects },
     { data: invoices },
   ] = await Promise.all([
-    supabase.from("clients").select("*").eq("id", id).single(),
+    supabase
+      .from("clients")
+      .select("*, linked_lead:leads!lead_id(id, name, source, status, created_at)")
+      .eq("id", id)
+      .single(),
     supabase
       .from("projects")
       .select("id, name, service, status, quoted_amount, due_date")
@@ -35,16 +39,12 @@ export default async function ClientDetailPage({
       .order("created_at", { ascending: false }),
   ]);
 
-  if (!client) notFound();
+  if (!clientRaw) notFound();
 
-  // Fetch linked lead if exists
-  const { data: linkedLead } = client.lead_id
-    ? await supabase
-        .from("leads")
-        .select("id, name, source, status, created_at")
-        .eq("id", client.lead_id)
-        .single()
-    : { data: null };
+  const client = clientRaw as typeof clientRaw & {
+    linked_lead: { id: string; name: string; source: string; status: string; created_at: string } | null;
+  };
+  const linkedLead = client.linked_lead ?? null;
 
   // Invoice financials
   const totalBilled = (invoices || []).reduce((s, inv) => s + inv.amount, 0);

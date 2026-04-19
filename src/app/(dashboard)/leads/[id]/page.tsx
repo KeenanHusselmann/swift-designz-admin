@@ -17,30 +17,24 @@ export default async function LeadDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: lead } = await supabase
-    .from("leads")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [
+    { data: lead },
+    { data: notes },
+    { data: linkedClient },
+  ] = await Promise.all([
+    supabase.from("leads").select("*").eq("id", id).single(),
+    supabase
+      .from("lead_notes")
+      .select("*, profiles:author_id(full_name)")
+      .eq("lead_id", id)
+      .order("created_at", { ascending: false }),
+    supabase.from("clients").select("id, name").eq("lead_id", id).maybeSingle(),
+  ]);
 
   if (!lead) notFound();
 
   const typedLead = lead as Lead;
-
-  const { data: notes } = await supabase
-    .from("lead_notes")
-    .select("*, profiles:author_id(full_name)")
-    .eq("lead_id", id)
-    .order("created_at", { ascending: false });
-
   const typedNotes = (notes ?? []) as (LeadNote & { profiles: { full_name: string } | null })[];
-
-  // Check if already converted to client
-  const { data: linkedClient } = await supabase
-    .from("clients")
-    .select("id, name")
-    .eq("lead_id", id)
-    .single();
 
   const details = [
     { label: "Email", value: typedLead.email },

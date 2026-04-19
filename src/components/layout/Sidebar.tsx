@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -26,7 +26,6 @@ import {
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
-import { createClient } from "@/lib/supabase/client";
 import { getDocumentLibraryCountForRole } from "@/lib/document-templates";
 import type { Profile } from "@/types/database";
 
@@ -74,21 +73,8 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
-  const [counts, setCounts] = useState<Record<string, number>>(initialCounts);
+  const counts = initialCounts;
   const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
-
-  // Refresh counts once on mount — not on every route change
-  useEffect(() => {
-    const supabase = createClient();
-    const tables = ["leads", "clients", "projects", "invoices", "documents", "investors", "employees", "ai_agents", "equipment"] as const;
-    Promise.all(
-      tables.map((t) => supabase.from(t).select("id", { count: "exact", head: true }))
-    ).then((results) => {
-      setCounts(
-        Object.fromEntries(tables.map((t, i) => [t, results[i].count ?? 0]))
-      );
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
