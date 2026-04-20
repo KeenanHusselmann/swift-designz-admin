@@ -8,7 +8,12 @@ import {
   DollarSign,
   Receipt,
   BarChart3,
+  Activity,
+  Calculator,
+  ShieldCheck,
   ArrowUpRight,
+  AlertTriangle,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 import PrintAccountantStatementButton from "@/components/statements/PrintAccountantStatementButton";
@@ -24,17 +29,32 @@ export default async function AccountingPage() {
   const yearStart = new Date(now.getFullYear() - 1, now.getMonth() + 1, 1).toISOString().slice(0, 10);
   const ytdStart = `${now.getFullYear()}-01-01`;
 
-  const [incomeResult, expensesResult, recentIncomeResult, recentExpensesResult] = await Promise.all([
+  const [incomeResult, expensesResult, recentIncomeResult, recentExpensesResult, outstandingResult, liabilitiesResult, projectionsResult] = await Promise.all([
     supabase.from("income_entries").select("amount, date, category").gte("date", yearStart),
     supabase.from("expenses").select("amount, date").gte("date", yearStart),
     supabase.from("income_entries").select("id, description, amount, date, category").order("date", { ascending: false }).limit(5),
     supabase.from("expenses").select("id, description, amount, date, category").order("date", { ascending: false }).limit(5),
+    supabase.from("invoices").select("amount, paid_amount").in("status", ["sent", "overdue", "partial"]).eq("doc_type", "invoice"),
+    supabase.from("liabilities").select("outstanding, status").eq("status", "active"),
+    supabase.from("revenue_projections").select("projected_income, projected_expenses, month").gte("month", `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`).limit(12),
   ]);
 
   const incomeEntries = (incomeResult.data ?? []) as Pick<IncomeEntry, "amount" | "date" | "category">[];
   const expenseEntries = (expensesResult.data ?? []) as Pick<Expense, "amount" | "date">[];
   const recentIncome = (recentIncomeResult.data ?? []) as Pick<IncomeEntry, "id" | "description" | "amount" | "date" | "category">[];
   const recentExpenses = (recentExpensesResult.data ?? []) as Pick<Expense, "id" | "description" | "amount" | "date" | "category">[];
+  const totalOutstanding = (outstandingResult.data ?? []).reduce(
+    (s: number, i: { amount: number; paid_amount: number }) => s + (i.amount - i.paid_amount),
+    0
+  );
+
+  const totalLiabilities = (liabilitiesResult.data ?? []).reduce(
+    (s: number, l: { outstanding: number }) => s + l.outstanding,
+    0
+  );
+  const projections12 = (projectionsResult.data ?? []) as { projected_income: number; projected_expenses: number; month: string }[];
+  const projMonthsSet = projections12.length;
+  const totalProjNet = projections12.reduce((s, p) => s + p.projected_income - p.projected_expenses, 0);
 
   // MTD
   const incomeMTD = incomeEntries.filter((e) => e.date >= mtdStartDate).reduce((s, e) => s + e.amount, 0);
@@ -45,6 +65,8 @@ export default async function AccountingPage() {
   // YTD
   const ytdIncome = incomeEntries.filter((e) => e.date >= ytdStart).reduce((s, e) => s + e.amount, 0);
   const ytdExpenses = expenseEntries.filter((e) => e.date >= ytdStart).reduce((s, e) => s + e.amount, 0);
+  // Net position: YTD income minus active liabilities (simple proxy)
+  const netPosition = ytdIncome - totalLiabilities;
 
   // Sparkline — daily cumulative income this month
   const daysInMonth = now.getDate();
@@ -263,8 +285,22 @@ export default async function AccountingPage() {
         </div>
       </div>
 
+      {/* Net Position Banner */}
+      <div className={`glass-card p-4 mb-4 flex items-center justify-between ${netPosition >= 0 ? "border-teal/20" : "border-red-500/20"}`}>
+        <div>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Estimated Net Position (YTD Income − Active Liabilities)</p>
+          <p className={`text-2xl font-bold mt-1 ${netPosition >= 0 ? "text-teal" : "text-red-400"}`}>
+            {netPosition >= 0 ? "" : "-"}{formatCurrency(Math.abs(netPosition))}
+          </p>
+        </div>
+        <div className="text-right text-xs text-gray-500 space-y-0.5">
+          <p>YTD Income: <span className="text-green-400 font-mono">{formatCurrency(ytdIncome)}</span></p>
+          <p>Active Liabilities: <span className="text-red-400 font-mono">{formatCurrency(totalLiabilities)}</span></p>
+        </div>
+      </div>
+
       {/* Section Nav */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Link href="/accounting/income" className="glass-card p-6 hover:border-teal/30 transition-colors group">
           <div className="flex items-start justify-between mb-3">
             <TrendingUp className="h-7 w-7 text-green-400" />
@@ -283,6 +319,48 @@ export default async function AccountingPage() {
           <p className="text-sm text-gray-500 mt-1">Track all business spending</p>
           <p className="text-xs text-red-400 font-mono font-medium mt-3">{formatCurrency(ytdExpenses)} YTD</p>
         </Link>
+        <Link href="/accounting/liabilities" className="glass-card p-6 hover:border-teal/30 transition-colors group">
+          <div className="flex items-start justify-between mb-3">
+            <AlertTriangle className="h-7 w-7 text-orange-400" />
+            <ArrowUpRight className="h-4 w-4 text-gray-600 group-hover:text-teal transition-colors" />
+          </div>
+          <h3 className="text-foreground font-semibold">Liabilities</h3>
+          <p className="text-sm text-gray-500 mt-1">Loans, credit & payables</p>
+          <p className={`text-xs font-mono font-medium mt-3 ${totalLiabilities > 0 ? "text-red-400" : "text-gray-600"}`}>
+            {formatCurrency(totalLiabilities)} outstanding
+          </p>
+        </Link>
+        <Link href="/accounting/projections" className="glass-card p-6 hover:border-teal/30 transition-colors group">
+          <div className="flex items-start justify-between mb-3">
+            <CalendarDays className="h-7 w-7 text-teal" />
+            <ArrowUpRight className="h-4 w-4 text-gray-600 group-hover:text-teal transition-colors" />
+          </div>
+          <h3 className="text-foreground font-semibold">Projections</h3>
+          <p className="text-sm text-gray-500 mt-1">12-month revenue forecast</p>
+          <p className={`text-xs font-mono font-medium mt-3 ${projMonthsSet > 0 ? (totalProjNet >= 0 ? "text-teal" : "text-red-400") : "text-gray-600"}`}>
+            {projMonthsSet > 0 ? `${formatCurrency(Math.abs(totalProjNet))} proj. net` : `${projMonthsSet}/12 months set`}
+          </p>
+        </Link>
+        <Link href="/accounting/cashflow" className="glass-card p-6 hover:border-teal/30 transition-colors group">
+          <div className="flex items-start justify-between mb-3">
+            <Activity className="h-7 w-7 text-amber-400" />
+            <ArrowUpRight className="h-4 w-4 text-gray-600 group-hover:text-teal transition-colors" />
+          </div>
+          <h3 className="text-foreground font-semibold">Cash Flow</h3>
+          <p className="text-sm text-gray-500 mt-1">Receivables & projections</p>
+          <p className={`text-xs font-mono font-medium mt-3 ${totalOutstanding > 0 ? "text-amber-400" : "text-gray-600"}`}>
+            {formatCurrency(totalOutstanding)} outstanding
+          </p>
+        </Link>
+        <Link href="/accounting/tax" className="glass-card p-6 hover:border-teal/30 transition-colors group">
+          <div className="flex items-start justify-between mb-3">
+            <Calculator className="h-7 w-7 text-purple-400" />
+            <ArrowUpRight className="h-4 w-4 text-gray-600 group-hover:text-teal transition-colors" />
+          </div>
+          <h3 className="text-foreground font-semibold">Tax</h3>
+          <p className="text-sm text-gray-500 mt-1">VAT & provisional tax</p>
+          <p className="text-xs text-purple-400/80 font-mono font-medium mt-3">SARS estimates</p>
+        </Link>
         <Link href="/accounting/reports" className="glass-card p-6 hover:border-teal/30 transition-colors group">
           <div className="flex items-start justify-between mb-3">
             <BarChart3 className="h-7 w-7 text-teal" />
@@ -293,6 +371,15 @@ export default async function AccountingPage() {
           <p className={`text-xs font-mono font-medium mt-3 ${(ytdIncome - ytdExpenses) >= 0 ? "text-teal" : "text-red-400"}`}>
             {formatCurrency(Math.abs(ytdIncome - ytdExpenses))} net YTD
           </p>
+        </Link>
+        <Link href="/accounting/audit" className="glass-card p-6 hover:border-teal/30 transition-colors group">
+          <div className="flex items-start justify-between mb-3">
+            <ShieldCheck className="h-7 w-7 text-blue-400" />
+            <ArrowUpRight className="h-4 w-4 text-gray-600 group-hover:text-teal transition-colors" />
+          </div>
+          <h3 className="text-foreground font-semibold">Audit</h3>
+          <p className="text-sm text-gray-500 mt-1">Unified ledger & review</p>
+          <p className="text-xs text-blue-400/80 font-mono font-medium mt-3">All transactions</p>
         </Link>
       </div>
     </>

@@ -20,6 +20,7 @@ CREATE TYPE employee_status AS ENUM ('active', 'inactive', 'terminated');
 CREATE TYPE department AS ENUM ('development', 'design', 'marketing', 'operations', 'other');
 CREATE TYPE agent_status AS ENUM ('active', 'paused', 'retired');
 CREATE TYPE income_source AS ENUM ('invoice', 'manual');
+CREATE TYPE liability_type AS ENUM ('loan', 'credit_facility', 'accounts_payable', 'vat_payable', 'tax_provision', 'other');
 CREATE TYPE equipment_category AS ENUM ('computing', 'peripherals', 'mobile', 'networking', 'software_licence', 'office', 'other');
 CREATE TYPE equipment_condition AS ENUM ('new', 'good', 'fair', 'poor');
 CREATE TYPE equipment_status AS ENUM ('active', 'sold', 'disposed');
@@ -170,7 +171,40 @@ CREATE TABLE income_entries (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Investors
+-- Income entry reconciliation columns (add to existing DB via migration)
+-- ALTER TABLE income_entries ADD COLUMN IF NOT EXISTS reconciled BOOLEAN NOT NULL DEFAULT false;
+-- ALTER TABLE income_entries ADD COLUMN IF NOT EXISTS reconciled_at TIMESTAMPTZ;
+
+-- Business settings extra fields (add to existing DB via migration)
+-- ALTER TABLE business_settings ADD COLUMN IF NOT EXISTS registration_date DATE;
+-- ALTER TABLE business_settings ADD COLUMN IF NOT EXISTS directors TEXT;
+
+-- Liabilities
+CREATE TABLE liabilities (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  type liability_type NOT NULL DEFAULT 'loan',
+  lender TEXT,
+  total_amount INTEGER NOT NULL DEFAULT 0,   -- original/credit limit in cents
+  outstanding INTEGER NOT NULL DEFAULT 0,    -- current balance in cents
+  interest_rate NUMERIC(5,2),                -- annual % e.g. 11.75
+  due_date DATE,
+  notes TEXT,
+  status TEXT NOT NULL DEFAULT 'active',     -- 'active' | 'settled'
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Revenue Projections
+CREATE TABLE revenue_projections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  month DATE NOT NULL UNIQUE,                    -- first day of month e.g. 2026-04-01
+  projected_income INTEGER NOT NULL DEFAULT 0,   -- cents
+  projected_expenses INTEGER NOT NULL DEFAULT 0, -- cents
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 CREATE TABLE investors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
@@ -305,6 +339,8 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON investors FOR EACH ROW EXECUTE FU
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON employees FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON ai_agents FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON equipment FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON liabilities FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON revenue_projections FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- AUTO-CREATE PROFILE ON SIGNUP
@@ -348,6 +384,8 @@ ALTER TABLE ai_agents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE salary_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lead_notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE equipment ENABLE ROW LEVEL SECURITY;
+ALTER TABLE liabilities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE revenue_projections ENABLE ROW LEVEL SECURITY;
 
 -- Authenticated users can read all tables
 CREATE POLICY "Authenticated users can read profiles" ON profiles FOR SELECT TO authenticated USING (true);
@@ -366,6 +404,8 @@ CREATE POLICY "Authenticated users can read agents" ON ai_agents FOR SELECT TO a
 CREATE POLICY "Authenticated users can read salary history" ON salary_history FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read lead notes" ON lead_notes FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read equipment" ON equipment FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can read liabilities" ON liabilities FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can read projections" ON revenue_projections FOR SELECT TO authenticated USING (true);
 
 -- Only admins can write (insert, update, delete)
 CREATE POLICY "Admins can manage profiles" ON profiles FOR ALL TO authenticated
@@ -399,6 +439,12 @@ CREATE POLICY "Admins can manage salary history" ON salary_history FOR ALL TO au
 CREATE POLICY "Admins can manage lead notes" ON lead_notes FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 CREATE POLICY "Admins can manage equipment" ON equipment FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can manage liabilities" ON liabilities FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can manage projections" ON revenue_projections FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
   WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 

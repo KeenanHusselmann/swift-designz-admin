@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
-import StatCard from "@/components/ui/StatCard";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { deleteIncomeAction } from "./actions";
+import ReconcileToggle from "@/components/accounting/ReconcileToggle";
 import Link from "next/link";
-import { Trash2, TrendingUp, DollarSign, Hash, Tag } from "lucide-react";
+import { Trash2, TrendingUp, DollarSign, Hash, Tag, CheckCircle2 } from "lucide-react";
 import type { IncomeEntry } from "@/types/database";
 
 const categoryLabels: Record<string, string> = {
@@ -24,9 +24,14 @@ export default async function IncomePage() {
     .select("*")
     .order("date", { ascending: false });
 
-  const entries = (data || []) as IncomeEntry[];
+  const entries = (data ?? []) as IncomeEntry[];
 
   const totalIncome = entries.reduce((s, e) => s + e.amount, 0);
+  const reconciledEntries = entries.filter((e) => e.reconciled);
+  const reconciledTotal = reconciledEntries.reduce((s, e) => s + e.amount, 0);
+  const reconciledPct = entries.length > 0
+    ? Math.round((reconciledEntries.length / entries.length) * 100)
+    : 0;
   const avgIncome = entries.length > 0 ? Math.round(totalIncome / entries.length) : 0;
   const categoryTotals = entries.reduce<Record<string, number>>((acc, e) => {
     acc[e.category] = (acc[e.category] ?? 0) + e.amount;
@@ -51,54 +56,118 @@ export default async function IncomePage() {
         }
       />
 
+      {/* Hero */}
+      <div className="glass-card p-6 mb-6 relative overflow-hidden">
+        <div className="absolute -top-16 -right-16 w-56 h-56 bg-teal/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Total Income</p>
+            <p className="text-5xl font-bold leading-none text-green-400">{formatCurrency(totalIncome)}</p>
+            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+              <span className="text-teal font-medium">{reconciledEntries.length} of {entries.length} reconciled</span>
+              <span>&mdash;</span>
+              <span className={`font-medium ${reconciledPct === 100 ? "text-teal" : "text-amber-400"}`}>
+                {formatCurrency(reconciledTotal)} verified
+              </span>
+            </div>
+          </div>
+          {/* Reconciliation progress */}
+          <div className="shrink-0 w-full md:w-52">
+            <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+              <span>Reconciliation</span>
+              <span className={`font-medium ${reconciledPct === 100 ? "text-teal" : "text-amber-400"}`}>
+                {reconciledPct}%
+              </span>
+            </div>
+            <div className="h-2 bg-card rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${reconciledPct === 100 ? "bg-teal" : "bg-amber-400"}`}
+                style={{ width: `${reconciledPct}%` }}
+              />
+            </div>
+            <p className="text-xs text-gray-600 mt-1">{reconciledEntries.length} of {entries.length} entries</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stat grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <StatCard title="Total Income" value={formatCurrency(totalIncome)} sub="All time" icon={TrendingUp} accent="green" />
-        <StatCard title="Transactions" value={String(entries.length)} sub="All time" icon={Hash} />
-        <StatCard title="Avg Transaction" value={formatCurrency(avgIncome)} sub="Per entry" icon={DollarSign} accent="teal" />
-        <StatCard title="Top Category" value={topCategory} sub="By revenue" icon={Tag} accent="teal" />
+        <div className="glass-card p-5">
+          <TrendingUp className="h-5 w-5 text-green-400 mb-3" />
+          <p className="text-2xl font-bold text-green-400">{formatCurrency(totalIncome)}</p>
+          <p className="text-xs text-gray-500 mt-1">Total Income</p>
+        </div>
+        <div className="glass-card p-5">
+          <CheckCircle2 className="h-5 w-5 text-teal mb-3" />
+          <p className="text-2xl font-bold text-teal">{formatCurrency(reconciledTotal)}</p>
+          <p className="text-xs text-gray-500 mt-1">Reconciled</p>
+        </div>
+        <div className="glass-card p-5">
+          <Hash className="h-5 w-5 text-blue-400 mb-3" />
+          <p className="text-2xl font-bold text-foreground">{entries.length}</p>
+          <p className="text-xs text-gray-500 mt-1">Transactions</p>
+        </div>
+        <div className="glass-card p-5">
+          <Tag className="h-5 w-5 text-purple-400 mb-3" />
+          <p className="text-2xl font-bold text-foreground">{topCategory}</p>
+          <p className="text-xs text-gray-500 mt-1">Top Category</p>
+        </div>
       </div>
 
       <div className="glass-card overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-              <th className="text-right px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="w-12" />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {entries.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">No income records yet.</td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="w-10 px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="Reconciled">✓</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="w-10" />
               </tr>
-            ) : (
-              entries.map((e) => (
-                <tr key={e.id} className="hover:bg-card transition-colors">
-                  <td className="px-5 py-3 text-sm text-gray-400">{formatDate(e.date)}</td>
-                  <td className="px-5 py-3 text-sm text-foreground">
-                    <Link href={`/accounting/income/${e.id}/edit`} className="hover:text-teal">
-                      {e.description}
-                    </Link>
-                  </td>
-                  <td className="px-5 py-3 text-sm text-gray-400">{categoryLabels[e.category] || e.category}</td>
-                  <td className="px-5 py-3 text-sm text-gray-500 capitalize">{e.source}</td>
-                  <td className="px-5 py-3 text-sm text-green-400 text-right font-mono font-medium">{formatCurrency(e.amount)}</td>
-                  <td className="px-2 py-3 text-center">
-                    <form action={async () => { "use server"; await deleteIncomeAction(e.id); }}>
-                      <button type="submit" className="text-gray-600 hover:text-red-400 transition-colors" title="Delete">
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </form>
-                  </td>
+            </thead>
+            <tbody>
+              {entries.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-10 text-center text-sm text-gray-500">No income records yet.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                entries.map((e, i) => (
+                  <tr
+                    key={e.id}
+                    className={`border-b border-border/50 hover:bg-card transition-colors ${
+                      !e.reconciled ? "bg-amber-950/10" : i % 2 === 1 ? "bg-card/20" : ""
+                    }`}
+                  >
+                    <td className="px-3 py-3 text-center">
+                      <ReconcileToggle id={e.id} reconciled={e.reconciled} />
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-400 whitespace-nowrap">{formatDate(e.date)}</td>
+                    <td className="px-4 py-3 text-sm text-foreground">
+                      <Link href={`/accounting/income/${e.id}/edit`} className="hover:text-teal transition-colors">
+                        {e.description}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-400">{categoryLabels[e.category] ?? e.category}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 capitalize">{e.source}</td>
+                    <td className="px-4 py-3 text-sm text-green-400 text-right font-mono font-medium whitespace-nowrap">
+                      {formatCurrency(e.amount)}
+                    </td>
+                    <td className="px-2 py-3 text-center">
+                      <form action={async () => { "use server"; await deleteIncomeAction(e.id); }}>
+                        <button type="submit" className="text-gray-600 hover:text-red-400 transition-colors" title="Delete">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

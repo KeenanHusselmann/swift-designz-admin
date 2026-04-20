@@ -94,9 +94,21 @@ export default function BusinessSettingsForm({ settings, action }: BusinessSetti
               className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
           </div>
           <div>
-            <label htmlFor="registration_number" className="block text-xs text-gray-500 mb-1">Registration Number</label>
+            <label htmlFor="registration_number" className="block text-xs text-gray-500 mb-1">Company Registration (CIPC)</label>
             <input id="registration_number" name="registration_number" type="text" defaultValue={settings.registration_number || ""}
               className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
+          </div>
+          <div>
+            <label htmlFor="registration_date" className="block text-xs text-gray-500 mb-1">Registration Date</label>
+            <input id="registration_date" name="registration_date" type="date" defaultValue={settings.registration_date || ""}
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal" />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="directors" className="block text-xs text-gray-500 mb-1">Directors / Members</label>
+            <textarea id="directors" name="directors" rows={2} defaultValue={settings.directors || ""}
+              placeholder="e.g. Jane Smith, John Doe"
+              className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:border-teal resize-none" />
+            <p className="text-xs text-gray-600 mt-1">Comma-separated names of company directors or members</p>
           </div>
         </div>
       </div>

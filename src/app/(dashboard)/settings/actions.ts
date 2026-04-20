@@ -83,6 +83,8 @@ export async function updateBusinessSettingsAction(formData: FormData) {
     website: (formData.get("website") as string)?.trim() || null,
     vat_number: (formData.get("vat_number") as string)?.trim() || null,
     registration_number: (formData.get("registration_number") as string)?.trim() || null,
+    registration_date: (formData.get("registration_date") as string)?.trim() || null,
+    directors: (formData.get("directors") as string)?.trim() || null,
     bank_name: (formData.get("bank_name") as string)?.trim() || null,
     bank_account_number: (formData.get("bank_account_number") as string)?.trim() || null,
     bank_branch_code: (formData.get("bank_branch_code") as string)?.trim() || null,

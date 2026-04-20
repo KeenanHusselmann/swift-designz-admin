@@ -4,29 +4,55 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import DeleteInvoiceButton from "@/components/invoices/DeleteInvoiceButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
+import { TrendingUp, Clock, AlertTriangle, CheckCircle2, ArrowUpRight, FileText } from "lucide-react";
+import type { Invoice } from "@/types/database";
 
-function DocTypeBadge({ type }: { type: string }) {
-  const isQuote = type === "quotation";
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${
-      isQuote
-        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-        : "bg-teal/10 text-teal border border-teal/20"
-    }`}>
-      {isQuote ? "Quote" : "Invoice"}
-    </span>
-  );
-}
+type InvoiceWithClient = Invoice & { clients: { name: string } | null };
 
 export default async function InvoicesPage() {
   const supabase = await createClient();
+
+  const now = new Date();
+  const ytdStart = `${now.getFullYear()}-01-01`;
+
   const { data: allDocs } = await supabase
     .from("invoices")
     .select("*, clients(name)")
     .order("created_at", { ascending: false });
 
-  const invoices = (allDocs || []).filter((d) => d.doc_type !== "quotation");
-  const quotations = (allDocs || []).filter((d) => d.doc_type === "quotation");
+  const all = (allDocs ?? []) as InvoiceWithClient[];
+  const invoices = all.filter((d) => d.doc_type !== "quotation");
+  const quotations = all.filter((d) => d.doc_type === "quotation");
+
+  // ── KPI stats ──────────────────────────────────────────────
+  const activeDocs = all.filter((d) => !["draft", "cancelled"].includes(d.status));
+  const ytdInvoices = invoices.filter((d) => !["draft", "cancelled"].includes(d.status) && d.created_at >= ytdStart);
+
+  const ytdBilled = ytdInvoices.reduce((s, i) => s + i.amount, 0);
+  const ytdCollected = ytdInvoices.reduce((s, i) => s + i.paid_amount, 0);
+  const totalOutstanding = activeDocs
+    .filter((d) => ["sent", "partial", "overdue"].includes(d.status))
+    .reduce((s, i) => s + (i.amount - i.paid_amount), 0);
+  const overdueInvoices = invoices.filter((d) => d.status === "overdue");
+
+  const totalBilledAll = activeDocs.reduce((s, i) => s + i.amount, 0);
+  const totalCollectedAll = activeDocs.reduce((s, i) => s + i.paid_amount, 0);
+  const collectionRate = totalBilledAll > 0 ? Math.round((totalCollectedAll / totalBilledAll) * 100) : 0;
+
+  // ── Status breakdown counts ────────────────────────────────
+  const statusCounts = invoices.reduce<Record<string, number>>((acc, inv) => {
+    acc[inv.status] = (acc[inv.status] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  const statusPills: { label: string; key: string; color: string }[] = [
+    { key: "draft", label: "Draft", color: "text-gray-500 bg-gray-500/10 border-gray-500/20" },
+    { key: "sent", label: "Sent", color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
+    { key: "partial", label: "Partial", color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
+    { key: "overdue", label: "Overdue", color: "text-red-400 bg-red-400/10 border-red-400/20" },
+    { key: "paid", label: "Paid", color: "text-teal bg-teal/10 border-teal/20" },
+    { key: "cancelled", label: "Cancelled", color: "text-gray-600 bg-gray-600/10 border-gray-600/20" },
+  ].filter(({ key }) => (statusCounts[key] ?? 0) > 0);
 
   return (
     <>
@@ -51,50 +77,177 @@ export default async function InvoicesPage() {
         }
       />
 
+      {/* Hero */}
+      <div className="glass-card p-6 mb-6 relative overflow-hidden">
+        <div className="absolute -top-16 -right-16 w-56 h-56 bg-teal/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+              Total Outstanding
+            </p>
+            <p className={`text-5xl font-bold leading-none ${totalOutstanding > 0 ? "text-amber-400" : "text-foreground"}`}>
+              {formatCurrency(totalOutstanding)}
+            </p>
+            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+              <span className="text-green-400 font-medium">{formatCurrency(ytdBilled)} billed YTD</span>
+              <span>&mdash;</span>
+              <span className="text-teal font-medium">{formatCurrency(ytdCollected)} collected YTD</span>
+            </div>
+          </div>
+
+          <div className="shrink-0 w-full md:w-56">
+            <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+              <span>Collection rate</span>
+              <span className={`font-medium ${collectionRate >= 80 ? "text-teal" : collectionRate >= 50 ? "text-amber-400" : "text-red-400"}`}>
+                {collectionRate}%
+              </span>
+            </div>
+            <div className="h-2 bg-card rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${
+                  collectionRate >= 80 ? "bg-teal" : collectionRate >= 50 ? "bg-amber-400" : "bg-red-400"
+                }`}
+                style={{ width: `${Math.min(collectionRate, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-gray-600 mt-1">
+              <span>{formatCurrency(totalCollectedAll)} collected</span>
+              <span>{formatCurrency(totalBilledAll)} billed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stat grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="glass-card p-5">
+          <div className="flex items-start justify-between mb-3">
+            <TrendingUp className="h-5 w-5 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-foreground">{formatCurrency(ytdBilled)}</p>
+          <p className="text-xs text-gray-500 mt-1">Billed YTD</p>
+        </div>
+        <div className="glass-card p-5">
+          <div className="flex items-start justify-between mb-3">
+            <CheckCircle2 className="h-5 w-5 text-teal" />
+          </div>
+          <p className="text-2xl font-bold text-teal">{formatCurrency(ytdCollected)}</p>
+          <p className="text-xs text-gray-500 mt-1">Collected YTD</p>
+        </div>
+        <div className="glass-card p-5">
+          <div className="flex items-start justify-between mb-3">
+            <Clock className="h-5 w-5 text-amber-400" />
+          </div>
+          <p className="text-2xl font-bold text-amber-400">{formatCurrency(totalOutstanding)}</p>
+          <p className="text-xs text-gray-500 mt-1">Outstanding</p>
+        </div>
+        <div className="glass-card p-5">
+          <div className="flex items-start justify-between mb-3">
+            <AlertTriangle className="h-5 w-5 text-red-400" />
+          </div>
+          <p className={`text-2xl font-bold ${overdueInvoices.length > 0 ? "text-red-400" : "text-gray-600"}`}>
+            {overdueInvoices.length}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Overdue</p>
+        </div>
+      </div>
+
+      {/* Status breakdown */}
+      {statusPills.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {statusPills.map(({ key, label, color }) => (
+            <span
+              key={key}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${color}`}
+            >
+              <FileText className="h-3 w-3" />
+              {statusCounts[key]} {label}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Invoices Table */}
       <div className="mb-8">
-        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">Invoices</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            Invoices ({invoices.length})
+          </h2>
+        </div>
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due</th>
-                  <th className="px-5 py-3"></th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Issued</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider w-36">Collected</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Due</th>
+                  <th className="px-5 py-3 w-10" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {invoices.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={8} className="px-5 py-10 text-center text-sm text-gray-500">
                       No invoices yet.
                     </td>
                   </tr>
                 ) : (
-                  invoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-card transition-colors">
-                      <td className="px-5 py-3">
-                        <Link href={`/invoices/${inv.id}`} className="text-sm font-medium text-foreground hover:text-teal font-mono">
-                          {inv.invoice_number}
-                        </Link>
-                      </td>
-                      <td className="px-5 py-3 text-sm text-gray-400">
-                        {(inv as Record<string, unknown> & { clients: { name: string } | null }).clients?.name || "—"}
-                      </td>
-                      <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(inv.amount)}</td>
-                      <td className="px-5 py-3 text-sm text-gray-400">{formatCurrency(inv.paid_amount)}</td>
-                      <td className="px-5 py-3"><StatusBadge status={inv.status} /></td>
-                      <td className="px-5 py-3 text-sm text-gray-500">{formatDate(inv.due_date)}</td>
-                      <td className="px-5 py-3 text-right">
-                        <DeleteInvoiceButton id={inv.id} />
-                      </td>
-                    </tr>
-                  ))
+                  invoices.map((inv, i) => {
+                    const paidPct = inv.amount > 0 ? Math.min(Math.round((inv.paid_amount / inv.amount) * 100), 100) : 0;
+                    const isOverdue = inv.status === "overdue";
+                    return (
+                      <tr
+                        key={inv.id}
+                        className={`border-b border-border/50 hover:bg-card transition-colors ${
+                          isOverdue ? "bg-red-950/20" : i % 2 === 1 ? "bg-card/20" : ""
+                        }`}
+                      >
+                        <td className="px-5 py-3">
+                          <Link
+                            href={`/invoices/${inv.id}`}
+                            className="text-sm font-mono font-medium text-foreground hover:text-teal transition-colors flex items-center gap-1"
+                          >
+                            {inv.invoice_number}
+                            <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-300">
+                          {inv.clients?.name ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                          {formatDate(inv.created_at.slice(0, 10))}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-mono font-medium text-foreground text-right whitespace-nowrap">
+                          {formatCurrency(inv.amount)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-card rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${paidPct === 100 ? "bg-teal" : "bg-teal/50"}`}
+                                style={{ width: `${paidPct}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-500 shrink-0 w-8 text-right">{paidPct}%</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={inv.status} />
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500 text-right whitespace-nowrap">
+                          {formatDate(inv.due_date)}
+                        </td>
+                        <td className="px-5 py-3 text-right">
+                          <DeleteInvoiceButton id={inv.id} />
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -104,41 +257,61 @@ export default async function InvoicesPage() {
 
       {/* Quotations Table */}
       <div>
-        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">Quotations</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            Quotations ({quotations.length})
+          </h2>
+        </div>
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Quote #</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Valid Until</th>
-                  <th className="px-5 py-3"></th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Issued</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Valid Until</th>
+                  <th className="px-5 py-3 w-10" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {quotations.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={7} className="px-5 py-10 text-center text-sm text-gray-500">
                       No quotations yet.
                     </td>
                   </tr>
                 ) : (
-                  quotations.map((q) => (
-                    <tr key={q.id} className="hover:bg-card transition-colors">
+                  quotations.map((q, i) => (
+                    <tr
+                      key={q.id}
+                      className={`border-b border-border/50 hover:bg-card transition-colors ${i % 2 === 1 ? "bg-card/20" : ""}`}
+                    >
                       <td className="px-5 py-3">
-                        <Link href={`/invoices/${q.id}`} className="text-sm font-medium text-foreground hover:text-teal font-mono">
+                        <Link
+                          href={`/invoices/${q.id}`}
+                          className="text-sm font-mono font-medium text-foreground hover:text-teal transition-colors"
+                        >
                           {q.invoice_number}
                         </Link>
                       </td>
-                      <td className="px-5 py-3 text-sm text-gray-400">
-                        {(q as Record<string, unknown> & { clients: { name: string } | null }).clients?.name || "—"}
+                      <td className="px-4 py-3 text-sm text-gray-300">
+                        {q.clients?.name ?? "—"}
                       </td>
-                      <td className="px-5 py-3 text-sm text-foreground font-medium">{formatCurrency(q.amount)}</td>
-                      <td className="px-5 py-3"><StatusBadge status={q.status} /></td>
-                      <td className="px-5 py-3 text-sm text-gray-500">{formatDate(q.due_date)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                        {formatDate(q.created_at.slice(0, 10))}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-mono font-medium text-foreground text-right whitespace-nowrap">
+                        {formatCurrency(q.amount)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={q.status} />
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500 text-right whitespace-nowrap">
+                        {formatDate(q.due_date)}
+                      </td>
                       <td className="px-5 py-3 text-right">
                         <DeleteInvoiceButton id={q.id} />
                       </td>

@@ -24,6 +24,8 @@ export type IncomeSource = "invoice" | "manual" | "investor";
 export type EquipmentCategory = "computing" | "peripherals" | "mobile" | "networking" | "software_licence" | "office" | "other";
 export type EquipmentCondition = "new" | "good" | "fair" | "poor";
 export type EquipmentStatus = "active" | "sold" | "disposed";
+export type LiabilityType = "loan" | "credit_facility" | "accounts_payable" | "vat_payable" | "tax_provision" | "other";
+export type LiabilityStatus = "active" | "settled";
 
 export interface Profile {
   id: string;
@@ -172,6 +174,8 @@ export interface IncomeEntry {
   date: string;
   category: IncomeCategory;
   notes: string | null;
+  reconciled: boolean;
+  reconciled_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -251,6 +255,31 @@ export interface Equipment {
   updated_at: string;
 }
 
+export interface Liability {
+  id: string;
+  name: string;
+  type: LiabilityType;
+  lender: string | null;
+  total_amount: number;   // cents — original loan / credit limit
+  outstanding: number;   // cents — current balance
+  interest_rate: number | null; // annual %
+  due_date: string | null;
+  notes: string | null;
+  status: LiabilityStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RevenueProjection {
+  id: string;
+  month: string;               // ISO date — first day of month e.g. 2026-04-01
+  projected_income: number;    // cents
+  projected_expenses: number;  // cents
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SalaryHistory {
   id: string;
   employee_id: string;
@@ -272,6 +301,8 @@ export interface BusinessSettings {
   website: string | null;
   vat_number: string | null;
   registration_number: string | null;
+  registration_date: string | null;
+  directors: string | null;
   bank_name: string | null;
   bank_account_number: string | null;
   bank_branch_code: string | null;
@@ -301,6 +332,8 @@ export interface Database {
       salary_history: { Row: SalaryHistory; Insert: Partial<SalaryHistory> & Pick<SalaryHistory, "employee_id" | "amount" | "effective_date">; Update: Partial<SalaryHistory> };
       business_settings: { Row: BusinessSettings; Insert: Partial<BusinessSettings> & Pick<BusinessSettings, "company_name">; Update: Partial<BusinessSettings> };
       equipment: { Row: Equipment; Insert: Partial<Equipment> & Pick<Equipment, "name" | "category">; Update: Partial<Equipment> };
+      liabilities: { Row: Liability; Insert: Partial<Liability> & Pick<Liability, "name" | "type" | "total_amount" | "outstanding">; Update: Partial<Liability> };
+      revenue_projections: { Row: RevenueProjection; Insert: Partial<RevenueProjection> & Pick<RevenueProjection, "month" | "projected_income" | "projected_expenses">; Update: Partial<RevenueProjection> };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -323,6 +356,7 @@ export interface Database {
       equipment_category: EquipmentCategory;
       equipment_condition: EquipmentCondition;
       equipment_status: EquipmentStatus;
+      liability_type: LiabilityType;
     };
   };
 }

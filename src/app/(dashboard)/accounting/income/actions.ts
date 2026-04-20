@@ -90,3 +90,19 @@ export async function deleteIncomeAction(id: string) {
   revalidatePath("/accounting");
   redirect("/accounting/income");
 }
+
+export async function toggleReconcileAction(id: string, reconciled: boolean) {
+  await requireAuth();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("income_entries")
+    .update({
+      reconciled,
+      reconciled_at: reconciled ? new Date().toISOString() : null,
+    })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/accounting/income");
+}
