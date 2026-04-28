@@ -77,7 +77,7 @@ async function main() {
     type: "magiclink",
     email: EMAIL,
     options: {
-      redirectTo: "https://admin.swiftdesignz.co.za/auth/callback?next=/",
+      redirectTo: "https://admin.swiftdesignz.co.za/auth/magic",
     },
   });
   if (linkError || !linkData?.properties?.action_link) {
@@ -85,15 +85,15 @@ async function main() {
     process.exit(1);
   }
 
-  const magicLink = linkData.properties.action_link;
-  console.log("Magic link generated.");
+  const otp = linkData.properties.email_otp;
+  console.log("OTP generated:", otp);
 
   // 4. Send branded invite email via Resend
   const { error: emailError } = await resend.emails.send({
     from: "Swift Designz <keenan@swiftdesignz.co.za>",
     to: EMAIL,
     subject: "You're invited to the Swift Designz Admin Portal",
-    html: buildInviteEmail(FULL_NAME, magicLink),
+    html: buildInviteEmail(FULL_NAME, otp),
   });
 
   if (emailError) {
@@ -106,7 +106,7 @@ async function main() {
   console.log("The link is valid for 1 hour. Run this script again to generate a new one.");
 }
 
-function buildInviteEmail(name: string, link: string): string {
+function buildInviteEmail(name: string, otp: string): string {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
@@ -127,20 +127,22 @@ function buildInviteEmail(name: string, link: string): string {
               <h1 style="margin:0 0 24px;font-size:22px;font-weight:700;color:#fff;line-height:1.3;">Access the Admin Portal</h1>
               <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Hi ${name},</p>
               <p style="margin:0 0 24px;font-size:14px;color:#ccc;line-height:1.6;">
-                You have been invited by Keenan to access the <strong style="color:#fff;">Swift Designz Admin Portal</strong>
-                at <strong style="color:#30B0B0;">admin.swiftdesignz.co.za</strong>.
+                You have been invited by Keenan to access the <strong style="color:#fff;">Swift Designz Admin Portal</strong>.
+                Use the one-time code below to sign in and create your password.
               </p>
-              <p style="margin:0 0 24px;font-size:14px;color:#ccc;line-height:1.6;">
-                Click the button below to sign in instantly — no password required.
-              </p>
-              <table cellpadding="0" cellspacing="0" style="margin:24px 0;">
-                <tr>
-                  <td style="background:#30B0B0;border-radius:8px;">
-                    <a href="${link}" target="_blank" style="display:inline-block;padding:14px 32px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:0.5px;">Sign In to Admin Portal</a>
-                  </td>
-                </tr>
-              </table>
-              <p style="margin:0 0 8px;font-size:12px;color:#555;line-height:1.6;">This link expires in 1 hour and can only be used once.</p>
+              <p style="margin:0 0 8px;font-size:13px;color:#70c0c0;letter-spacing:1px;text-transform:uppercase;">Your One-Time Code</p>
+              <div style="background:#0a1a1a;border:2px solid #30B0B0;border-radius:10px;padding:20px 32px;margin:0 0 24px;text-align:center;">
+                <span style="font-size:36px;font-weight:700;color:#30B0B0;letter-spacing:12px;font-family:monospace;">${otp}</span>
+              </div>
+              <p style="margin:0 0 6px;font-size:14px;color:#ccc;line-height:1.6;"><strong style="color:#fff;">How to sign in:</strong></p>
+              <ol style="margin:0 0 24px;padding-left:20px;font-size:14px;color:#aaa;line-height:2;">
+                <li>Go to <a href="https://admin.swiftdesignz.co.za/login" style="color:#30B0B0;">admin.swiftdesignz.co.za/login</a></li>
+                <li>Enter your email address: <strong style="color:#fff;">${EMAIL}</strong></li>
+                <li>Click <strong style="color:#fff;">&ldquo;First time? Sign in with invite OTP&rdquo;</strong></li>
+                <li>Enter the 6-digit code above</li>
+                <li>Create your password on the next screen</li>
+              </ol>
+              <p style="margin:0 0 8px;font-size:12px;color:#555;line-height:1.6;">This code expires in 1 hour. Run the invite script again to get a new one.</p>
               <p style="margin:0;font-size:12px;color:#555;line-height:1.6;">If you did not expect this invitation, you can safely ignore this email.</p>
             </td>
           </tr>

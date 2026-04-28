@@ -1,33 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, requestMagicLink } from "@/app/auth/actions";
+import { signIn, verifyOtp } from "@/app/auth/actions";
 import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [useMagicLink, setUseMagicLink] = useState(false);
+  const [useOtp, setUseOtp] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
-    setSuccess(null);
-    if (useMagicLink) {
-      const result = await requestMagicLink(formData);
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        setSuccess("Login link sent — check your email.");
-      }
+    const result = useOtp ? await verifyOtp(formData) : await signIn(formData);
+    if (result?.error) {
+      setError(result.error);
       setLoading(false);
-    } else {
-      const result = await signIn(formData);
-      if (result?.error) {
-        setError(result.error);
-        setLoading(false);
-      }
     }
   }
 
@@ -44,14 +32,13 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="glass-card p-8">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Sign In</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-6">
+            {useOtp ? "Sign In with Invite Code" : "Sign In"}
+          </h2>
 
           <form action={handleSubmit} className="space-y-5">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-400 mb-1.5"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1.5">
                 Email
               </label>
               <input
@@ -65,12 +52,27 @@ export default function LoginPage() {
               />
             </div>
 
-            {!useMagicLink && (
+            {useOtp ? (
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-400 mb-1.5"
-                >
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-400 mb-1.5">
+                  OTP Code
+                </label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  required
+                  inputMode="numeric"
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  className="w-full px-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder-gray-500 focus:outline-none focus:border-teal focus:ring-1 focus:ring-teal transition-colors tracking-widest text-center text-lg font-mono"
+                  placeholder="000000"
+                />
+                <p className="text-xs text-gray-500 mt-1.5">Enter the 6-digit code from your invite email.</p>
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1.5">
                   Password
                 </label>
                 <input
@@ -91,31 +93,23 @@ export default function LoginPage() {
               </div>
             )}
 
-            {success && (
-              <div className="text-sm text-teal bg-teal/10 border border-teal/20 rounded-lg px-4 py-2.5">
-                {success}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
               className="w-full py-2.5 px-4 bg-teal hover:bg-teal-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading
-                ? useMagicLink ? "Sending..." : "Signing in..."
-                : useMagicLink ? "Send Login Link" : "Sign In"}
+              {loading ? "Signing in..." : useOtp ? "Verify & Sign In" : "Sign In"}
             </button>
           </form>
 
           <div className="mt-5 text-center">
             <button
               type="button"
-              onClick={() => { setUseMagicLink((v) => !v); setError(null); setSuccess(null); }}
+              onClick={() => { setUseOtp((v) => !v); setError(null); }}
               className="text-xs text-gray-500 hover:text-teal transition-colors"
             >
-              {useMagicLink ? "Sign in with password instead" : "Sign in with a magic link"}
+              {useOtp ? "Sign in with password instead" : "First time? Sign in with invite OTP"}
             </button>
           </div>
         </div>
@@ -127,3 +121,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

@@ -49,6 +49,22 @@ export async function setInvitePassword(formData: FormData) {
   redirect("/");
 }
 
+export async function verifyOtp(formData: FormData) {
+  const email = (formData.get("email") as string)?.trim().toLowerCase();
+  const token = (formData.get("otp") as string)?.trim();
+
+  if (!email || !token) return { error: "Email and OTP code are required." };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+
+  if (error) {
+    return { error: "Invalid or expired OTP. Request a new invite from Keenan." };
+  }
+
+  redirect("/auth/set-password");
+}
+
 export async function requestMagicLink(formData: FormData) {
   const email = (formData.get("email") as string)?.trim().toLowerCase();
   if (!email) return { error: "Email is required." };
