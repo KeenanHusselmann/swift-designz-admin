@@ -14,7 +14,12 @@ export async function GET(request: Request) {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const nextPath = getSafeNextPath(searchParams.get("next"));
-  const redirectTarget = `${origin}${nextPath}`;
+
+  // Invite links must land on the set-password page, not the dashboard
+  const isInvite = type === "invite";
+  const redirectTarget = isInvite
+    ? `${origin}/auth/set-password`
+    : `${origin}${nextPath}`;
 
   const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();

@@ -111,6 +111,7 @@ export interface Invoice {
   project_id: string | null;
   client_id: string;
   doc_type: InvoiceDocType;
+  category: IncomeCategory;
   amount: number;
   discount_amount: number;
   discount_type: "percent" | "flat";

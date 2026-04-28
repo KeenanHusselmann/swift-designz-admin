@@ -23,6 +23,7 @@ export async function createInvoiceAction(formData: FormData) {
   const notes = (formData.get("notes") as string)?.trim() || null;
   const status = (formData.get("status") as InvoiceStatus) || "draft";
   const docType = (formData.get("doc_type") as string) || "invoice";
+  const category = (formData.get("category") as string) || "web_dev";
   const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
   const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
   const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
@@ -84,6 +85,7 @@ export async function createInvoiceAction(formData: FormData) {
       client_id: clientId,
       project_id: projectId,
       doc_type: docType,
+      category,
       amount: finalTotal,
       discount_amount: discountAmt,
       discount_type: discountType,
@@ -135,6 +137,7 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
   const notes = (formData.get("notes") as string)?.trim() || null;
   const status = (formData.get("status") as InvoiceStatus) || "draft";
   const docType = (formData.get("doc_type") as string) || "invoice";
+  const category = (formData.get("category") as string) || "web_dev";
   const paymentPlanEnabled = formData.get("payment_plan_enabled") === "true";
   const installmentCount = paymentPlanEnabled ? parseInt(formData.get("installment_count") as string) || null : null;
   const installmentInterval = paymentPlanEnabled ? (formData.get("installment_interval") as string) || null : null;
@@ -173,6 +176,7 @@ export async function updateInvoiceAction(id: string, formData: FormData) {
       client_id: clientId,
       project_id: projectId,
       doc_type: docType,
+      category,
       amount: finalTotal,
       discount_amount: discountAmt,
       discount_type: discountType,
@@ -284,8 +288,7 @@ export async function addPaymentAction(formData: FormData) {
   // Auto-update invoice status
   const { data: invoice } = await supabase
     .from("invoices")
-    .select("amount, paid_amount, status, invoice_number, clients(name)")
-    .eq("id", invoiceId)
+      .select("amount, paid_amount, status, invoice_number, category, clients(name)")
     .single();
 
   if (invoice) {
@@ -316,7 +319,7 @@ export async function addPaymentAction(formData: FormData) {
       description: `Payment — ${invoice.invoice_number} (${clientName})`,
       amount,
       date: paidAt,
-      category: "web_dev" as const,
+      category: (invoice.category || "web_dev") as const,
     });
   }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { renderToBuffer } from "@react-pdf/renderer";
 import InvoicePDF from "@/components/invoices/InvoicePDF";
 import type { InvoiceItem, Payment } from "@/types/database";
@@ -21,7 +22,16 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const supabase = await createClient();
+
+  // Verify the requester is authenticated (API routes bypass the proxy auth guard)
+  const authClient = await createClient();
+  const { data: { user } } = await authClient.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Use admin client to bypass RLS for internal data fetch
+  const supabase = createAdminClient();
 
   const [{ data: invoice }, { data: items }, { data: payments }] = await Promise.all([
     supabase
@@ -54,8 +64,10 @@ export async function GET(
   const docType = (invoice.doc_type as "invoice" | "quotation") || "invoice";
   const isQuotation = docType === "quotation";
 
-  const buffer = await renderToBuffer(
-    InvoicePDF({
+  let buffer: ArrayBuffer;
+  try {
+    buffer = await renderToBuffer(
+      InvoicePDF({
       docType,
       invoiceNumber: invoice.invoice_number,
       status: invoice.status,
@@ -88,8 +100,12 @@ export async function GET(
         paid_at: p.paid_at,
       })),
       logoSrc,
-    }),
-  );
+      }),
+    );
+  } catch (err) {
+    console.error("[PDF] renderToBuffer failed:", err);
+    return NextResponse.json({ error: "PDF generation failed" }, { status: 500 });
+  }
 
   const filename = isQuotation
     ? invoice.invoice_number.replace("QUO", "Quotation")

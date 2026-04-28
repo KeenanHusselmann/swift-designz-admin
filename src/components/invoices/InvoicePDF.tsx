@@ -77,6 +77,16 @@ const s = StyleSheet.create({
   histCol3: { width: "25%", fontSize: 8 },
   histCol4: { width: "25%", fontSize: 8, textAlign: "right" as const },
   histColHead: { fontSize: 7, fontWeight: 700, color: "#777", textTransform: "uppercase" as const, letterSpacing: 1 },
+  // Banking
+  bankingBox: { backgroundColor: surface, borderWidth: 1, borderColor: border, borderRadius: 6, padding: 12, marginBottom: 16 },
+  bankingLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, marginBottom: 8, textTransform: "uppercase" as const },
+  bankingSubLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 2, color: "#444", marginBottom: 6, marginTop: 8, textTransform: "uppercase" as const },
+  bankingGrid: { flexDirection: "row" as const, flexWrap: "wrap" as const },
+  bankingItem: { width: "50%", marginBottom: 5 },
+  bankingKey: { fontSize: 7, letterSpacing: 1, textTransform: "uppercase" as const, color: "#888" },
+  bankingVal: { fontSize: 8, fontWeight: 600, color: "#111" },
+  bankingDivider: { borderBottomWidth: 1, borderColor: border, marginVertical: 8 },
+  bankingRef: { marginTop: 8, fontSize: 7, color: "#555" },
   // Notes
   notesBox: { backgroundColor: surface, borderWidth: 1, borderColor: border, borderRadius: 6, padding: 12, marginBottom: 20 },
   notesLabel: { fontSize: 7, fontWeight: 700, letterSpacing: 3, color: teal, marginBottom: 4, textTransform: "uppercase" as const },
@@ -376,6 +386,69 @@ export default function InvoicePDF({
                 <Text style={[s.histCol4, { color: "#111", fontWeight: 600 }]}>{formatR(pay.amount)}</Text>
               </View>
             ))}
+          </View>
+        )}
+
+        {/* Banking Details (invoices only) */}
+        {!isQuotation && (
+          <View style={s.bankingBox}>
+            <Text style={s.bankingLabel}>Banking Details — EFT Payment</Text>
+            {/* Namibia / International */}
+            <Text style={s.bankingSubLabel}>Namibia / International — Bank Windhoek</Text>
+            <View style={s.bankingGrid}>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Name</Text>
+                <Text style={s.bankingVal}>Keenan Husselmann</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Bank</Text>
+                <Text style={s.bankingVal}>Bank Windhoek Ltd.</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Number</Text>
+                <Text style={s.bankingVal}>8025331126</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Type</Text>
+                <Text style={s.bankingVal}>Cheque (CHK)</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Branch Code</Text>
+                <Text style={s.bankingVal}>481-972</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Swift Code</Text>
+                <Text style={s.bankingVal}>BWLINANX</Text>
+              </View>
+            </View>
+            <View style={s.bankingDivider} />
+            {/* South Africa — ABSA */}
+            <Text style={s.bankingSubLabel}>South African Clients — ABSA</Text>
+            <View style={s.bankingGrid}>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Name</Text>
+                <Text style={s.bankingVal}>Leon Lourens Husselmann</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Bank</Text>
+                <Text style={s.bankingVal}>ABSA Bank</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Number</Text>
+                <Text style={s.bankingVal}>9325564310</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Account Type</Text>
+                <Text style={s.bankingVal}>Current / Cheque</Text>
+              </View>
+              <View style={s.bankingItem}>
+                <Text style={s.bankingKey}>Branch Code</Text>
+                <Text style={s.bankingVal}>632005</Text>
+              </View>
+            </View>
+            <Text style={s.bankingRef}>
+              Reference: {invoiceNumber} — Always include your invoice number as the payment reference.
+            </Text>
           </View>
         )}
 

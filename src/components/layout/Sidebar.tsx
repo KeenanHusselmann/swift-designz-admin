@@ -140,50 +140,59 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
             })}
           </ul>
         ) : (
-          NAV_SECTIONS.map((section, sIdx) => (
-          <div key={sIdx}>
-            {sIdx > 0 && (
-              <hr className="my-3 border-border" />
-            )}
-            <ul className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
-                const count = item.countKey
-                  ? item.countKey === "team"
-                    ? (counts.employees ?? 0) + (counts.ai_agents ?? 0)
-                    : item.countKey === "documents"
-                      ? profile?.role === "investor"
-                        ? documentLibraryCount
-                        : (counts.documents ?? 0) + documentLibraryCount
-                    : counts[item.countKey] ?? 0
-                  : null;
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        active
-                          ? "bg-teal/10 text-teal border border-teal/20"
-                          : "text-gray-400 hover:text-foreground hover:bg-card"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {item.label}
-                      {count !== null && count > 0 && (
-                        <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-border text-gray-400">
-                          {count}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))
+          <>
+            {NAV_SECTIONS.map((section, sIdx) => {
+              const visibleItems = section.items.filter((item) => {
+                if (profile?.role === "viewer" && (item.href === "/investors" || item.href === "/team")) return false;
+                return true;
+              });
+              if (visibleItems.length === 0) return null;
+              return (
+              <div key={sIdx}>
+                {sIdx > 0 && (
+                  <hr className="my-3 border-border" />
+                )}
+                <ul className="space-y-1">
+                  {visibleItems.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
+                    const count = item.countKey
+                      ? item.countKey === "team"
+                        ? (counts.employees ?? 0) + (counts.ai_agents ?? 0)
+                        : item.countKey === "documents"
+                          ? profile?.role === "investor"
+                            ? documentLibraryCount
+                            : (counts.documents ?? 0) + documentLibraryCount
+                          : counts[item.countKey] ?? 0
+                      : null;
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                            active
+                              ? "bg-teal/10 text-teal border border-teal/20"
+                              : "text-gray-400 hover:text-foreground hover:bg-card"
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          {item.label}
+                          {count !== null && count > 0 && (
+                            <span className="ml-auto text-xs tabular-nums px-1.5 py-0.5 rounded-full bg-border text-gray-400">
+                              {count}
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+              );
+            })}
+          </>
         )}
       </nav>
 

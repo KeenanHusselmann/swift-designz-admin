@@ -334,6 +334,24 @@ export default function InvoiceForm({
         </div>
       </div>
 
+      {/* Income Category */}
+      <div>
+        <label className={labelCls}>Income Category</label>
+        <select
+          name="category"
+          defaultValue={invoice?.category || "web_dev"}
+          className={inputCls}
+        >
+          <option value="web_dev">Web Development</option>
+          <option value="ecommerce">E-Commerce</option>
+          <option value="apps">Apps</option>
+          <option value="training">Training</option>
+          <option value="consulting">Consulting</option>
+          <option value="investment">Investment</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
       {/* Line Items */}
       <div>
         <div className="flex items-center justify-between mb-3">
