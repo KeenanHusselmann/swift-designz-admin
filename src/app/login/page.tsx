@@ -7,12 +7,15 @@ import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
+  const emailParam = searchParams.get("email") ?? "";
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [useOtp, setUseOtp] = useState(() => searchParams.get("otp") === "1");
-  // OTP step: "email" = enter email to send code, "code" = enter the code
-  const [otpStep, setOtpStep] = useState<"email" | "code">("email");
-  const [otpEmail, setOtpEmail] = useState("");
+  // If email is in the URL (invite link), skip straight to the code-entry step
+  const [otpStep, setOtpStep] = useState<"email" | "code">(() =>
+    searchParams.get("otp") === "1" && emailParam ? "code" : "email"
+  );
+  const [otpEmail, setOtpEmail] = useState(() => emailParam);
 
   async function handlePasswordSubmit(formData: FormData) {
     setLoading(true);
