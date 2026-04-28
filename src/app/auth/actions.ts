@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { sendInviteEmail } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
@@ -71,18 +73,37 @@ export async function requestMagicLink(formData: FormData) {
 
   const supabase = await createClient();
 
-  // Only allow sign-in for existing users — do not create new accounts
-  const { error } = await supabase.auth.signInWithOtp({
+  // Only allow existing users — check profile exists
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .single();
+
+  if (!profile) {
+    return { error: "No account found for this email. Contact Keenan to get an invite." };
+  }
+
+  // Generate OTP via admin client and send our own branded email
+  const admin = createAdminClient();
+  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
+    type: "magiclink",
     email,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: `https://admin.swiftdesignz.co.za/auth/callback?next=/`,
-    },
+    options: { redirectTo: "https://admin.swiftdesignz.co.za/auth/magic" },
   });
 
-  if (error) {
-    // Generic message to avoid leaking whether the email exists
-    return { error: "Could not send a login link. Check the email address and try again." };
+  if (linkError || !linkData?.properties?.email_otp) {
+    return { error: "Could not generate a login code. Try again." };
+  }
+
+  try {
+    await sendInviteEmail({
+      to: email,
+      otp: linkData.properties.email_otp,
+      isInvite: false,
+    });
+  } catch {
+    return { error: "Could not send the login code. Try again." };
   }
 
   return { success: true };

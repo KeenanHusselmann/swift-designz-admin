@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import PageHeader from "@/components/ui/PageHeader";
+import InviteUserModal from "@/components/team/InviteUserModal";
 import { formatCurrency } from "@/lib/utils";
 import { Users, Bot, DollarSign, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -23,7 +24,11 @@ export default async function TeamPage() {
 
   return (
     <>
-      <PageHeader title="Team" description="Manage employees and AI agents" />
+      <PageHeader
+        title="Team"
+        description="Manage employees and AI agents"
+        actions={<InviteUserModal />}
+      />
 
       {/* Hero */}
       <div className="glass-card p-6 mb-6 relative overflow-hidden">

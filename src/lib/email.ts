@@ -77,3 +77,130 @@ export async function sendDocumentEmail({
     html,
   });
 }
+
+// ── Invite / OTP email ────────────────────────────────────────────────────────
+
+interface SendInviteEmailParams {
+  to: string;
+  otp: string;
+  /** Shown in greeting line. Defaults to the email address. */
+  fullName?: string;
+  /** If provided, displayed as the invite role. */
+  role?: string;
+  /** Optional personal message from the admin. */
+  message?: string;
+  /** Whether this is a first-time invite (true) or self-serve OTP request (false). */
+  isInvite?: boolean;
+}
+
+export async function sendInviteEmail({
+  to,
+  otp,
+  fullName,
+  role,
+  message,
+  isInvite = false,
+}: SendInviteEmailParams) {
+  const displayName = escapeHtml(fullName || to);
+  const roleLabel =
+    role === "admin" ? "Admin" : role === "investor" ? "Investor" : "Viewer";
+  const subject = isInvite
+    ? "You're invited to the Swift Designz Admin Portal"
+    : "Your Swift Designz sign-in code";
+
+  const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
+<body style="margin:0;padding:0;background:#0d0d0d;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0d0d;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="580" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #222;border-radius:12px;overflow:hidden;max-width:580px;width:100%;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0c2020,#081818);padding:28px 32px;border-bottom:1px solid #1a3030;">
+              <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#30B0B0;">Swift Designz</p>
+              <p style="margin:6px 0 0;font-size:11px;color:#4a8080;letter-spacing:2px;text-transform:uppercase;">Admin Portal</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <p style="margin:0 0 8px;font-size:13px;color:#70c0c0;letter-spacing:1px;text-transform:uppercase;">${isInvite ? "You&rsquo;re Invited" : "Sign-In Code"}</p>
+              <h1 style="margin:0 0 24px;font-size:22px;font-weight:700;color:#fff;line-height:1.3;">${isInvite ? "Access the Admin Portal" : "Your one-time sign-in code"}</h1>
+              <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Hi ${displayName},</p>
+              ${
+                isInvite
+                  ? `<p style="margin:0 0 ${message ? "16px" : "24px"};font-size:14px;color:#ccc;line-height:1.6;">
+                      You have been invited by <strong style="color:#fff;">Keenan</strong> to access the
+                      <strong style="color:#fff;">Swift Designz Admin Portal</strong> as a
+                      <span style="color:#30B0B0;font-weight:700;">${roleLabel}</span>.
+                    </p>
+                    ${
+                      message
+                        ? `<div style="background:#0d1a1a;border-left:3px solid #30B0B0;padding:12px 16px;margin:0 0 24px;border-radius:0 6px 6px 0;">
+                            <p style="margin:0;font-size:14px;color:#ccc;line-height:1.6;font-style:italic;">&ldquo;${escapeHtml(message)}&rdquo;</p>
+                          </div>`
+                        : ""
+                    }`
+                  : `<p style="margin:0 0 24px;font-size:14px;color:#ccc;line-height:1.6;">Use the code below to sign in.</p>`
+              }
+
+              <!-- IMPORTANT banner -->
+              <div style="background:#1a1200;border:1px solid #665500;border-radius:8px;padding:12px 16px;margin:0 0 20px;">
+                <p style="margin:0;font-size:13px;color:#d4a800;line-height:1.5;">
+                  <strong>Important:</strong> Copy the code below <em>before</em> clicking the button. You will need to paste it on the login page.
+                </p>
+              </div>
+
+              <!-- OTP code -->
+              <p style="margin:0 0 8px;font-size:12px;color:#70c0c0;letter-spacing:1px;text-transform:uppercase;">Your One-Time Code</p>
+              <div style="background:#0a1a1a;border:2px solid #30B0B0;border-radius:10px;padding:20px 32px;margin:0 0 24px;text-align:center;">
+                <span style="font-size:40px;font-weight:700;color:#30B0B0;letter-spacing:14px;font-family:monospace;">${otp}</span>
+              </div>
+
+              <!-- CTA button -->
+              <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+                <tr>
+                  <td style="background:#30B0B0;border-radius:8px;">
+                    <a href="https://admin.swiftdesignz.co.za/login" target="_blank"
+                      style="display:inline-block;padding:13px 32px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:0.5px;">
+                      Sign in to Admin Portal &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Instructions -->
+              <p style="margin:0 0 6px;font-size:13px;color:#ccc;font-weight:600;">How to sign in:</p>
+              <ol style="margin:0 0 24px;padding-left:20px;font-size:13px;color:#aaa;line-height:2.2;">
+                <li><strong style="color:#d4a800;">Copy the 6-digit code above first</strong></li>
+                <li>Click the button above (or visit <a href="https://admin.swiftdesignz.co.za/login" style="color:#30B0B0;">admin.swiftdesignz.co.za/login</a>)</li>
+                <li>Click <strong style="color:#fff;">&ldquo;First time? Sign in with invite OTP&rdquo;</strong></li>
+                <li>Enter your email: <strong style="color:#fff;">${escapeHtml(to)}</strong></li>
+                ${isInvite ? '<li>Click <strong style="color:#fff;">"Send OTP Code"</strong> — or paste the code you already have</li>' : ""}
+                <li>Enter the 6-digit code when prompted</li>
+                ${isInvite ? '<li>Create your permanent password on the next screen</li>' : ""}
+              </ol>
+
+              <p style="margin:0 0 4px;font-size:12px;color:#555;line-height:1.6;">This code expires in <strong style="color:#777;">1 hour</strong>.</p>
+              <p style="margin:0;font-size:12px;color:#555;line-height:1.6;">If you did not expect this, you can safely ignore it.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px;border-top:1px solid #1a1a1a;">
+              <p style="margin:0;font-size:11px;color:#444;line-height:1.6;">Swift Designz &middot; admin.swiftdesignz.co.za &middot; keenan@swiftdesignz.co.za</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  return resend.emails.send({
+    from: "Swift Designz <keenan@swiftdesignz.co.za>",
+    to,
+    subject,
+    html,
+  });
+}
