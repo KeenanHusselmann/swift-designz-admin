@@ -98,7 +98,7 @@ async function main() {
 
   if (emailError) {
     console.error("Email send failed:", emailError.message);
-    console.log("Magic link (send manually):", magicLink);
+    console.log("OTP (send manually):", otp);
     process.exit(1);
   }
 
