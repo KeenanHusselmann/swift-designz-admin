@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { validateUploadedFile, secureFileName } from "@/lib/utils";
-import type { InvoiceStatus, PaymentMethod } from "@/types/database";
+import type { InvoiceStatus, PaymentMethod, IncomeCategory } from "@/types/database";
 
 // ── Create Invoice ────────────────────────────────────────────────────────────
 
@@ -319,7 +319,7 @@ export async function addPaymentAction(formData: FormData) {
       description: `Payment — ${invoice.invoice_number} (${clientName})`,
       amount,
       date: paidAt,
-      category: (invoice.category || "web_dev") as const,
+      category: (invoice.category || "web_dev") as IncomeCategory,
     });
   }
 
