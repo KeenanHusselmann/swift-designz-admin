@@ -161,7 +161,7 @@ export async function sendInviteEmail({
               <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
                 <tr>
                   <td style="background:#30B0B0;border-radius:8px;">
-                    <a href="https://admin.swiftdesignz.co.za/login" target="_blank"
+                    <a href="https://admin.swiftdesignz.co.za/login?otp=1" target="_blank"
                       style="display:inline-block;padding:13px 32px;font-size:14px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:0.5px;">
                       Sign in to Admin Portal &rarr;
                     </a>
@@ -173,7 +173,7 @@ export async function sendInviteEmail({
               <p style="margin:0 0 6px;font-size:13px;color:#ccc;font-weight:600;">How to sign in:</p>
               <ol style="margin:0 0 24px;padding-left:20px;font-size:13px;color:#aaa;line-height:2.2;">
                 <li><strong style="color:#d4a800;">Copy the 6-digit code above first</strong></li>
-                <li>Click the button above (or visit <a href="https://admin.swiftdesignz.co.za/login" style="color:#30B0B0;">admin.swiftdesignz.co.za/login</a>)</li>
+                <li>Click the button above (or visit <a href="https://admin.swiftdesignz.co.za/login?otp=1" style="color:#30B0B0;">admin.swiftdesignz.co.za/login</a>)</li>
                 <li>Click <strong style="color:#fff;">&ldquo;First time? Sign in with invite OTP&rdquo;</strong></li>
                 <li>Enter your email: <strong style="color:#fff;">${escapeHtml(to)}</strong></li>
                 ${isInvite ? '<li>Click <strong style="color:#fff;">"Send OTP Code"</strong> — or paste the code you already have</li>' : ""}
