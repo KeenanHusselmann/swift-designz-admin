@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { LayoutList, Columns, ChevronUp, ChevronDown, Trash2, Plus, Check } from "lucide-react";
 import { useToast } from "@/components/ui/ToastProvider";
 import {
@@ -21,19 +21,16 @@ type View = "table" | "board";
 
 export default function MilestoneBoard({ projectId, initialMilestones }: MilestoneBoardProps) {
   const [milestones, setMilestones] = useState(initialMilestones);
-  const [view, setView] = useState<View>("table");
+  const [view, setView] = useState<View>(() => {
+    if (typeof window === "undefined") return "table";
+    return (localStorage.getItem(`milestone-view-${projectId}`) as View) || "table";
+  });
   const [isPending, startTransition] = useTransition();
   const [addTitle, setAddTitle] = useState("");
   const [addDueDate, setAddDueDate] = useState("");
   const [addLoading, setAddLoading] = useState(false);
   const toast = useToast();
   const [addError, setAddError] = useState<string | null>(null);
-
-  // Persist view preference
-  useEffect(() => {
-    const saved = localStorage.getItem(`milestone-view-${projectId}`) as View | null;
-    if (saved) setView(saved);
-  }, [projectId]);
 
   function switchView(v: View) {
     setView(v);

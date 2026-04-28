@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "prepare": "husky"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.4.1",
@@ -38,6 +40,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.2",
     "supabase": "^2.89.1",
     "tailwindcss": "^4",

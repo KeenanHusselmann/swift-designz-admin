@@ -1,9 +1,9 @@
-import { test, expect, request } from "@playwright/test";
+import { test, expect, request, Page } from "@playwright/test";
 
 const EMAIL = process.env.E2E_EMAIL ?? "";
 const PASSWORD = process.env.E2E_PASSWORD ?? "";
 
-async function login(page: Parameters<typeof test>[1] extends (args: { page: infer P }) => unknown ? P : never) {
+async function login(page: Page) {
   await page.goto("/login");
   await page.getByLabel(/email/i).fill(EMAIL);
   await page.getByLabel(/password/i).fill(PASSWORD);
