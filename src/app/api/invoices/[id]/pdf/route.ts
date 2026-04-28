@@ -64,7 +64,7 @@ export async function GET(
   const docType = (invoice.doc_type as "invoice" | "quotation") || "invoice";
   const isQuotation = docType === "quotation";
 
-  let buffer: ArrayBuffer;
+  let buffer: Buffer;
   try {
     buffer = await renderToBuffer(
       InvoicePDF({
