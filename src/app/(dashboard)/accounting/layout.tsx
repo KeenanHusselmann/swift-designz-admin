@@ -8,10 +8,9 @@ export default async function AccountingLayout({
 }) {
   const profile = await getProfile();
 
-  // Admins and intern_admins always have access; viewers need the accounting_access flag
+  // Admins always have access; viewers need the accounting_access flag (intern admins)
   const allowed =
     profile?.role === "admin" ||
-    profile?.role === "intern_admin" ||
     profile?.accounting_access === true;
   if (!allowed) {
     redirect("/");

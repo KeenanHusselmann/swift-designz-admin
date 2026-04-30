@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendInviteEmail } from "@/lib/email";
 import type { UserRole } from "@/types/database";
 
-const ALLOWED_ROLES: UserRole[] = ["admin", "viewer", "investor", "intern_admin"];
+const ALLOWED_ROLES: UserRole[] = ["admin", "viewer", "investor"];
 
 export async function POST(request: Request) {
   // Auth check — must be an admin

@@ -97,7 +97,7 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
           <h1 className="text-lg font-bold text-teal tracking-tight leading-tight">
             Swift Designz
           </h1>
-          <p className="text-xs text-teal-muted">{profile?.role === "investor" ? "Investor Portal" : profile?.role === "intern_admin" ? "Intern Admin" : "Admin Portal"}</p>
+          <p className="text-xs text-teal-muted">{profile?.role === "investor" ? "Investor Portal" : (profile?.role === "viewer" && profile.accounting_access) ? "Intern Admin" : "Admin Portal"}</p>
         </div>
       </div>
 
@@ -143,7 +143,7 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
           <>
             {NAV_SECTIONS.map((section, sIdx) => {
               const visibleItems = section.items.filter((item) => {
-                if ((profile?.role === "viewer" || profile?.role === "intern_admin") && (item.href === "/investors" || item.href === "/team")) return false;
+                if (profile?.role === "viewer" && (item.href === "/investors" || item.href === "/team")) return false;
                 if (profile?.role === "viewer" && item.href === "/accounting" && !profile.accounting_access) return false;
                 return true;
               });

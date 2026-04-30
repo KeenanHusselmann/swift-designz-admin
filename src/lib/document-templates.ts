@@ -28,7 +28,6 @@ export const DOCUMENT_TEMPLATES: DocumentTemplateDefinition[] = [
 ];
 
 function audienceForRole(role: UserRole | null | undefined): DocumentTemplateAudience {
-  // intern_admin falls through to "admin" audience (client-facing docs)
   return role === "investor" ? "investor" : "admin";
 }
 
