@@ -33,6 +33,7 @@ export interface Profile {
   email: string;
   role: UserRole;
   avatar_url: string | null;
+  accounting_access: boolean;
   created_at: string;
   updated_at: string;
 }

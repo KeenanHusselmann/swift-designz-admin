@@ -144,6 +144,7 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
             {NAV_SECTIONS.map((section, sIdx) => {
               const visibleItems = section.items.filter((item) => {
                 if (profile?.role === "viewer" && (item.href === "/investors" || item.href === "/team")) return false;
+                if (profile?.role === "viewer" && item.href === "/accounting" && !profile.accounting_access) return false;
                 return true;
               });
               if (visibleItems.length === 0) return null;
