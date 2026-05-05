@@ -75,6 +75,10 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
+  const { theme, toggle: toggleTheme } = useTheme();
+  const counts = initialCounts;
+  const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
+
   async function handleSignOut() {
     flushSync(() => setSigningOut(true));
     await signOut();
