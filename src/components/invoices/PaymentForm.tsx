@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Loader2, Upload } from "lucide-react";
 import { addPaymentAction } from "@/app/(dashboard)/invoices/actions";
 import { useToast } from "@/components/ui/ToastProvider";
+import { useRouter } from "next/navigation";
 
 const METHODS = [
   { value: "eft", label: "EFT / Bank Transfer" },
@@ -22,6 +23,8 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const toast = useToast();
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -38,7 +41,9 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
     } else {
       setSuccess(true);
       toast.success("Payment recorded!");
-      setTimeout(() => setSuccess(false), 2000);
+      formRef.current?.reset();
+      router.refresh();
+      setTimeout(() => setSuccess(false), 3000);
     }
   }
 
@@ -48,7 +53,7 @@ export default function PaymentForm({ invoiceId, outstandingCents }: PaymentForm
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="space-y-4">
+    <form ref={formRef} onSubmit={(e) => { e.preventDefault(); void handleSubmit(new FormData(e.currentTarget)); }} className="space-y-4">
       <input type="hidden" name="invoice_id" value={invoiceId} />
 
       {error && (
