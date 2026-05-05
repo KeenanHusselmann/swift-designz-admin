@@ -74,7 +74,8 @@ export default function SopModal({ item, isSigned }: Props) {
 
             {/* Modal */}
             <motion.div
-              className="relative z-10 w-full max-w-2xl max-h-[85vh] flex flex-col glass-card overflow-hidden"
+              className="relative z-10 w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl border border-teal/20 overflow-hidden shadow-2xl"
+              style={{ backgroundColor: "var(--card, #1a1a1a)" }}
               initial={{ opacity: 0, y: 20, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.97 }}
