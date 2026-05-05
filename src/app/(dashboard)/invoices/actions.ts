@@ -289,6 +289,7 @@ export async function addPaymentAction(formData: FormData) {
   const { data: invoice } = await supabase
     .from("invoices")
       .select("amount, paid_amount, status, invoice_number, category, clients(name)")
+    .eq("id", invoiceId)
     .single();
 
   if (invoice) {
@@ -327,6 +328,7 @@ export async function addPaymentAction(formData: FormData) {
   revalidatePath("/invoices");
   revalidatePath("/accounting/income");
   revalidatePath("/accounting");
+  revalidatePath("/");
   return { success: true };
 }
 
