@@ -15,13 +15,17 @@ export default function SopModal({ item, isSigned }: Props) {
   const [open, setOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [signed, setSigned] = useState(isSigned);
+  const [signError, setSignError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleSign() {
     if (!agreed || isPending) return;
+    setSignError(null);
     startTransition(async () => {
       const result = await acknowledgeSopAction(item.id);
-      if (!result.error) {
+      if (result.error) {
+        setSignError(result.error);
+      } else {
         setSigned(true);
         setOpen(false);
       }
@@ -93,7 +97,7 @@ export default function SopModal({ item, isSigned }: Props) {
               </div>
 
               {/* Scrollable content */}
-              <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+              <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 space-y-6">
                 {(item.sections ?? []).map((section, i) => (
                   <div key={i}>
                     <h3 className="text-sm font-semibold text-teal mb-2">{section.heading}</h3>
@@ -105,7 +109,7 @@ export default function SopModal({ item, isSigned }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-4 border-t border-border bg-card/50">
+              <div className="px-6 py-4 border-t border-border bg-card">
                 {signed ? (
                   <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
                     <CheckCircle className="h-4 w-4" />
@@ -113,6 +117,9 @@ export default function SopModal({ item, isSigned }: Props) {
                   </div>
                 ) : (
                   <div className="space-y-3">
+                    {signError && (
+                      <p className="text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{signError}</p>
+                    )}
                     <label className="flex items-start gap-3 cursor-pointer">
                       <input
                         type="checkbox"
