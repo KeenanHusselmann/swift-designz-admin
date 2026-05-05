@@ -19,13 +19,25 @@ import Link from "next/link";
 import PrintAccountantStatementButton from "@/components/statements/PrintAccountantStatementButton";
 import RevenueChart, { type RevenueDataPoint } from "@/components/dashboard/RevenueChart";
 import SparklineChart from "@/components/dashboard/SparklineChart";
+import MonthNav from "@/components/accounting/MonthNav";
 import type { IncomeEntry, Expense } from "@/types/database";
 
-export default async function AccountingPage() {
+interface Props {
+  searchParams: Promise<Record<string, string>>;
+}
+
+export default async function AccountingPage({ searchParams }: Props) {
+  const { month: monthParam } = await searchParams;
   const supabase = await createClient();
 
   const now = new Date();
-  const mtdStartDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+  const currentMonthKey = monthParam && /^\d{4}-\d{2}$/.test(monthParam)
+    ? monthParam
+    : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const [cmYear, cmMonth] = currentMonthKey.split("-").map(Number);
+  const selectedMonthDate = new Date(cmYear, cmMonth - 1, 1);
+  const mtdStartDate = `${currentMonthKey}-01`;
+  const mtdEndDate = `${currentMonthKey}-31`; // safe upper bound
   const yearStart = new Date(now.getFullYear() - 1, now.getMonth() + 1, 1).toISOString().slice(0, 10);
   const ytdStart = `${now.getFullYear()}-01-01`;
 
@@ -56,11 +68,12 @@ export default async function AccountingPage() {
   const projMonthsSet = projections12.length;
   const totalProjNet = projections12.reduce((s, p) => s + p.projected_income - p.projected_expenses, 0);
 
-  // MTD
-  const incomeMTD = incomeEntries.filter((e) => e.date >= mtdStartDate).reduce((s, e) => s + e.amount, 0);
-  const expensesMTD = expenseEntries.filter((e) => e.date >= mtdStartDate).reduce((s, e) => s + e.amount, 0);
+  // MTD (for selected month)
+  const incomeMTD = incomeEntries.filter((e) => e.date >= mtdStartDate && e.date <= mtdEndDate).reduce((s, e) => s + e.amount, 0);
+  const expensesMTD = expenseEntries.filter((e) => e.date >= mtdStartDate && e.date <= mtdEndDate).reduce((s, e) => s + e.amount, 0);
   const netMTD = incomeMTD - expensesMTD;
   const marginPct = incomeMTD > 0 ? Math.round((netMTD / incomeMTD) * 100) : 0;
+  const selectedMonthLabel = selectedMonthDate.toLocaleDateString("en-ZA", { month: "long", year: "numeric" });
 
   // YTD
   const ytdIncome = incomeEntries.filter((e) => e.date >= ytdStart).reduce((s, e) => s + e.amount, 0);
@@ -68,15 +81,15 @@ export default async function AccountingPage() {
   // Net position: YTD income minus active liabilities (simple proxy)
   const netPosition = ytdIncome - totalLiabilities;
 
-  // Sparkline — daily cumulative income this month
-  const daysInMonth = now.getDate();
+  // Sparkline — daily cumulative income for selected month
+  const daysInSelectedMonth = new Date(cmYear, cmMonth, 0).getDate();
   const dailyMap = new Map<string, number>();
-  for (let d = 1; d <= daysInMonth; d++) {
-    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  for (let d = 1; d <= daysInSelectedMonth; d++) {
+    const key = `${currentMonthKey}-${String(d).padStart(2, "0")}`;
     dailyMap.set(key, 0);
   }
   incomeEntries
-    .filter((e) => e.date >= mtdStartDate)
+    .filter((e) => e.date >= mtdStartDate && e.date <= mtdEndDate)
     .forEach((e) => {
       const day = e.date.slice(0, 10);
       if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) ?? 0) + e.amount);
@@ -135,7 +148,12 @@ export default async function AccountingPage() {
       <PageHeader
         title="Accounting"
         description="Income, expenses, and financial overview"
-        actions={<PrintAccountantStatementButton />}
+        actions={
+          <div className="flex items-center gap-3">
+            <MonthNav currentMonth={currentMonthKey} />
+            <PrintAccountantStatementButton />
+          </div>
+        }
       />
 
       {/* Hero Card */}
@@ -144,7 +162,7 @@ export default async function AccountingPage() {
         <div className="flex flex-col md:flex-row md:items-center gap-6">
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-              Net Profit — Month to Date
+              Net Profit &mdash; {selectedMonthLabel}
             </p>
             <p className={`text-5xl font-bold leading-none ${netMTD >= 0 ? "text-foreground" : "text-red-400"}`}>
               {formatCurrency(Math.abs(netMTD))}
@@ -175,14 +193,14 @@ export default async function AccountingPage() {
         <StatCard
           title="Income MTD"
           value={formatCurrency(incomeMTD)}
-          sub="This month"
+          sub={selectedMonthLabel}
           icon={TrendingUp}
           accent="green"
         />
         <StatCard
           title="Expenses MTD"
           value={formatCurrency(expensesMTD)}
-          sub="This month"
+          sub={selectedMonthLabel}
           icon={TrendingDown}
           accent="red"
         />

@@ -9,7 +9,12 @@ import type { Invoice } from "@/types/database";
 
 type InvoiceWithClient = Invoice & { clients: { name: string } | null };
 
-export default async function InvoicesPage() {
+interface Props {
+  searchParams: Promise<Record<string, string>>;
+}
+
+export default async function InvoicesPage({ searchParams }: Props) {
+  const { status: filterStatus } = await searchParams;
   const supabase = await createClient();
 
   const now = new Date();
@@ -152,18 +157,32 @@ export default async function InvoicesPage() {
         </div>
       </div>
 
-      {/* Status breakdown */}
+      {/* Status breakdown — clickable filters */}
       {statusPills.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          {statusPills.map(({ key, label, color }) => (
-            <span
-              key={key}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${color}`}
+          {filterStatus && (
+            <Link
+              href="/invoices"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-gray-500/30 bg-gray-500/10 text-gray-400 hover:text-foreground transition-colors"
             >
-              <FileText className="h-3 w-3" />
-              {statusCounts[key]} {label}
-            </span>
-          ))}
+              ✕ Clear filter
+            </Link>
+          )}
+          {statusPills.map(({ key, label, color }) => {
+            const isActive = filterStatus === key;
+            return (
+              <Link
+                key={key}
+                href={isActive ? "/invoices" : `/invoices?status=${key}`}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  isActive ? color + " ring-1 ring-current" : color + " opacity-70 hover:opacity-100"
+                }`}
+              >
+                <FileText className="h-3 w-3" />
+                {statusCounts[key]} {label}
+              </Link>
+            );
+          })}
         </div>
       )}
 
@@ -171,7 +190,9 @@ export default async function InvoicesPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-            Invoices ({invoices.length})
+            {filterStatus
+              ? `${filterStatus.toUpperCase()} INVOICES (${invoices.filter((i) => i.status === filterStatus).length})`
+              : `Invoices (${invoices.length})`}
           </h2>
         </div>
         <div className="glass-card overflow-hidden">
@@ -197,7 +218,7 @@ export default async function InvoicesPage() {
                     </td>
                   </tr>
                 ) : (
-                  invoices.map((inv, i) => {
+                  invoices.filter((inv) => !filterStatus || inv.status === filterStatus).map((inv, i) => {
                     const paidPct = inv.amount > 0 ? Math.min(Math.round((inv.paid_amount / inv.amount) * 100), 100) : 0;
                     const isOverdue = inv.status === "overdue";
                     return (

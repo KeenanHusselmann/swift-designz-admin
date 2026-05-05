@@ -4,7 +4,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { deleteIncomeAction } from "./actions";
 import ReconcileToggle from "@/components/accounting/ReconcileToggle";
 import Link from "next/link";
-import { Trash2, TrendingUp, DollarSign, Hash, Tag, CheckCircle2 } from "lucide-react";
+import { Trash2, TrendingUp, DollarSign, Hash, Tag, CheckCircle2, Receipt } from "lucide-react";
 import type { IncomeEntry } from "@/types/database";
 
 const categoryLabels: Record<string, string> = {
@@ -125,13 +125,14 @@ export default async function IncomePage() {
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="w-10 px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" title="Invoice">Inv</th>
                 <th className="w-10" />
               </tr>
             </thead>
             <tbody>
               {entries.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-10 text-center text-sm text-gray-500">No income records yet.</td>
+                  <td colSpan={8} className="px-5 py-10 text-center text-sm text-gray-500">No income records yet.</td>
                 </tr>
               ) : (
                 entries.map((e, i) => (
@@ -154,6 +155,19 @@ export default async function IncomePage() {
                     <td className="px-4 py-3 text-sm text-gray-500 capitalize">{e.source}</td>
                     <td className="px-4 py-3 text-sm text-green-400 text-right font-mono font-medium whitespace-nowrap">
                       {formatCurrency(e.amount)}
+                    </td>
+                    <td className="px-2 py-3 text-center">
+                      {e.invoice_id ? (
+                        <Link
+                          href={`/invoices/${e.invoice_id}`}
+                          className="inline-flex items-center justify-center text-teal hover:text-teal/70 transition-colors"
+                          title="View linked invoice"
+                        >
+                          <Receipt className="h-3.5 w-3.5" />
+                        </Link>
+                      ) : (
+                        <span className="text-gray-700 text-xs">—</span>
+                      )}
                     </td>
                     <td className="px-2 py-3 text-center">
                       <form action={async () => { "use server"; await deleteIncomeAction(e.id); }}>
