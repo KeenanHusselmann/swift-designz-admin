@@ -7,7 +7,12 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { updateIncomeAction } from "../../actions";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Download, ExternalLink, Receipt } from "lucide-react";
-import type { IncomeEntry, InvoiceItem, Payment } from "@/types/database";
+import type { IncomeEntry, Invoice, InvoiceItem, Payment } from "@/types/database";
+
+type InvoiceWithJoins = Invoice & {
+  clients: { id: string; name: string; email: string; phone: string | null; company: string | null } | null;
+  projects: { id: string; name: string } | null;
+};
 
 export default async function EditIncomePage({
   params,
@@ -23,7 +28,7 @@ export default async function EditIncomePage({
   const entry = data as IncomeEntry;
 
   // If this income entry is linked to an invoice, fetch all invoice data
-  let invoice: null | Record<string, unknown> = null;
+  let invoice: InvoiceWithJoins | null = null;
   let invoiceItems: InvoiceItem[] = [];
   let invoicePayments: Payment[] = [];
 
@@ -45,7 +50,7 @@ export default async function EditIncomePage({
         .eq("invoice_id", entry.invoice_id)
         .order("paid_at", { ascending: false }),
     ]);
-    invoice = inv ?? null;
+    invoice = (inv as InvoiceWithJoins) ?? null;
     invoiceItems = (items ?? []) as InvoiceItem[];
     invoicePayments = (pays ?? []) as Payment[];
   }
@@ -55,14 +60,12 @@ export default async function EditIncomePage({
     return updateIncomeAction(id, formData);
   }
 
-  const client = invoice
-    ? (invoice.clients as { id: string; name: string; email: string; phone: string | null; company: string | null } | null)
-    : null;
+  const client = invoice?.clients ?? null;
   const isQuotation = invoice?.doc_type === "quotation";
   const docLabel = isQuotation ? "Quotation" : "Invoice";
-  const discountAmt = (invoice?.discount_amount ?? 0) as number;
+  const discountAmt = invoice?.discount_amount ?? 0;
   const itemsSubtotal = invoiceItems.reduce((s, it) => s + it.amount, 0);
-  const outstanding = invoice ? ((invoice.amount as number) - (invoice.paid_amount as number)) : 0;
+  const outstanding = invoice ? (invoice.amount - invoice.paid_amount) : 0;
 
   return (
     <>
@@ -107,14 +110,14 @@ export default async function EditIncomePage({
               <div className="flex items-start justify-between gap-4 mb-5">
                 <div>
                   <p className="text-xs font-semibold text-teal uppercase tracking-widest mb-1">{docLabel}</p>
-                  <h2 className="text-2xl font-bold text-foreground tracking-tight">{invoice.invoice_number as string}</h2>
+                  <h2 className="text-2xl font-bold text-foreground tracking-tight">{invoice.invoice_number}</h2>
                   {client && (
                     <p className="text-sm text-gray-400 mt-1">{client.company ? `${client.company} · ` : ""}{client.name}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <StatusBadge status={invoice.status as string} />
-                  <p className="text-xs text-gray-500">Due {formatDate(invoice.due_date as string)}</p>
+                  <StatusBadge status={invoice.status} />
+                  <p className="text-xs text-gray-500">Due {formatDate(invoice.due_date)}</p>
                 </div>
               </div>
 
@@ -129,9 +132,9 @@ export default async function EditIncomePage({
                   </div>
                   <div className="text-right">
                     <p className="text-gray-500 uppercase tracking-wider font-semibold mb-1">Amount Due</p>
-                    <p className="text-3xl font-bold text-teal font-mono">{formatCurrency(isQuotation ? (invoice.amount as number) : outstanding)}</p>
-                    {!isQuotation && (invoice.paid_amount as number) > 0 && (
-                      <p className="text-xs text-green-400 mt-1">{formatCurrency(invoice.paid_amount as number)} paid</p>
+                    <p className="text-3xl font-bold text-teal font-mono">{formatCurrency(isQuotation ? invoice.amount : outstanding)}</p>
+                    {!isQuotation && invoice.paid_amount > 0 && (
+                      <p className="text-xs text-green-400 mt-1">{formatCurrency(invoice.paid_amount)} paid</p>
                     )}
                   </div>
                 </div>
@@ -177,13 +180,13 @@ export default async function EditIncomePage({
                   ) : (
                     <tr className="border-t border-border">
                       <td colSpan={3} className="px-5 py-2.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Subtotal</td>
-                      <td className="px-5 py-2.5 text-right text-sm font-bold text-foreground font-mono">{formatCurrency(invoice.amount as number)}</td>
+                      <td className="px-5 py-2.5 text-right text-sm font-bold text-foreground font-mono">{formatCurrency(invoice.amount)}</td>
                     </tr>
                   )}
-                  {!isQuotation && (invoice.paid_amount as number) > 0 && (
+                  {!isQuotation && invoice.paid_amount > 0 && (
                     <tr>
                       <td colSpan={3} className="px-5 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Paid</td>
-                      <td className="px-5 py-2 text-right text-sm font-bold text-green-400 font-mono">-{formatCurrency(invoice.paid_amount as number)}</td>
+                      <td className="px-5 py-2 text-right text-sm font-bold text-green-400 font-mono">-{formatCurrency(invoice.paid_amount)}</td>
                     </tr>
                   )}
                   <tr className="border-t border-teal/30">
@@ -191,7 +194,7 @@ export default async function EditIncomePage({
                       {isQuotation ? "Total" : "Amount Due"}
                     </td>
                     <td className="px-5 py-3 text-right text-base font-bold text-teal font-mono">
-                      {formatCurrency(isQuotation ? (invoice.amount as number) : outstanding)}
+                      {formatCurrency(isQuotation ? invoice.amount : outstanding)}
                     </td>
                   </tr>
                 </tfoot>
@@ -243,7 +246,7 @@ export default async function EditIncomePage({
             {invoice.notes && (
               <div className="glass-card p-5">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Notes</h3>
-                <p className="text-sm text-gray-300 whitespace-pre-wrap">{invoice.notes as string}</p>
+                <p className="text-sm text-gray-300 whitespace-pre-wrap">{invoice.notes}</p>
               </div>
             )}
 
