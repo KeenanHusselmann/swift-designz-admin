@@ -4,7 +4,7 @@ import { useState } from "react";
 import { flushSync } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { signIn, verifyOtp, requestMagicLink } from "@/app/auth/actions";
-import { Loader2, Eye, EyeOff, Zap } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
@@ -78,13 +78,13 @@ export default function LoginPage() {
       {signingIn && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-6">
-            <div className="relative flex items-center justify-center">
-              <div className="h-16 w-16 rounded-full border-2 border-teal/20 animate-ping absolute" />
-              <div className="h-12 w-12 rounded-full border-2 border-teal/40 animate-ping absolute" style={{ animationDelay: "150ms" }} />
-              <div className="h-8 w-8 rounded-full bg-teal/10 flex items-center justify-center">
-                <Zap className="h-4 w-4 text-teal animate-pulse" />
-              </div>
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/favicon.png"
+              alt="Swift Designz"
+              className="h-20 w-20 animate-spin"
+              style={{ animationDuration: "1.2s" }}
+            />
             <div className="text-center space-y-1">
               <p className="text-lg font-semibold text-foreground tracking-tight">
                 Signing you into the

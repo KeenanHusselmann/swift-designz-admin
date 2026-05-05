@@ -246,20 +246,20 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
       {signingOut && (
         <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-5">
-            <div className="relative flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full border-2 border-red-400/20 animate-ping absolute" />
-              <div className="h-10 w-10 rounded-full border-2 border-red-400/40 animate-ping absolute" style={{ animationDelay: "150ms" }} />
-              <div className="h-6 w-6 rounded-full bg-red-400/10 flex items-center justify-center">
-                <LogOut className="h-3.5 w-3.5 text-red-400 animate-pulse" />
-              </div>
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/favicon.png"
+              alt="Swift Designz"
+              className="h-20 w-20 animate-spin"
+              style={{ animationDuration: "1.2s" }}
+            />
             <div className="text-center space-y-1">
               <p className="text-base font-semibold text-foreground tracking-tight">Signing you out</p>
               <p className="text-sm text-gray-500">Swift Designz Portal</p>
             </div>
             <div className="flex gap-1.5">
               {[0,1,2].map((i) => (
-                <div key={i} className="h-1.5 w-1.5 rounded-full bg-red-400 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
+                <div key={i} className="h-1.5 w-1.5 rounded-full bg-teal animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
               ))}
             </div>
           </div>
