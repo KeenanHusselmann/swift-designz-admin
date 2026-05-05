@@ -246,13 +246,23 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
       {signingOut && (
         <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/favicon.png"
-              alt="Swift Designz"
-              className="h-20 w-20 animate-spin"
-              style={{ animationDuration: "1.2s" }}
-            />
+            {/* Door loader */}
+            <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-teal/30 bg-teal/5">
+              {/* Left door */}
+              <div
+                className="absolute inset-y-0 left-0 w-1/2 bg-teal/25 border-r border-teal/50 origin-left"
+                style={{ animation: "doorOpen 2s ease-in-out infinite" }}
+              >
+                <div className="absolute right-1.5 top-1/2 -translate-y-1/2 h-3.5 w-0.5 rounded-full bg-teal" />
+              </div>
+              {/* Right door */}
+              <div
+                className="absolute inset-y-0 right-0 w-1/2 bg-teal/25 border-l border-teal/50 origin-right"
+                style={{ animation: "doorOpen 2s ease-in-out infinite" }}
+              >
+                <div className="absolute left-1.5 top-1/2 -translate-y-1/2 h-3.5 w-0.5 rounded-full bg-teal" />
+              </div>
+            </div>
             <div className="text-center space-y-1">
               <p className="text-base font-semibold text-foreground tracking-tight">Signing you out</p>
               <p className="text-sm text-gray-500">Swift Designz Portal</p>
