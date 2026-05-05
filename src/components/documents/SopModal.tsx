@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ClipboardList } from "lucide-react";
 import { acknowledgeSopAction } from "@/app/(dashboard)/documents/actions";
@@ -55,8 +56,9 @@ export default function SopModal({ item, isSigned }: Props) {
         )}
       </button>
 
-      <AnimatePresence>
-        {open && (
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {open && (
           <motion.div
             className="fixed inset-0 z-9999 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
@@ -144,8 +146,10 @@ export default function SopModal({ item, isSigned }: Props) {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
