@@ -21,13 +21,13 @@ export default function LoginPage() {
 
   async function handlePasswordSubmit(formData: FormData) {
     setLoading(true);
+    setSigningIn(true);
     setError(null);
     const result = await signIn(formData);
     if (result?.error) {
       setError(result.error);
       setLoading(false);
-    } else {
-      setSigningIn(true);
+      setSigningIn(false);
     }
   }
 
