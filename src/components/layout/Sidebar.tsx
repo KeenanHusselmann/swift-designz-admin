@@ -23,8 +23,8 @@ import {
   Package,
   BarChart2,
 } from "lucide-react";
-import { useTransition } from "react";
 import { signOut } from "@/app/auth/actions";
+import { flushSync } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
 import { getDocumentLibraryCountForRole } from "@/lib/document-templates";
@@ -74,14 +74,10 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-  const [, startSignOut] = useTransition();
-  const { theme, toggle: toggleTheme } = useTheme();
-  const counts = initialCounts;
-  const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
 
-  function handleSignOut() {
-    setSigningOut(true);
-    startSignOut(async () => { await signOut(); });
+  async function handleSignOut() {
+    flushSync(() => setSigningOut(true));
+    await signOut();
   }
 
   const isActive = (href: string) => {

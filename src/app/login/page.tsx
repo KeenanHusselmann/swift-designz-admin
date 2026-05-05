@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { flushSync } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { signIn, verifyOtp, requestMagicLink } from "@/app/auth/actions";
 import { Loader2, Eye, EyeOff, Zap } from "lucide-react";
@@ -19,15 +20,21 @@ export default function LoginPage() {
   );
   const [otpEmail, setOtpEmail] = useState(() => emailParam);
 
-  async function handlePasswordSubmit(formData: FormData) {
-    setLoading(true);
-    setSigningIn(true);
-    setError(null);
+  async function handlePasswordSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    flushSync(() => {
+      setLoading(true);
+      setSigningIn(true);
+      setError(null);
+    });
     const result = await signIn(formData);
     if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-      setSigningIn(false);
+      flushSync(() => {
+        setError(result.error!);
+        setLoading(false);
+        setSigningIn(false);
+      });
     }
   }
 
@@ -112,7 +119,7 @@ export default function LoginPage() {
 
           {/* Password login */}
           {!useOtp && (
-            <form action={handlePasswordSubmit} className="space-y-5">
+            <form onSubmit={handlePasswordSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1.5">Email</label>
                 <input id="email" name="email" type="email" required autoComplete="email"
