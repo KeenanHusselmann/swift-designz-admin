@@ -2,8 +2,40 @@
 
 import { createContext, useContext, useCallback, useRef, useState, useEffect, startTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Check, X, Loader2, Trash2, Send, Save, Plus, Upload, FileText, CreditCard, RefreshCw } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
+
+const LOADING_ICONS: Array<{ test: RegExp; Icon: LucideIcon }> = [
+  { test: /delet/i,                Icon: Trash2 },
+  { test: /send|email|mail/i,      Icon: Send },
+  { test: /sav|updat|edit/i,       Icon: Save },
+  { test: /creat|add|new/i,        Icon: Plus },
+  { test: /upload/i,               Icon: Upload },
+  { test: /pdf|generat|document/i, Icon: FileText },
+  { test: /pay|record/i,           Icon: CreditCard },
+  { test: /refresh|reload|sync/i,  Icon: RefreshCw },
+];
+
+function LoadingIcon({ message }: { message: string }) {
+  const match = LOADING_ICONS.find(({ test }) => test.test(message));
+  if (!match) {
+    return (
+      <span className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-teal/15">
+        <Loader2 className="h-4 w-4 text-teal animate-spin" strokeWidth={2.5} />
+      </span>
+    );
+  }
+  const { Icon } = match;
+  return (
+    <span className="shrink-0 relative flex h-8 w-8 items-center justify-center">
+      <span className="absolute inset-0 rounded-full border border-teal/50 animate-ping" />
+      <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-teal/15">
+        <Icon className="h-4 w-4 text-teal" strokeWidth={2.5} />
+      </span>
+    </span>
+  );
+}
 
 type ToastType = "loading" | "success" | "error";
 interface ToastState { type: ToastType; message: string; }
@@ -71,15 +103,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           >
             <div className="relative overflow-hidden flex items-center gap-4 px-6 py-4 rounded-2xl bg-sidebar border border-border shadow-2xl shadow-black/70 backdrop-blur-md min-w-[320px] max-w-lg">
               {toast.type === "loading" && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src="/favicon.png"
-                  alt=""
-                  width={26}
-                  height={26}
-                  className="shrink-0"
-                  style={{ animation: "spin 0.75s linear infinite" }}
-                />
+                <LoadingIcon message={toast.message} />
               )}
               {toast.type === "success" && (
                 <span className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-green-500/20">
