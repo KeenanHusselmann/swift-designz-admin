@@ -23,6 +23,7 @@ import {
   Package,
   BarChart2,
 } from "lucide-react";
+import { useTransition } from "react";
 import { signOut } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
@@ -72,9 +73,16 @@ const INVESTOR_NAV = [
 export default function Sidebar({ profile, initialCounts }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const [, startSignOut] = useTransition();
   const { theme, toggle: toggleTheme } = useTheme();
   const counts = initialCounts;
   const documentLibraryCount = getDocumentLibraryCountForRole(profile?.role);
+
+  function handleSignOut() {
+    setSigningOut(true);
+    startSignOut(async () => { await signOut(); });
+  }
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -211,15 +219,15 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
           </div>
         </div>
         <div className="flex items-center gap-2 mb-2">
-          <form action={signOut} className="flex-1">
+          <div className="flex-1">
             <button
-              type="submit"
+              onClick={handleSignOut}
               className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors w-full px-1"
             >
               <LogOut className="h-4 w-4" />
               Sign out
             </button>
-          </form>
+          </div>
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-lg text-gray-500 hover:text-teal hover:bg-card transition-colors"
@@ -234,6 +242,30 @@ export default function Sidebar({ profile, initialCounts }: SidebarProps) {
 
   return (
     <>
+      {/* Sign-out overlay */}
+      {signingOut && (
+        <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-5">
+            <div className="relative flex items-center justify-center">
+              <div className="h-14 w-14 rounded-full border-2 border-red-400/20 animate-ping absolute" />
+              <div className="h-10 w-10 rounded-full border-2 border-red-400/40 animate-ping absolute" style={{ animationDelay: "150ms" }} />
+              <div className="h-6 w-6 rounded-full bg-red-400/10 flex items-center justify-center">
+                <LogOut className="h-3.5 w-3.5 text-red-400 animate-pulse" />
+              </div>
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-base font-semibold text-foreground tracking-tight">Signing you out</p>
+              <p className="text-sm text-gray-500">Swift Designz Portal</p>
+            </div>
+            <div className="flex gap-1.5">
+              {[0,1,2].map((i) => (
+                <div key={i} className="h-1.5 w-1.5 rounded-full bg-red-400 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
