@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateProgressOverrideAction } from "@/app/(dashboard)/projects/actions";
 import { useToast } from "@/components/ui/ToastProvider";
+import { useRouter } from "next/navigation";
 
 interface ProgressEditorProps {
   projectId: string;
@@ -21,6 +22,7 @@ export default function ProgressEditor({
   const [value, setValue] = useState(String(progress));
   const [saving, setSaving] = useState(false);
   const toast = useToast();
+  const router = useRouter();
 
   async function handleSave() {
     setSaving(true);
@@ -31,6 +33,7 @@ export default function ProgressEditor({
     toast.success("Progress saved!");
     setSaving(false);
     setEditing(false);
+    router.refresh();
   }
 
   async function handleReset() {
@@ -41,6 +44,7 @@ export default function ProgressEditor({
     setValue(String(milestoneProgress));
     setSaving(false);
     setEditing(false);
+    router.refresh();
   }
 
   if (editing) {
