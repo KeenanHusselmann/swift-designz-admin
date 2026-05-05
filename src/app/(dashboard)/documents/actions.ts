@@ -74,3 +74,20 @@ export async function sendDocumentAction(formData: FormData) {
 
   return { success: true };
 }
+
+export async function acknowledgeSopAction(sopId: string) {
+  const user = await requireAuth();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("sop_acknowledgements")
+    .upsert({ sop_id: sopId, user_id: user.id }, { onConflict: "sop_id,user_id" });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/documents");
+  revalidatePath("/documents/[category]", "page");
+
+  return { success: true };
+}
+

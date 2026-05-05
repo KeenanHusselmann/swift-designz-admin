@@ -182,6 +182,13 @@ export interface IncomeEntry {
   updated_at: string;
 }
 
+export interface SopAcknowledgement {
+  id: string;
+  sop_id: string;
+  user_id: string;
+  signed_at: string;
+}
+
 export interface Document {
   id: string;
   client_id: string | null;
